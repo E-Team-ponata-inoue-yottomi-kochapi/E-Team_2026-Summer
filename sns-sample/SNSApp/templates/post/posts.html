@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block title %}タイムライン{% endblock %}
+
+{% block page_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/posts.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="page-posts">
+  <!-- メイン -->
+  <main>
+    <div class="page-title">
+      <h1>タイムライン</h1>
+    </div>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div class="flash-messages">
+      {% for category, message in messages %}
+      <div class="flash flash-{{ category }}">
+        {{ message }}
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
+    <!-- 新規投稿フォーム -->
+    <section class="new-post">
+      <form class="new-post-main" action="/posts" method="post">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <textarea name="content" placeholder="いま何してる？"></textarea>
+        <div class="new-post-footer">
+          <button class="btn-primary" type="submit">
+            投稿する
+          </button>
+        </div>
+      </form>
+    </section>
+
+    {% if posts and posts|length > 0 %}
+    <section class="post-list">
+      {% for post in posts %}
+      <div class="post-card">
+        <div class="post-content">
+          <div class="post-header">
+            <div class="post-user">
+              <span class="display-name">{{ post.user_name }}</span>
+            </div>
+            <div class="post-time">{{ post.created_at }}</div>
+          </div>
+          <div class="post-body">
+            {{ post.content }}
+          </div>
+          <div class="post-footer">
+            <div class="post-actions">
+              <!-- 詳細・コメント画面へ（GET /posts/{post_id}） -->
+              <a class="post-btn " href="/posts/{{ post.id }}">詳細</a>
+
+              {% if post.user_id == user_id %}
+              <form action="/posts/{{ post.id }}/delete" method="post">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button class="post-btn  post-btn-delete" type="submit"
+                  onclick="return confirm('この投稿を削除しますか？');">削除</button>
+              </form>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </section>
+    {% else %}
+    <div class="empty">
+      <p>投稿がありません。</p>
+    </div>
+    {% endif %}
+  </main>
+</div>
+{% endblock %}

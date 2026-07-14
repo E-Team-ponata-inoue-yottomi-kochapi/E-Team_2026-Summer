@@ -1,0 +1,9 @@
+<header>
+  <div class="header-inner">
+    <a href="{{ url_for('posts_view') }}" class="logo">SNS Sample App</a>
+
+    {% if session.get('user_id') %}
+    <a class="logout" href="{{ url_for('logout') }}">ログアウト</a>
+    {% endif %}
+  </div>
+</header>
