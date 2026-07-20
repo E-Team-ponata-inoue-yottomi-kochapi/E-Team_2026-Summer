@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    {% if title %}
+    <title>{{title}} - つどい</title>
+    {% else %}
+    <title>つどい</title>
+    {% endif %}
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet"  href="{{ url_for('static', filename='css/base.css')}}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/form.css')}}">
+    {% block css %}{% endblock %}
+</head>
+<body>
+    <!-- 共通部品を埋め込む -->
+    <!-- {% include 'common/header.html' %} -->
+    <!-- ページごとに内容が変わる部分 -->
+    <main>
+        {% block main_content %}{% endblock %}
+    </main>
+    <!-- 共通部品を埋め込む -->
+    <!-- {% include 'common/footer.html' %} -->
+</body>
+</html>

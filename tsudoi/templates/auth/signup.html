@@ -1,34 +1,40 @@
-<!--
-  【チュートリアル用・削除予定】
-  ぽんたが、チュートリアルとして仮実装。チュートリアル完了後、
-  削除してから本実装に置き換える。
-  このコードの内容と処理を理解し、言語化できるようにすること！
--->
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <title>新規登録 - つどい</title>
-</head>
-<body>
-    <h1>Hello World</h1>
-    <p>新規登録画面(仮)。ここから本実装していく。</p>
+{% extends "layouts/card_base.html" %}
 
-    <!-- 仮フォーム。usersテーブルにはnameが無いので email / password のみ -->
-    <form method="POST" action="/signup">
-        <div>
-            <label for="email">メールアドレス</label>
-            <input type="email" id="email" name="email" required>
-        </div>
-        <div>
-            <label for="password">パスワード</label>
-            <input type="password" id="password" name="password" required>
-        </div>
-        <div>
-            <label for="password_confirmation">パスワード(確認)</label>
-            <input type="password" id="password_confirmation" name="password_confirmation" required>
-        </div>
-        <button type="submit">登録する</button>
-    </form>
-</body>
-</html>
+{% block css %}
+{{ super() }}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}">
+{% endblock %}
+
+{% block card_header %}
+<div class="app-card-header">
+    <button class="app-card-back-button" type="button">←</button>
+    <p>新規登録</p>
+</div>
+{% endblock %}
+
+{% block card_content %}
+<!-- 仮フォーム。usersテーブルにはnameが無いので email / password のみ -->
+<form class="form" method="POST" action="/signup">
+    <!-- CSRF対策：トークン -->
+    <input type="hidden" name="csrf_token" value="{{ csrf_token()}}">
+    <div class="form-field">
+        <label for="email">メールアドレス</label>
+        <input class="form-input" type="email" id="email" name="email" required>
+    </div>
+    <div class="form-field">
+        <label for="password">パスワード</label>
+        <input class="form-input" type="password" id="password" name="password" required>
+    </div>
+    <div class="form-field">
+        <label for="password_confirmation">パスワード(確認)</label>
+        <input class="form-input" type="password" id="password_confirmation" name="password_confirmation" required>
+    </div>
+    <button class="form-button" type="submit">登録する</button>
+</form>
+{% endblock %}
+
+{% block card_footer %}
+<footer class="app-card-footer">
+    <p>&copy; 2026 つどい</p>
+</footer>
+{% endblock %}
