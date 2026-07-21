@@ -153,9 +153,10 @@ CREATE TABLE application_participants (
     fee_rule_id            INT NOT NULL,
     member_name_snapshot   INT  NULL,
     relation_snapshot      INT NOT NULL,
-    age_at_application.    INT NOT NULL,
+    age_at_application     INT NOT NULL,
     fee_rule_name_snapshot INT NOT NULL,
     amount                 INT NOT NULL,
+    deleted_at             DATETIME NULL,
     PRIMARY KEY (application_id, member_id),
     CONSTRAINT fk_ap_application
         FOREIGN KEY (application_id) REFERENCES applications(id)
