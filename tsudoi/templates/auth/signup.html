@@ -1,4 +1,4 @@
-{% extends "layouts/card_base.html" %}
+{% extends "common/card_base.html" %}
 
 {% block css %}
 {{ super() }}
@@ -34,7 +34,5 @@
 {% endblock %}
 
 {% block card_footer %}
-<footer class="app-card-footer">
-    <p>&copy; 2026 つどい</p>
-</footer>
+    {% include "common/card_footer.html" %}
 {% endblock %}
