@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+
+<h2>イベント一覧</h2>
+<marquee behavior="alternate">ここは作成済みイベント一覧画面です</marquee>
+<hr>
+<br><br>
+<p>ここにイベントの一覧が表示されます</p>
+<br><br>
+<hr><br>
+<a href="{{ url_for('admin.users_list_view')}}">登録アカウント一覧へ</a>
+<br>
+<a href="{{ url_for('admin.dashboard_view')}}">ダッシュボードに戻る</a><br>
+<!-- <a href="javascript:history.back()">← 戻る</a>}でも可　-->
+<br><hr><br>
+<form action="{{ url_for('admin.logout_process')}}", method="POST">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <button type="submit">ログアウト</button>
+</form>
+{% endblock %}
