@@ -1,0 +1,9 @@
+<h1>ユーザー編集画面</h1>
+
+<form action="{{ url_for('mypage.user_edit_process') }}" method="POST">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+    <button type="submit">更新</button>
+</form>
+
+<a href="{{ url_for('mypage.mypage_view')}}">マイページに戻る</a>
