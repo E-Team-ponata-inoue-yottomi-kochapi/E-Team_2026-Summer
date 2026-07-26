@@ -134,7 +134,7 @@ CREATE TABLE applications (
     total_amount  INT NOT NULL,
     applied_at    DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at    DATETIME NULL ON UPDATE CURRENT_TIMESTAMP,
-    deleted_at    DATETIME NULL,
+    canceled_at    DATETIME NULL,
     CONSTRAINT fk_applications_event
         FOREIGN KEY (event_id) REFERENCES events(id)
         ON DELETE CASCADE,
@@ -148,10 +148,15 @@ CREATE TABLE applications (
 --    複合主キー (application_id, member_id) で同一申込内の重複を防止
 -- ------------------------------------------------------------
 CREATE TABLE application_participants (
-    application_id  INT NOT NULL,
-    member_id       INT NOT NULL,
-    fee_rule_id     INT NOT NULL,
-    amount          INT NOT NULL,
+    application_id         INT NOT NULL,
+    member_id              INT NOT NULL,
+    fee_rule_id            INT NOT NULL,
+    member_name_snapshot   VARCHAR(100),
+    relation_snapshot      VARCHAR(50) NOT NULL,
+    age_at_application     INT NOT NULL CHECK (age_at_application >=0),
+    fee_rule_name_snapshot VARCHAR(50) NOT NULL,
+    amount                 INT NOT NULL,
+    deleted_at             DATETIME NULL,
     PRIMARY KEY (application_id, member_id),
     CONSTRAINT fk_ap_application
         FOREIGN KEY (application_id) REFERENCES applications(id)
@@ -168,7 +173,7 @@ CREATE TABLE application_participants (
 -- 8. admins : サービス管理者(一般ユーザーと別系統の認証)
 -- ------------------------------------------------------------
 CREATE TABLE admins (
-    id             INT AUTO_INCREMENT PRIMARY KEY,
+    admin_id       INT AUTO_INCREMENT PRIMARY KEY,
     email          VARCHAR(255) NOT NULL UNIQUE,
     password_hash  VARCHAR(255) NOT NULL,
     created_at     DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,

@@ -9,13 +9,16 @@
     {% endif %}
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <link rel="stylesheet"  href="{{ url_for('static', filename='css/base.css')}}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/form.css')}}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
     {% block css %}{% endblock %}
 </head>
 <body>
-    <main>
-        {% block main_content %}{% endblock %}
-    </main>
+    <hr>
+    <!-- 共通部品を埋め込む -->
+    {# {% include 'common/header.html' %} #}
+    <!-- ページごとに内容が変わる部分 -->
+    {% block content %}{% endblock %}
+    <!-- 共通部品を埋め込む -->
+    {# {% include 'common/footer.html' %} #}
 </body>
 </html>
