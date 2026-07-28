@@ -1,14 +1,25 @@
-# ============================================================
-# 【チュートリアル用・削除予定】
-# ぽんたが、チュートリアルとして仮実装。チュートリアル完了後、
-# 削除してから本実装に置き換える。
-# このコードの内容と処理を理解し、言語化できるようにすること！
-# ============================================================
-from flask import Blueprint, render_template
+from flask import Blueprint, session, render_template, redirect, url_for, request
 
 auth_bp = Blueprint("auth", __name__)
 
-
 @auth_bp.route("/signup", methods=["GET"])
 def signup_view():
-    return render_template("auth/signup.html")
+    if session.get("user_id") is None:
+        return render_template("auth/signup.html")
+    # ログイン済みの場合はマイページへ遷移する
+    return "マイページへ遷移"
+
+@auth_bp.route("/signup", methods=["POST"])
+def signup_process():
+    return "家族情報登録へ進む"
+
+@auth_bp.route("/login", methods=["GET"])
+def login_view():
+    if session.get("user_id") is None:
+        return render_template("auth/login.html")
+	# ログイン済みの場合はマイページへ遷移する
+    return "マイページへ遷移"
+
+@auth_bp.route("/login", methods=["POST"])
+def login_process():
+    return "マイページへ遷移"
