@@ -5,10 +5,10 @@
 <h1>ダッシュボード</h1>
 <marquee behavior="alternate">ここは管理者画面のホームです</marquee>
 <hr><br>
-<nuv>
+<nav>
     <button><a href="{{ url_for('admin.users_list_view')}}">登録アカウント一覧</a></button><br><br>
     <button><a href="{{ url_for('admin.event_list_view')}}">作成済みイベント一覧</a></button>
-</nuv>
+</nav>
 <br><br>
 <hr><br>
 <form action="{{ url_for('admin.logout_process')}}", method="POST">
