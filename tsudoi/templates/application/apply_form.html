@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}{{ "申込編集" if application else "参加申し込み" }}{% endblock %}
+{% block content %}
+<h1>{{ "申込編集" if application else "参加申し込み" }}</h1>
+
+<form action="{{ url_for('application.apply_edit_process', id=application.id) if application else url_for('application.apply_confirmation_view', event_id=event_id) }}" method="POST">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+  <p>参加者を選択してください</p>
+  {% for member in members %}
+  <label>
+    <input type="checkbox" name="member_ids" value="{{ member.id }}">
+    {{ member.name }}
+  </label>
+  {% endfor %}
+
+  <button type="submit">{{ "更新する" if application else "確認画面へ" }}</button>
+</form>
+{% endblock %}
