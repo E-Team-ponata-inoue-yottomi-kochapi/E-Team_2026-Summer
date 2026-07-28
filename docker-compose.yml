@@ -2,7 +2,7 @@
 services:
   db:
     # コンテナ名をmysqlに設定
-    container_name: tsudoi-MySQL
+    container_name: MySQL
     # MySQLのDockerfileをビルドする
     build:
       # ビルドコンテキストはカレントディレクトリ
@@ -39,7 +39,7 @@ services:
 
   app:
     # コンテナ名をFlaskに設定
-    container_name: tsudoi-Flask
+    container_name: Flask
     # FlaskのDockerfileをビルドする
     build:
       # ビルドコンテキストはカレントディレクトリ
@@ -48,7 +48,7 @@ services:
     # ボリュームを指定
     # ローカルのカレントディレクトリをコンテナの/codeにマウントする
     volumes:
-      - ./tsudoi:/code
+      - ./SNSApp:/code
     # ローカルのFlaskポートとコンテナの5000番ポートをつなぐ
     ports:
       - "${FLASK_PORT}:5000"
