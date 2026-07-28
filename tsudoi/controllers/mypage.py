@@ -28,11 +28,11 @@ def user_edit_process():
     # TODO: 入力チェックを実装する
     # 例：
     # if ユーザー名が空欄:
-    #   errors.append("ユーザー名を入力してください")
+    # errors.append("エラー時遷移確認用のエラーです")
 
     # エラーがある場合
     if errors:
-        return render_template("mypage/settings.html", error_masseges=errors) # errorsリストの内容をerror_massegesとしてHTMLで利用できるようにする
+        return render_template("mypage/settings.html", error_messages=errors) # errorsリストの内容をerror_massegesとしてHTMLで利用できるようにする
 
     # TODO: Modelを使ってユーザー情報を更新する
 
