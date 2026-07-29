@@ -12,33 +12,19 @@ def login_required(func):
     return wrapper
 
 
-@household_bp.route('', methods=["GET"])
+@household_bp.route('/', methods=["GET"])
 @login_required
 def household_list_view():
     members = [
         {"id": 1, "name": "田中太郎"},
         {"id": 2, "name": "田中花子"},
-    ]
-    return render_template('household/list.html', members=members)
-
-@household_bp.route('/member/new', methods=["GET"])
-@login_required
-def member_new_view():
-    return render_template('household/form.html', member=None)
-
+    ]#仮でデータを入れています
+    return render_template('household/household_list.html', members=members)
 
 @household_bp.route('/member/create', methods=["POST"])
 @login_required
 def member_create_process():
     return redirect(url_for('household.household_list_view'))
-
-
-@household_bp.route('/member/<int:id>/edit', methods=["GET"])
-@login_required
-def member_edit_view(id):
-    member = {"id": id, "name": ""}
-    return render_template('household/form.html', member=member)
-
 
 @household_bp.route('/member/<int:id>/edit', methods=["POST"])
 @login_required
