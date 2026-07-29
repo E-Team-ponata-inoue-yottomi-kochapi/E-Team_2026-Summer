@@ -1,0 +1,33 @@
+<!-- 親テンプレート呼び出し -->
+{% extends 'base.html' %} 
+
+
+
+{% block content %} 
+<h2>管理者ログイン</h2>
+<hr>
+<br><br>
+
+<!-- バリデーション処理エリア -->
+
+
+
+<!-- 入力フォームエリア -->
+<form method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <div>
+        <label>メールアドレス</label>
+        <input type="text" placeholder="メールアドレス" name="email" />
+    </div>
+    <br>
+    <div>
+        <label>パスワード</label>
+        <input type="password" placeholder="パスワード" name="password" />
+    </div>
+    <br>
+    <div>
+        <button type="submit">Login</button>
+    </div>
+</form>
+
+{% endblock %}

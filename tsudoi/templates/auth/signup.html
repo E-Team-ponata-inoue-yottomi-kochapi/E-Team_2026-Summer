@@ -1,38 +1,43 @@
-{% extends "common/card_base.html" %}
+{% extends "base.html" %}
 
 {% block css %}
-{{ super() }}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}">
 {% endblock %}
 
-{% block card_header %}
-<div class="app-card-header">
-    <button class="app-card-back-button" type="button">←</button>
-    <p>新規登録</p>
+{% block content %}
+<div>
+    <!-- 仮フォーム。usersテーブルにはnameが無いので email / password のみ -->
+    <form method="POST" action="{{ url_for('auth.signup_process')}}">
+        <!-- CSRF対策：トークン -->
+        <input type="hidden" name="csrf_token" value="{{ csrf_token()}}">
+        <header>
+            <h1>新規登録</h1>
+        </header>
+        <div>
+            <label for="email">メールアドレス</label>
+            <input type="text" id="email" name="email" value="{{ email }}">
+        </div>
+        <div>
+            <label for="password">パスワード</label>
+            <input type="password" id="password" name="password">
+        </div>
+        <div>
+            <label for="password_confirmation">パスワード(確認)</label>
+            <input type="password" id="password_confirmation" name="password_confirmation">
+        </div>
+        <div>
+            {% if messages %}
+            <ul>
+                {% for message in messages %}
+                <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+        </div>
+        <div>
+            <button type="submit">登録する</button>
+        </div>
+    </form>
+    <a href="{{ url_for('auth.login_view') }}">ログインはこちら</a>
 </div>
-{% endblock %}
-
-{% block card_content %}
-<!-- 仮フォーム。usersテーブルにはnameが無いので email / password のみ -->
-<form class="form" method="POST" action="/signup">
-    <!-- CSRF対策：トークン -->
-    <input type="hidden" name="csrf_token" value="{{ csrf_token()}}">
-    <div class="form-field">
-        <label for="email">メールアドレス</label>
-        <input class="form-input" type="email" id="email" name="email" required>
-    </div>
-    <div class="form-field">
-        <label for="password">パスワード</label>
-        <input class="form-input" type="password" id="password" name="password" required>
-    </div>
-    <div class="form-field">
-        <label for="password_confirmation">パスワード(確認)</label>
-        <input class="form-input" type="password" id="password_confirmation" name="password_confirmation" required>
-    </div>
-    <button class="form-button" type="submit">登録する</button>
-</form>
-{% endblock %}
-
-{% block card_footer %}
-    {% include "common/card_footer.html" %}
 {% endblock %}
