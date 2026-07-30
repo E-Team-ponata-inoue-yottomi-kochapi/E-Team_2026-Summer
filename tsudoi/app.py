@@ -9,7 +9,7 @@ from config import settings
 from controllers.auth import auth_bp
 from controllers.household import household_bp
 from controllers.event import event_bp
-# from controllers.application import application_bp
+from controllers.application import application_bp
 #　　実装待ち：from controllers.mypage import mypage_bp
 from controllers.admin import admin_bp
 
@@ -21,7 +21,7 @@ app.secret_key = settings.SECRET_KEY
 app.register_blueprint(auth_bp)
 app.register_blueprint(household_bp)
 app.register_blueprint(event_bp)
-# app.register_blueprint(application_bp)
+app.register_blueprint(application_bp)
 #　　実装待ち：app.register_blueprint(mypage_bp)
 app.register_blueprint(admin_bp) 
 
