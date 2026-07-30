@@ -3,9 +3,10 @@
 {% block content %}
 <h1>{{ "申込編集" if application else "参加申し込み" }}</h1>
 
+#申込みの編集or新規申込みのフォームを表示
 <form action="{{ url_for('application.apply_edit_process', id=application.id) if application else url_for('application.apply_confirmation_view', event_id=event_id) }}" method="POST">
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-
+  #参加する家族をチェックボックス選択
   <p>参加者を選択してください</p>
   {% for member in members %}
   <label>
