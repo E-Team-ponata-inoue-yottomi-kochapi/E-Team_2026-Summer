@@ -11,7 +11,8 @@ def signup_view():
 
 @auth_bp.route("/signup", methods=["POST"])
 def signup_process():
-    return "家族情報登録へ進む"
+    # ↓一次的に追記しました。return "家族情報登録へ進む"
+    return redirect(url_for("household.household_list_view"))
 
 @auth_bp.route("/login", methods=["GET"])
 def login_view():
