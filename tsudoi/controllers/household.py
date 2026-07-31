@@ -13,7 +13,7 @@ def login_required(func):
 
 #家族一覧ページ表示
 @household_bp.route('/', methods=["GET"])
-@login_required
+# @login_required
 def household_list_view():
     members = [
         {"id": 1, "name": "田中太郎"},
@@ -23,18 +23,18 @@ def household_list_view():
 
 #家族追加処理→家族一覧表示
 @household_bp.route('/member/create', methods=["POST"])
-@login_required
+# @login_required
 def member_create_process():
     return redirect(url_for('household.household_list_view'))
 
 #家族情報編集処理
 @household_bp.route('/member/<int:id>/edit', methods=["POST"])
-@login_required
+# @login_required
 def member_edit_process(id):
     return redirect(url_for('household.household_list_view'))
 
 #メンバー削除処理
 @household_bp.route('/member/<int:id>/delete', methods=["POST"])
-@login_required
+# @login_required
 def member_delete_process(id):
     return redirect(url_for('household.household_list_view'))
