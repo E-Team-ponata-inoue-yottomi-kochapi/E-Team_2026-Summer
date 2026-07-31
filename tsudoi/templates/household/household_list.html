@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}家族一覧{% endblock %}
+{% block content %}
+<a href="#">← マイページに戻る</a>
+
+<h2 class="page-title">家族一覧</h2>
+
+<h2>追加する</h2>
+<form action="{{ url_for('household.member_create_process')}}" method="POST">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+</form>
+
+<ul>
+  {% for member in members %}
+  <li>
+    {{ member.name }}
+    <span>編集：</span>
+    <form action="{{ url_for('household.member_edit_process', id=member.id) }}" method="POST">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    </form>
+  </li>
+  <form action="{{ url_for('household.member_delete_process', id=member.id) }}" method="POST">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <button type="submit">削除</button>
+</form>
+  {% endfor %}
+</ul>
+{% endblock %}
