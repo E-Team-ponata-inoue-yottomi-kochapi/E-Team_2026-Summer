@@ -9,8 +9,8 @@ from config import settings
 from controllers.auth import auth_bp
 #　　実装待ち：from controllers.household import household_bp
 from controllers.event import event_bp
-#　　実装待ち：from controllers.application import application_bp
-#　　実装待ち：from controllers.mypage import mypage_bp
+from controllers.application import application_bp
+from controllers.mypage import mypage_bp
 from controllers.admin import admin_bp
 
 # appインスタンス生成　＋　cookie署名用key設定
@@ -21,8 +21,8 @@ app.secret_key = settings.SECRET_KEY
 app.register_blueprint(auth_bp)
 #　　実装待ち：app.register_blueprint(household_bp)
 app.register_blueprint(event_bp)
-#　　実装待ち：app.register_blueprint(application_bp)
-#　　実装待ち：app.register_blueprint(mypage_bp)
+app.register_blueprint(application_bp)
+app.register_blueprint(mypage_bp)
 app.register_blueprint(admin_bp) 
 
 
