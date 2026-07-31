@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h2>イベント作成画面</h2>
+<hr>
+<br><br>
+<p>ここにイベント作成フォームが表示されます</p>
+<br><br>
+<hr><br>
+<a href="{{ url_for('event.detail_view', id=1)}}">作成済みイベント詳細へ</a>
+<br>
+<a href="{{ url_for('mypage.mypage_view')}}">ダッシュボードに戻る</a><br>
+<!-- <a href="javascript:history.back()">← 戻る</a>}でも可　-->
+<br><hr><br>
+
+{# ログアウトは未実装 #}
+
+{% endblock %}
