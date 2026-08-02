@@ -1,26 +1,50 @@
-from flask import Blueprint, session, render_template, redirect, url_for, request
+from flask import Blueprint, session, render_template, redirect, url_for, request, abort
+import pymysql
+from services.auth import signup
 
 auth_bp = Blueprint("auth", __name__)
 
 @auth_bp.route("/signup", methods=["GET"])
 def signup_view():
     if session.get("user_id") is None:
-        return render_template("auth/signup.html")
-    # ログイン済みの場合はマイページへ遷移する
-    return "マイページへ遷移"
+        return render_template("auth/signup.html", title="新規登録", messages=[], email="")
+    # ログイン済みの場合にマイページへ遷移
+    return redirect(url_for("mypage.mypage_view"))
 
 @auth_bp.route("/signup", methods=["POST"])
 def signup_process():
-    # ↓一次的に追記しました。return "家族情報登録へ進む"
+    # controllerがフォームデータを取得
+    # 入力がなかったら空文字を渡す
+    email = request.form.get("email", "").strip()
+    password = request.form.get("password", "")
+    password_confirmation = request.form.get("password_confirmation", "")
+    try:
+        # サービスで行った入力チェックの結果を取得
+        result = signup(email, password, password_confirmation)
+    except pymysql.MySQLError as e:
+        # DBエラーは入力エラーではないため500エラーを返す
+        print("MySQLエラーが発生しました:", e)
+        abort(500)
+
+    # 入力チェックでエラーになった場合
+    if result["valid"] is False:
+        # titleはbase.htmlの{{title}}に表示される（渡さない場合、タブには「つどい」のみが表示される）
+        # 入力エラーがあれば登録画面を再表示
+        return render_template("auth/signup.html", title="新規登録", messages=result["messages"], email=email)
+
+    # 入力チェックを通った場合
+    # 新規登録したユーザーIDをセッションに保存
+    session['user_id'] = result["data"]["user_id"]
+    # 新規登録が完了したらプロフィール・家族情報登録へ遷移
     return redirect(url_for("household.household_list_view"))
 
 @auth_bp.route("/login", methods=["GET"])
 def login_view():
     if session.get("user_id") is None:
         return render_template("auth/login.html")
-	# ログイン済みの場合はマイページへ遷移する
-    return "マイページへ遷移"
+    # ログイン済みの場合はマイページへ遷移する
+    return redirect(url_for("mypage.mypage_view"))
 
 @auth_bp.route("/login", methods=["POST"])
 def login_process():
-    return "マイページへ遷移"
+    return redirect(url_for("mypage.mypage_view"))
