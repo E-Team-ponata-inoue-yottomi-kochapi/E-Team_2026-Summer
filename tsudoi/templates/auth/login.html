@@ -1,1 +1,6 @@
+{% extends "base.html" %}
+{% block content %}
 <p>ログインページです</p>
+<a href="{{ url_for('mypage.mypage_view') }}">ログイン済みはマイページへ</a>
+<a href="{{ url_for('auth.signup_view') }}">新規登録はこちら</a>
+{% endblock %}
