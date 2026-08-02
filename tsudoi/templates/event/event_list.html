@@ -1,1 +1,5 @@
+{% extends "base.html" %}
+{% block content %}
 <p>イベント一覧ページです</p>
+<a href="{{ url_for('event.detail_view') }}">イベント詳細へ</a>
+{% endblock %}
