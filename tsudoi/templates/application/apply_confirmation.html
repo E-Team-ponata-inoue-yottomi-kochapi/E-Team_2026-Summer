@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block title %}申し込み確認{% endblock %}
+
+ {% block content %}
+<h2 class="page-title">申し込み確認</h2>
+
+<form action="{{ url_for('application.apply_create_process', event_id=event_id) }}" method="POST">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <button type="submit">申し込み確定</button>
+</form>
+
+<form action="{{ url_for('application.apply_view', event_id=event_id) }}" method="POST">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <button type="submit">戻る</button>
+</form>
+
+{% endblock %}
