@@ -1,4 +1,10 @@
+{% extends "base.html" %}
+
+{% block content %}
+
 <h1>マイページ</h1>
 <a href="{{ url_for('mypage.user_edit_view')}}">アカウント設定</a>
 {# 🦴追記しました #}
 <br><a href="{{ url_for('event.new_view')}}">← イベント作成</a>
+
+{% endblock %}
