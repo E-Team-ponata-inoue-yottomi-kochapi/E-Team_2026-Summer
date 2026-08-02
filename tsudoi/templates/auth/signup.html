@@ -6,7 +6,7 @@
 
 {% block content %}
 <div>
-    <!-- 仮フォーム。usersテーブルにはnameが無いので email / password のみ -->
+    <!-- usersテーブルにはnameが無いので email / password のみ -->
     <form method="POST" action="{{ url_for('auth.signup_process')}}">
         <!-- CSRF対策：トークン -->
         <input type="hidden" name="csrf_token" value="{{ csrf_token()}}">
@@ -15,16 +15,18 @@
         </header>
         <div>
             <label for="email">メールアドレス</label>
-            <input type="text" id="email" name="email" value="{{ email }}">
+            <!-- value：入力エラー時もメールアドレスを保持 -->
+            <input type="text" id="email" name="email" value="{{ email }}" required>
         </div>
         <div>
             <label for="password">パスワード</label>
-            <input type="password" id="password" name="password">
+            <input type="password" id="password" name="password" required>
         </div>
         <div>
             <label for="password_confirmation">パスワード(確認)</label>
-            <input type="password" id="password_confirmation" name="password_confirmation">
+            <input type="password" id="password_confirmation" name="password_confirmation" required>
         </div>
+        <!-- 入力チェックでエラーの場合、ここにメッセージを表示 -->
         <div>
             {% if messages %}
             <ul>
@@ -35,9 +37,12 @@
             {% endif %}
         </div>
         <div>
+            <p>アカウント登録後、プロフィールや家族情報の登録へ進みます</p>
             <button type="submit">登録する</button>
         </div>
     </form>
-    <a href="{{ url_for('auth.login_view') }}">ログインはこちら</a>
+    <div>
+        <a href="{{ url_for('auth.login_view') }}">ログインはこちら</a>
+    </div>
 </div>
 {% endblock %}
