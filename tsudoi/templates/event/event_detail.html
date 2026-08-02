@@ -1,1 +1,5 @@
+{% extends "base.html" %}
+{% block content %}
 <p>イベント詳細ページです</p>
+<a href="{{ url_for('event.list_view') }}">イベント一覧へ戻る</a>
+{% endblock %}
