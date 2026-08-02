@@ -37,7 +37,7 @@ def apply_view(event_id):
 
   
 #申し込み内容確認画面
-@application_bp.route('/events/<string:event_id>/confirm', methods=["POST"])
+@application_bp.route('/events/<string:event_id>/confirm', methods=["GET","POST"])
 # @login_required
 def apply_confirmation_view(event_id):
     # フォームで選択されたmember_idsを受け取り、まだ保存せず画面表示のみ
@@ -50,7 +50,6 @@ def apply_confirmation_view(event_id):
     return render_template(
         'application/apply_confirmation.html', event=event, event_id=event_id, participants=participants, total_amount=total_amount
     )
-
   
 #申し込み確定処理
 @application_bp.route('/events/<string:event_id>/create', methods=["POST"])
