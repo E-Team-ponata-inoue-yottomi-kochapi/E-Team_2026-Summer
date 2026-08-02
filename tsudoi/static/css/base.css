@@ -1,13 +1,19 @@
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 li {
-    list-style: none;
+  list-style: none;
 }
 
 a {
-    text-decoration: none;
+  text-decoration: none;
+}
+
+/*　画面幅を375ｐｘ　中央に固定　*/
+body {
+  max-width: 375px;
+  margin: 0 auto;
 }

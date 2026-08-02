@@ -4,10 +4,10 @@ auth_bp = Blueprint("auth", __name__)
 
 @auth_bp.route("/signup", methods=["GET"])
 def signup_view():
-    if session.get("user_id") is None:
+    #if session.get("user_id") is None:
         return render_template("auth/signup.html")
     # ログイン済みの場合はマイページへ遷移する
-    return "マイページへ遷移"
+    # return "マイページへ遷移"
 
 @auth_bp.route("/signup", methods=["POST"])
 def signup_process():
