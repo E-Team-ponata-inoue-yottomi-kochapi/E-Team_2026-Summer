@@ -1,4 +1,5 @@
 from flask import Blueprint, session, render_template, redirect, url_for, request
+from models.event import get_open_events
 
 event_bp = Blueprint("event", __name__, url_prefix="/events")
 
@@ -8,7 +9,8 @@ event_bp = Blueprint("event", __name__, url_prefix="/events")
 def list_view():
     # if session.get("user_id") is None:
     #     return redirect(url_for('auth.login_view'))
-    return render_template("event/event_list.html")
+    events = get_open_events()
+    return render_template("event/event_list.html", title="イベント一覧", events=events)
 
 
 # イベント詳細表示画面
