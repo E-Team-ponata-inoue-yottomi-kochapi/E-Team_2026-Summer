@@ -1,5 +1,26 @@
+<!-- base.htmlを利用する -->
 {% extends "base.html" %}
+
+<!-- ここからbaseのheadに差し込まれる -->
+{% block css%}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/event.css') }}">
+{% endblock %}
+<!-- ここまで -->
+
+<!-- ここからbaseのbodyに差し込まれる -->
 {% block content %}
 <p>イベント一覧ページです</p>
-<a href="{{ url_for('event.detail_view') }}">イベント詳細へ</a>
+{% if events %}
+    {% for event in events %}
+    <div>
+        <a href="{{ url_for('event.detail_view', id=event.id ) }}">{{ event.title }}</a>
+        <span>{{ event.start_at }}</span>
+        <span>{{ event.place }}</span>
+    </div>
+    {% endfor %}
+{% else %}
+<div>
+    <p>開催中のイベントはありません</p>
+</div>
+{% endif %}
 {% endblock %}
