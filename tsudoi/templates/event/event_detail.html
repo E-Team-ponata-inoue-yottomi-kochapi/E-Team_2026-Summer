@@ -1,5 +1,48 @@
+<!-- base.htmlを利用する -->
 {% extends "base.html" %}
+
+<!-- ここからbaseのheadに差し込まれる -->
+{% block css%}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/event.css') }}">
+{% endblock %}
+<!-- ここまで -->
+
+<!-- ここからbaseのbodyに差し込まれる -->
 {% block content %}
+<div>
+    <a href="{{ url_for('event.list_view') }}">イベント一覧へ戻る</a>
+</div>
 <p>イベント詳細ページです</p>
-<a href="{{ url_for('event.list_view') }}">イベント一覧へ戻る</a>
+<div>
+    <span>{{ event.title }}</span>
+    <span>{{ owner_name }}</span>
+    <span>{{ event.start_at }}</span>
+    <span>{{ event.place }}</span>
+    <span>{{ event.address }}</span>
+</div>
+<div>
+    <span>{{ event.description }}</span>
+    <span>{{ event.items_to_bring }}</span>
+    <span>{{ event.schedule }}</span>
+    <span>{{ event.hold_condition }}</span>
+    <span>{{ event.cancellation_policy }}</span>
+    <span>{{ event.emergency_contact }}</span>
+</div>
+<div>
+    {% for fee_rule in  fee_rules %}
+    <span>{{ fee_rule.tier_name }}</span>
+    <span>（{{ fee_rule.min_age }} ～ {{ fee_rule.max_age }}歳）</span>
+    <span>{{ fee_rule.fee }}</span>
+    {% endfor %}
+</div>
+<div>
+    <a href="{{ url_for('application.apply_view', event_id=event.id) }}">参加申し込み</a>
+</div>
+<p>イベント主催者の場合のみ下記を追加表示：</p>
+<div>
+    <a href="#">イベントを編集</a>
+</div>
+<div>
+    <a href="{{ url_for('application.summary_view', event_id=event.id) }}">参加者一覧・集計表を閲覧</a>
+</div>
 {% endblock %}
