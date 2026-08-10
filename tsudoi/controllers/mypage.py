@@ -1,4 +1,5 @@
 from flask import Blueprint, render_template, redirect, url_for
+from services.mypage import get_current_user
 # auth_guard.py実装後に追加
 # from util.auth_guard import login_required
 
@@ -16,7 +17,13 @@ def mypage_view():
 # auth_guard.py実装後に追加
 # @login_required
 def user_edit_view():
-    return render_template("mypage/settings.html")
+    # ステージ2ではテスト用ユーザーIDを固定で使用
+    user_id = 3001
+
+    # serviceからユーザー情報を取得
+    user = get_current_user(user_id)
+
+    return render_template("mypage/settings.html", user = user)
 
 # ユーザー編集処理
 @mypage_bp.route("/user", methods=["POST"])
