@@ -46,3 +46,22 @@ def signup(email, password, password_confirmation):
     password_hash = generate_password_hash(password)
     user_id = User.create_user(email, password_hash)
     return {"valid": True, "data": {"user_id": user_id}}
+
+def login(email, password):
+
+    # if not email or not password:
+    #     return {"valid": False, "messages": ["未入力の項目があります"]}
+
+    user = User.find_user_by_email(email)
+
+    if not user:
+        # 第三者にメールアドレスの登録有・無やどちらが間違っているかを知らせない
+        return {"valid": False, "messages": ["メールアドレスorパスワードが違います"]}
+
+    if not check_password_hash(user["password_hash"], password):
+        return{"valid": False, "messages": ["メールアドレスorパスワードが違います"]}
+
+    # if user["is_banned"] is True:
+    #     return {"valid": False, "messages": ["ログインエラー：管理者へお問い合わせください"]}
+
+    return {"valid": True, "data": {"user_id": user["id"]}}
