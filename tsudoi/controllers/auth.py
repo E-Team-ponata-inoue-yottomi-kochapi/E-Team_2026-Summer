@@ -1,7 +1,7 @@
 from flask import Blueprint, session, render_template, redirect, url_for, request, abort
 import pymysql
 from util.auth_guard import login_required
-from services.auth import signup
+from services.auth import signup, login
 
 auth_bp = Blueprint("auth", __name__)
 
@@ -48,17 +48,13 @@ def login_view():
 
 @auth_bp.route("/login", methods=["POST"])
 def login_process():
-    # email = request.form.get("email", "").strip()
-    # password = request.form.get("password", "")
-    # result = login(email, password)
-    # if result["valid"] is False:
-    #     return render_template("auth/login.html", title="ログイン", messages=result["messages"], email=email)
+    email = request.form.get("email", "").strip()
+    password = request.form.get("password", "")
+    result = login(email, password)
+    if result["valid"] is False:
+        return render_template("auth/login.html", title="ログイン", messages=result["messages"], email=email)
 
-    # session['user_id'] = result["data"]["user_id"]
-
-    # 仮のユーザーID
-    user_id = 1
-    session['user_id'] = user_id
+    session['user_id'] = result["data"]["user_id"]
     return redirect(url_for("mypage.mypage_view"))
 
 @auth_bp.route("/logout")
