@@ -39,3 +39,18 @@ class User:
             raise
         finally:
             conn.close()
+
+    @classmethod
+    # IDから情報を取得
+    def find_user_by_id(cls, user_id):
+        conn = get_connection()
+        try:
+            with conn.cursor() as cursor:
+                sql = "SELECT id, email, created_at FROM users WHERE id = %s;"
+                cursor.execute(sql, (user_id,))
+                user = cursor.fetchone()
+                return user
+        except pymysql.MySQLError:
+            raise
+        finally:
+            conn.close()
