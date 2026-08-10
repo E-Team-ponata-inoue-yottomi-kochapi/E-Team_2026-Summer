@@ -1,23 +1,22 @@
 from flask import Blueprint, session, render_template, redirect, url_for, request
 from models.event import get_open_events, find_event_by_id, get_owner_name_by_event_id, get_fee_rules_by_event_id
+from util.auth_guard import login_required
 
 event_bp = Blueprint("event", __name__, url_prefix="/events")
 
 
 # イベント一覧表示画面
 @event_bp.route("/", methods=["GET"])
+@login_required
 def list_view():
-    # if session.get("user_id") is None:
-    #     return redirect(url_for('auth.login_view'))
     events = get_open_events()
     return render_template("event/event_list.html", title="イベント一覧", events=events)
 
 
 # イベント詳細表示画面
 @event_bp.route("/<string:event_id>", methods=["GET"])
+@login_required
 def detail_view(event_id):
-    # if session.get("user_id") is None:
-    #     return redirect(url_for('auth.login_view'))
     event = find_event_by_id(event_id)
     owner_name = get_owner_name_by_event_id(event_id)
     fee_rules = get_fee_rules_by_event_id(event_id)
