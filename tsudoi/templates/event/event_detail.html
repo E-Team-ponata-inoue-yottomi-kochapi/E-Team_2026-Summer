@@ -12,28 +12,43 @@
 <div>
     <a href="{{ url_for('event.list_view') }}">イベント一覧へ戻る</a>
 </div>
-<p>イベント詳細ページです</p>
 <div>
-    <span>{{ event.title }}</span>
-    <span>{{ owner_name }}</span>
-    <span>{{ event.start_at }}</span>
-    <span>{{ event.place }}</span>
-    <span>{{ event.address }}</span>
+    <h1>{{ event.title }}</h1>
+    <p>主催：{{ owner_name }}</p>
+    <p>日時：{{ event.start_at }}</p>
+    <p>場所：{{ event.place }}</p>
+    <p>住所：{{ event.address }}</p>
 </div>
 <div>
-    <span>{{ event.description }}</span>
-    <span>{{ event.items_to_bring }}</span>
-    <span>{{ event.schedule }}</span>
-    <span>{{ event.hold_condition }}</span>
-    <span>{{ event.cancellation_policy }}</span>
-    <span>{{ event.emergency_contact }}</span>
+    <p>説明：</p>
+    <p>{{ event.description }}</p>
+    <p>持ち物：</p>
+    <p>{{ event.items_to_bring }}</p>
+    <p>当日のスケジュール：</p>
+    <p>{{ event.schedule }}</p>
+    <p>開催条件：</p>
+    <p>{{ event.hold_condition }}</p>
+    <p>中止時の対応・連絡方法：</p>
+    <p>{{ event.cancellation_policy }}</p>
+    <p>緊急連絡先：</p>
+    <p>{{ event.emergency_contact }}</p>
 </div>
 <div>
-    {% for fee_rule in  fee_rules %}
-    <span>{{ fee_rule.tier_name }}</span>
-    <span>（{{ fee_rule.min_age }} ～ {{ fee_rule.max_age }}歳）</span>
-    <span>{{ fee_rule.fee }}</span>
-    {% endfor %}
+    <p>料金表</p>
+    <table>
+        <tr>
+            <th>区分</th>
+            <th>年齢</th>
+            <th>金額</th>
+        </tr>
+        {% for fee_rule in  fee_rules %}
+        <tr>
+            <td>{{ fee_rule.tier_name }}</td>
+            <td>（{{ fee_rule.min_age }}～{{ fee_rule.max_age}}歳）</td>
+            <td>￥{{ fee_rule.fee }}</td>
+        </tr>
+        {% endfor %}
+    </table>
 </div>
 <div>
     <a href="{{ url_for('application.apply_view', event_id=event.id) }}">参加申し込み</a>
