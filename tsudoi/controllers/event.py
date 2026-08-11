@@ -1,5 +1,5 @@
 from flask import Blueprint, session, render_template, redirect, url_for, request
-from models.event import get_open_events, find_event_by_id, get_owner_name_by_event_id, get_fee_rules_by_event_id
+from models.event import get_open_events, find_event_by_id, get_owner_by_event_id, get_fee_rules_by_event_id
 from util.auth_guard import login_required
 
 event_bp = Blueprint("event", __name__, url_prefix="/events")
@@ -18,9 +18,9 @@ def list_view():
 @login_required
 def detail_view(event_id):
     event = find_event_by_id(event_id)
-    owner_name = get_owner_name_by_event_id(event_id)
+    owner = get_owner_by_event_id(event_id)
     fee_rules = get_fee_rules_by_event_id(event_id)
-    return render_template("event/event_detail.html", title="イベント詳細", event=event, owner_name=owner_name, fee_rules=fee_rules)
+    return render_template("event/event_detail.html", title="イベント詳細", event=event, owner=owner, fee_rules=fee_rules)
 
 
 # イベント作成画面表示
