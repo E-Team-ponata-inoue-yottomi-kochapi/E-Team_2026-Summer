@@ -1,15 +1,16 @@
 from flask import Blueprint, session, render_template, redirect, url_for, request, abort
 import pymysql
-from services.auth import signup
+from util.auth_guard import login_required
+from services.auth import signup, login
 
 auth_bp = Blueprint("auth", __name__)
 
 @auth_bp.route("/signup", methods=["GET"])
 def signup_view():
-    # if session.get("user_id") is None:
-    return render_template("auth/signup.html", title="新規登録", messages=[], email="")
+    if session.get("user_id") is None:
+        return render_template("auth/signup.html", title="新規登録", messages=[], email="")
     # ログイン済みの場合にマイページへ遷移
-    # return redirect(url_for("mypage.mypage_view"))
+    return redirect(url_for("mypage.mypage_view"))
 
 @auth_bp.route("/signup", methods=["POST"])
 def signup_process():
@@ -34,24 +35,29 @@ def signup_process():
 
     # 入力チェックを通った場合
     # 新規登録したユーザーIDをセッションに保存
-    # session['user_id'] = result["data"]["user_id"]
+    session['user_id'] = result["data"]["user_id"]
     # 新規登録が完了したらプロフィール・家族情報登録へ遷移
     return redirect(url_for("household.household_list_view"))
 
 @auth_bp.route("/login", methods=["GET"])
 def login_view():
-    # if session.get("user_id") is None:
+    if session.get("user_id") is None:
         return render_template("auth/login.html", title="ログイン", messages=[], email="")
     # ログイン済みの場合はマイページへ遷移する
-    # return redirect(url_for("mypage.mypage_view"))
+    return redirect(url_for("mypage.mypage_view"))
 
 @auth_bp.route("/login", methods=["POST"])
 def login_process():
-    # email = request.form.get("email", "").strip()
-    # password = request.form.get("password", "")
-    # result = login(email, password)
-    # if result["valid"] is False:
-    #     return render_template("auth/login.html", title="ログイン", messages=result["messages"], email=email)
+    email = request.form.get("email", "").strip()
+    password = request.form.get("password", "")
+    result = login(email, password)
+    if result["valid"] is False:
+        return render_template("auth/login.html", title="ログイン", messages=result["messages"], email=email)
 
-    # session['user_id'] = result["data"]["user_id"]
+    session['user_id'] = result["data"]["user_id"]
     return redirect(url_for("mypage.mypage_view"))
+
+@auth_bp.route("/logout")
+def logout():
+    session.clear()
+    return redirect(url_for("auth.login_view"))
