@@ -14,7 +14,7 @@
 </div>
 <div>
     <h1>{{ event.title }}</h1>
-    <p>主催：{{ owner_name }}</p>
+    <p>主催：{{ owner.name }}</p>
     <p>日時：{{ event.start_at }}</p>
     <p>場所：{{ event.place }}</p>
     <p>住所：{{ event.address }}</p>
@@ -54,10 +54,12 @@
     <a href="{{ url_for('application.apply_view', event_id=event.id) }}">参加申し込み</a>
 </div>
 <p>イベント主催者の場合のみ下記を追加表示：</p>
+{% if owner.owner_id == session["user_id"] %}
 <div>
     <a href="#">イベントを編集</a>
 </div>
 <div>
     <a href="{{ url_for('application.summary_view', event_id=event.id) }}">参加者一覧・集計表を閲覧</a>
 </div>
+{% endif %}
 {% endblock %}
