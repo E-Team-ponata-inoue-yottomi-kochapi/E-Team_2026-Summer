@@ -1,5 +1,5 @@
 # Flaskクラスのインポート + csrfクラスのインポート
-from flask import Flask
+from flask import Flask, render_template
 from flask_wtf.csrf import CSRFProtect
 
 # settings.SECRET_KEY＠１８行目に使用
@@ -13,9 +13,14 @@ from controllers.application import application_bp
 from controllers.mypage import mypage_bp
 from controllers.admin import admin_bp
 
+from util.logger import logger_config
+
 # appインスタンス生成　＋　cookie署名用key設定
 app = Flask(__name__)
 app.secret_key = settings.SECRET_KEY
+
+# ログ機能の初期化設定（app.py起動時に1度だけ実行）
+logger_config()
 
 # Blueprintの登録
 app.register_blueprint(auth_bp)
@@ -28,6 +33,10 @@ app.register_blueprint(admin_bp)
 
 # CSRF対策
 csrf = CSRFProtect(app)
+
+@app.errorhandler(500)
+def internal_server_error(error):
+    return render_template("error/500.html", title="500エラー"),500
 
 # このファイルが直接実行される時のみ「ファイルの中身」を実行する。
 # このファイルがインポートされたときは「ファイルの中身」は実行されない。
