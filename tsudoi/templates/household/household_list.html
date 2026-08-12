@@ -7,12 +7,28 @@
 <a href="{{ url_for('mypage.mypage_view')}}">← マイページに戻る</a>
 
 <h2 class="page-title">家族一覧</h2>
-
+{# 追加フォーム #}
 <h2>追加する</h2>
 <form action="{{ url_for('household.member_create_process')}}" method="POST">
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <input type="text" name="name" placeholder="田中太郎">
+  <select name="relation" required>
+    <option value="">続柄を選択</option>
+    {% for option in ['本人','夫','妻','息子','娘','父','母','祖母','祖父','その他'] %}
+      <option value="{{ option }}">{{ option }}</option>
+    {% endfor %}
+  </select>
+  <select name="gender">
+    <option value="">性別を選択</option>
+    <option value="男">男</option>
+    <option value="女">女</option>
+    <option value="その他">その他</option>
+  </select>
+  <input type="date" name="birth_date" required>
+  <input type="email" name="email" placeholder="メールアドレス">
+  <button type="submit">追加</button>
 </form>
-
+{# 編集フォーム #}
 <ul>
   {% for member in members %}
   <li>
@@ -20,12 +36,27 @@
     <span>編集：</span>
     <form action="{{ url_for('household.member_edit_process', id=member.id) }}" method="POST">
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <input type="text" name="name" value="{{member.name}}">
+      <select name="relation" required>
+        {% for option in ['本人','夫','妻','息子','娘','父','母','祖母','祖父','その他'] %}
+          <option value="{{ option }}" {% if member.relation == option %}selected{% endif %}>{{ option }}</option>
+        {% endfor %}
+      </select>
+      {# すでに選択肢が存在するため一致条件を追加 #}
+      <select name="gender">
+        {% for option in ['男','女','その他'] %}
+          <option value="{{ option }}" {% if member.gender == option %}selected{% endif %}>{{ option }}</option>
+        {% endfor %}
+      </select>
+      <input type="date" name="birth_date" value="{{ member.birth_date }}" required>
+      <input type="email" name="email" value="{{ member.email or '' }}">
+      <button type="submit">更新</button>
     </form>
-  </li>
-  <form action="{{ url_for('household.member_delete_process', id=member.id) }}" method="POST">
+    <form action="{{ url_for('household.member_delete_process', id=member.id) }}" method="POST">
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
       <button type="submit">削除</button>
-</form>
+    </form>
+  </li>
   {% endfor %}
 </ul>
 {% endblock %}
