@@ -1,12 +1,13 @@
 -- ユーザー作成
 -- kochapi_user_id = 1111
+-- パスワードはpasswordpassword
 INSERT INTO
     users (id, email, password_hash)
 VALUES
     (
         1111,
         'test777@example.com',
-        'pbkdf2:sha256:260000$PcznmAG3bbC0u4WY$3c7a440a0b20c31dc2ae7de34f0ece0c6b363297e42fdb3cb63c78d05ce57d89'
+        'pbkdf2:sha256:260000$ltKpVAn9ZjKAsfOT$2e03ac183990ff20d783bbb2d4b3530c19badf56613c09d7b5db8e3573fbcbed'
     );
 
 -- householdsの作成
@@ -107,11 +108,11 @@ VALUES
         'b8e4d521-9f6a-4c37-a812-5d7e3f9b2c64',
         1111,
         'テストイベント：夏越の大祓',
-        '2026-07-31 16:00:00',
+        '2026-06-30 16:00:00',
         '伊勢神宮（内宮）',
         '三重県伊勢市宇治館町１',
         24,
-        '2026-07-24 23:59:59',
+        '2026-06-23 23:59:59',
         '古くから12月の大祓と共に全国の神社でも行われている行事です',
         '雨具・暑さ対策グッズ・フォーマルな服装',
         '15時集合　16時大祓催行　17時解散',

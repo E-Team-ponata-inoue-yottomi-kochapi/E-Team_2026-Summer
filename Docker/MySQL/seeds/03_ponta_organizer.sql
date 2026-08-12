@@ -6,8 +6,9 @@ fee_rules.id = 6661(大人)0円/6662(小人)0円/6663(未就学児)0円
 */
 
 -- users
+-- パスワードはpasswordpassword
 -- ↓↓ password_hash ↓↓
-SET @pw ='pbkdf2:sha256:260000$6Y6tU2Jzl1mB09yN$109b9b804113df3865271898c69c8cc298e7d4c0c1d6fe66b458ed2a84054d93';
+SET @pw ='pbkdf2:sha256:260000$ltKpVAn9ZjKAsfOT$2e03ac183990ff20d783bbb2d4b3530c19badf56613c09d7b5db8e3573fbcbed';
 
 INSERT INTO users (id, email, password_hash) 
 VALUES(9999,'ponta@example.com', @pw);
