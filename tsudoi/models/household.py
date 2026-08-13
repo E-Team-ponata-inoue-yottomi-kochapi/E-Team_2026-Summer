@@ -15,7 +15,7 @@ def get_family_members(household_id):
     conn = get_connection()
     try:
         with conn.cursor() as cursor:
-            sql = "SELECT * FROM family_members WHERE household_id = %s AND deleted_at IS NULL ORDER By created_at ASC;"
+            sql = "SELECT * FROM family_members WHERE household_id = %s AND deleted_at IS NULL ORDER BY created_at ASC;"
             cursor.execute(sql, (household_id,))
             return cursor.fetchall()
     finally:
