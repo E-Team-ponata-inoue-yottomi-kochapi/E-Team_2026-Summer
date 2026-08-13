@@ -14,21 +14,21 @@ def get_open_events():
             cursor.execute(sql)
             events = cursor.fetchall()
             return events
-    # except pymysql.Error as e:
-    #     raise
+    except pymysql.Error:
+        raise
     finally:
         conn.close()
 
-def find_event_by_id(event_id):
+def find_open_event_by_id(event_id):
     conn = get_connection()
     try:
         with conn.cursor() as cursor:
             sql = "SELECT * FROM events WHERE id=%s AND status='公開' AND deleted_at IS NULL;"
             cursor.execute(sql, (event_id,))
             event = cursor.fetchone()
-            return event if event else None
-    # except pymysql.Error as e:
-    #     raise
+            return event
+    except pymysql.Error:
+        raise
     finally:
         conn.close()
 
@@ -39,9 +39,9 @@ def get_owner_by_event_id(event_id):
             sql = "SELECT f.name, e.owner_id FROM events as e INNER JOIN households as h ON e.owner_id=h.leader_id INNER JOIN family_members as f ON h.id=f.household_id WHERE e.id=%s AND f.relation='本人' ;"
             cursor.execute(sql, (event_id,))
             owner = cursor.fetchone()
-        return owner if owner else None
-    # except pymysql.Error as e:
-    #     raise
+            return owner
+    except pymysql.Error:
+        raise
     finally:
         conn.close()
 
@@ -49,11 +49,11 @@ def get_fee_rules_by_event_id(event_id):
     conn = get_connection()
     try:
         with conn.cursor() as cursor:
-            sql = "SELECT * FROM fee_rules WHERE event_id=%s ORDER BY min_age DESC;"
+            sql = "SELECT * FROM fee_rules WHERE event_id=%s AND deleted_at IS NULL ORDER BY min_age DESC;"
             cursor.execute(sql, (event_id,))
             fee_rules = cursor.fetchall()
-        return fee_rules if fee_rules else None
-    # except pymysql.Error as e:
-    #     raise
+            return fee_rules
+    except pymysql.Error:
+        raise
     finally:
         conn.close()
