@@ -42,7 +42,7 @@ CREATE TABLE users (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- ------------------------------------------------------------
--- 2. households : 世帯(新規登録時にsolo世帯を自動作成)
+-- 2. households : 世帯
 -- ------------------------------------------------------------
 CREATE TABLE households (
     id          VARCHAR(36) PRIMARY KEY,
@@ -179,4 +179,23 @@ CREATE TABLE admins (
     created_at     DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at     DATETIME NULL ON UPDATE CURRENT_TIMESTAMP,
     deleted_at     DATETIME NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ------------------------------------------------------------
+-- 9. event_messages : イベントごとのチャット
+-- ------------------------------------------------------------
+CREATE TABLE event_messages (
+    id  VARCHAR(36) PRIMARY KEY,
+    user_id INT NOT NULL,
+    event_id VARCHAR(36) NOT NULL,
+    body TEXT NOT NULL,
+    created_at     DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at     DATETIME NULL ON UPDATE CURRENT_TIMESTAMP,
+    deleted_at     DATETIME NULL,
+    CONSTRAINT fk_event_messages_user
+        FOREIGN KEY (user_id) REFERENCES users(id)
+        ON DELETE CASCADE,
+    CONSTRAINT fk_event_messages_event
+        FOREIGN KEY (event_id) REFERENCES events(id)
+        ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
