@@ -4,7 +4,7 @@ import re
 
 def signup(email, password, password_confirmation):
     messages = []
-    # ローカル部の最低限の形式チェック
+    # ドットの最低限の形式チェック
     # 先頭ドットはNG
     # ドットの連続はNG
     # @マーク直前のドットはNG
@@ -16,6 +16,9 @@ def signup(email, password, password_confirmation):
 
     if not email or not password or not password_confirmation:
         messages.append("未入力の項目があります")
+
+    if password and len(password) < 15:
+        messages.append("パスワードは15文字以上で設定してください")
 
     if email and len(email) > 254:
         messages.append("メールアドレスが長すぎます")
@@ -49,8 +52,8 @@ def signup(email, password, password_confirmation):
 
 def login(email, password):
 
-    # if not email or not password:
-    #     return {"valid": False, "messages": ["未入力の項目があります"]}
+    if not email or not password:
+        return {"valid": False, "messages": ["未入力の項目があります"]}
 
     user = User.find_user_by_email(email)
 
@@ -61,7 +64,7 @@ def login(email, password):
     if not check_password_hash(user["password_hash"], password):
         return{"valid": False, "messages": ["メールアドレスorパスワードが違います"]}
 
-    # if user["is_banned"] is True:
-    #     return {"valid": False, "messages": ["ログインエラー：管理者へお問い合わせください"]}
+    if user["is_banned"] is True or user["deleted_at"]:
+        return {"valid": False, "messages": ["ログインエラー：管理者へお問い合わせください"]}
 
     return {"valid": True, "data": {"user_id": user["id"]}}
