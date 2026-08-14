@@ -2,8 +2,10 @@ from flask import Blueprint, session, render_template, redirect, url_for, reques
 import pymysql
 from util.auth_guard import login_required
 from services.auth import signup, login
+import logging
 
 auth_bp = Blueprint("auth", __name__)
+logger = logging.getLogger(__name__)
 
 @auth_bp.route("/signup", methods=["GET"])
 def signup_view():
@@ -24,7 +26,7 @@ def signup_process():
         result = signup(email, password, password_confirmation)
     except pymysql.MySQLError as e:
         # DBエラーは入力エラーではないため500エラーを返す
-        print("MySQLエラーが発生しました:", e)
+        logger.exception('MySQLエラーが発生しました: %s', e)
         abort(500)
 
     # 入力チェックでエラーになった場合
@@ -50,14 +52,20 @@ def login_view():
 def login_process():
     email = request.form.get("email", "").strip()
     password = request.form.get("password", "")
-    result = login(email, password)
+    try:
+        result = login(email, password)
+    except pymysql.MySQLError as e:
+        # DBエラーは入力エラーではないため500エラーを返す
+        logger.exception('MySQLエラーが発生しました: %s', e)
+        abort(500)
+
     if result["valid"] is False:
         return render_template("auth/login.html", title="ログイン", messages=result["messages"], email=email)
 
     session['user_id'] = result["data"]["user_id"]
     return redirect(url_for("mypage.mypage_view"))
 
-@auth_bp.route("/logout")
+@auth_bp.route("/logout", methods=['POST'])
 def logout():
     session.clear()
     return redirect(url_for("auth.login_view"))

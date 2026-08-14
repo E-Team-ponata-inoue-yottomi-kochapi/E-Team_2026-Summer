@@ -10,6 +10,7 @@ SET @fee_rule_infant_id = 6663;  -- 未就学児の料金区分id
 -- 参加者側】
 -- ------------------------------------------------------------
 -- users(参加者)
+-- パスワードはpasswordpassword
 INSERT INTO users (id, email, password_hash)
 VALUES (5001, 'yottomi@gmail.com', 'pbkdf2:sha256:260000$JGJeFByTSQ2HO5d5$c6c6a0e479df614d0153a6fde007d59e77bd0023eb1f49624e6aa96d6c3a409d');
 SET @participant_id = 5001;
