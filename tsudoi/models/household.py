@@ -3,7 +3,7 @@ from util.db import get_connection
 
 
 #　user_idから世帯を特定する
-def find_household_by_user(user_id):
+def get_household_by_user(user_id):
     conn = get_connection()
     try:
         with conn.cursor() as cursor:

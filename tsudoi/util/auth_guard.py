@@ -4,7 +4,7 @@ from flask import session, abort, redirect, url_for
 
 # 独自のmodel関数
 from models.admin import find_admin_by_id
-from models.household import find_household_by_user, get_family_member_by_id
+from models.household import get_household_by_user, get_family_member_by_id
 from models.event import find_event_by_id
 from models.application import find_application_by_id
 
@@ -34,7 +34,7 @@ def admin_required(func):
 def verify_household_owner(resource):
     if resource is None:
         abort(404)
-    my_household = find_household_by_user(session['user_id'])
+    my_household = get_household_by_user(session['user_id'])
     if my_household is None or resource['household_id'] != my_household['id']:
         abort(403)
 
