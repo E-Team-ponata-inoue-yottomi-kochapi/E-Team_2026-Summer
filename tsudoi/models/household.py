@@ -64,7 +64,7 @@ def update_family_member(member_id, relation, name, gender, birth_date, email):
         conn.close()
         
 #家族メンバーの論理削除
-def soft_delete_family_member(member_id):
+def delete_family_member(member_id):
     conn = get_connection()
     try:
         with conn.cursor() as cursor:
