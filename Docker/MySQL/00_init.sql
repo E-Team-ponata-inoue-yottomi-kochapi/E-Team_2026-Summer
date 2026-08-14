@@ -185,10 +185,10 @@ CREATE TABLE admins (
 -- 9. event_messages : イベントごとのチャット
 -- ------------------------------------------------------------
 CREATE TABLE event_messages (
-    id  VARCHAR(36) PRIMARY KEY,
-    user_id INT NOT NULL,
-    event_id VARCHAR(36) NOT NULL,
-    body TEXT NOT NULL,
+    id             VARCHAR(36) PRIMARY KEY,
+    user_id        INT NOT NULL,
+    event_id       VARCHAR(36) NOT NULL,
+    body           TEXT NOT NULL,
     created_at     DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at     DATETIME NULL ON UPDATE CURRENT_TIMESTAMP,
     deleted_at     DATETIME NULL,
