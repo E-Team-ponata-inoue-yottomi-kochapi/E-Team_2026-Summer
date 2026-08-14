@@ -46,7 +46,7 @@ class User:
         conn = get_connection()
         try:
             with conn.cursor() as cursor:
-                sql = "SELECT id, email, created_at FROM users WHERE id = %s;"
+                sql = "SELECT id, email, created_at FROM users WHERE id = %s AND deleted_at IS NULL;"
                 cursor.execute(sql, (user_id,))
                 user = cursor.fetchone()
                 return user
@@ -66,6 +66,21 @@ class User:
                 cursor.execute(sql, (email, password_hash, user_id))
                 conn.commit()              
                 # 更新された行数を返す
+                return cursor.rowcount
+        except pymysql.MySQLError:
+            raise
+        finally:
+            conn.close()
+
+    # 管理者によるユーザー削除
+    @classmethod
+    def soft_delete_user(cls, user_id):
+        conn = get_connection()
+        try:
+            with conn.cursor() as cursor:
+                sql = "UPDATE users SET deleted_at=NOW() WHERE id=%s;"
+                cursor.execute(sql, (user_id,))
+                conn.commit()
                 return cursor.rowcount
         except pymysql.MySQLError:
             raise
