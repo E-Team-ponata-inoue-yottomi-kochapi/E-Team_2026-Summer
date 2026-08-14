@@ -65,7 +65,7 @@ def login_process():
     session['user_id'] = result["data"]["user_id"]
     return redirect(url_for("mypage.mypage_view"))
 
-@auth_bp.route("/logout")
+@auth_bp.route("/logout", methods=['POST'])
 def logout():
     session.clear()
     return redirect(url_for("auth.login_view"))

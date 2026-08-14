@@ -6,7 +6,7 @@ from util.db import get_connection
 
 
 #######################################################################
-# イベントの本体に関するmodel関数　
+# イベントの本体に関するmodel関数
 #######################################################################
 
 # 公開中のイベント一覧を取得する(status='公開'で絞り込み)
@@ -67,9 +67,9 @@ def create_event(owner_id, title, start_at, place, address, capacity, deadline,
                     cancellation_policy, emergency_contact, payment_method,
                     payment_deadline, status)
                     VALUES
-                    (%s, %s, %s, %s, %s, %s, %s, %s, 
-                     %s, %s, %s, %s, 
-                     %s, %s, %s, 
+                    (%s, %s, %s, %s, %s, %s, %s, %s,
+                     %s, %s, %s, %s,
+                     %s, %s, %s,
                      %s, %s );"""
             cursor.execute(sql, (new_id, owner_id, title, start_at, place, address, capacity, deadline,
                     description, items_to_bring, schedule, hold_condition,
@@ -122,7 +122,7 @@ def soft_delete_event(event_id):
         conn.close()
 
 #######################################################################
-# 料金区分に関するmodel関数　
+# 料金区分に関するmodel関数
 #######################################################################
 
 # イベントの料金区分一覧を取得する(min_ageを降順表示/区分0件（異常時）でも空リストを返す)
