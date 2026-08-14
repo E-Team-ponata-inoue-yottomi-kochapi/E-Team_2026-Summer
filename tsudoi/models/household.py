@@ -1,7 +1,7 @@
 import pymysql
 from util.db import get_connection
 
-def find_household_by_leader_id(user_id):
+def get_household_by_user(user_id):
     conn = get_connection()
     try:
         with conn.cursor() as cursor:

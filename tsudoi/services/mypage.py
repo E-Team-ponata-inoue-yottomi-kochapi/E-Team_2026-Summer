@@ -1,5 +1,5 @@
 from models.user import User
-from models.household import find_household_by_leader_id
+from models.household import get_household_by_user
 from models.application import list_applications_by_household
 from models.event import list_events_by_owner
 from werkzeug.security import generate_password_hash
@@ -17,7 +17,7 @@ def update_user(user_id, email, password):
     return updated_count
 
 def get_mypage(user_id):
-    household = find_household_by_leader_id(user_id)
+    household = get_household_by_user(user_id)
     household_id = household["id"]
     applications = list_applications_by_household(household_id)
     events = list_events_by_owner(user_id)
