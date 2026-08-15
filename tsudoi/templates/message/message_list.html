@@ -1,0 +1,28 @@
+<!-- base.htmlを利用する -->
+{% extends "base.html" %}
+
+<!-- ここからbaseのheadに差し込まれる -->
+{% block css%}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/message.css') }}">
+{% endblock %}
+<!-- ここまで -->
+
+<!-- ここからbaseのbodyに差し込まれる -->
+{% block content %}
+<div>
+    <a href="{{ url_for('event.list_view') }}">イベント一覧へ戻る</a>
+</div>
+<div>
+<h1>チャットページです</h1>
+</div>
+<div>
+    <form method="POST" action="{{ url_for('message.create_process', event_id=event.id)}}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token()}}">
+        <input type="text" id="message" name="message">
+        <button type="submit">投稿</button>
+    </form>
+</div>
+{% if message %}
+<p>{{ message }}</p>
+{% endif %}
+{% endblock %}

@@ -12,6 +12,7 @@ from controllers.event import event_bp
 from controllers.application import application_bp
 from controllers.mypage import mypage_bp
 from controllers.admin import admin_bp
+from controllers.message import message_bp
 
 from util.logger import logger_config
 
@@ -28,8 +29,8 @@ app.register_blueprint(household_bp)
 app.register_blueprint(event_bp)
 app.register_blueprint(application_bp)
 app.register_blueprint(mypage_bp)
-app.register_blueprint(admin_bp) 
-
+app.register_blueprint(admin_bp)
+app.register_blueprint(message_bp)
 
 # CSRF対策
 csrf = CSRFProtect(app)
