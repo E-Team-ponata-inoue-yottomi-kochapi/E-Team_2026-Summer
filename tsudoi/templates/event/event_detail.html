@@ -2,7 +2,7 @@
 {% extends "base.html" %}
 
 <!-- ここからbaseのheadに差し込まれる -->
-{% block css%}
+{% block css %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/event.css') }}">
 {% endblock %}
 <!-- ここまで -->
@@ -53,7 +53,11 @@
 <div>
     <a href="{{ url_for('application.apply_view', event_id=event.id) }}">参加申し込み</a>
 </div>
-<p>イベント主催者の場合のみ下記を追加表示：</p>
+<div>
+    <p>イベントについて話しながら、みんなで楽しもう！</p>
+    <a href="{{ url_for('message.messages_view', event_id=event.id) }}">チャットルームへ入室</a>
+</div>
+<!-- イベント主催者の場合のみ下記を追加表示 -->
 {% if owner.owner_id == session["user_id"] %}
 <div>
     <a href="#">イベントを編集</a>

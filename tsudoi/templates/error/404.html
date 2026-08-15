@@ -1,0 +1,25 @@
+<!-- base.htmlを利用する -->
+{% extends "base.html" %}
+
+<!-- ここからbaseのheadに差し込まれる -->
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/error.css') }}">
+{% endblock %}
+<!-- ここまで -->
+
+<!-- ここからbaseのbodyに差し込まれる -->
+{% block content %}
+<div>
+    <h1>404 エラー<br>（Not Found）</h1>
+    <p>申し訳ありません</p>
+    <p>お探しのページが見つかりませんでした</p>
+    <p>URLが間違っているか、ページが削除された可能性があります</p>
+</div>
+<div>
+    {% if session.get("user_id") %}
+    <a href="{{ url_for('mypage.mypage_view') }}">マイページへ戻る</a>
+    {% else %}
+    <a href="{{ url_for('auth.login_view') }}">ログインへ戻る</a>
+    {% endif %}
+</div>
+{% endblock %}

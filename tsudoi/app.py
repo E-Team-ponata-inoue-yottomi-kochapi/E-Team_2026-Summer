@@ -12,6 +12,7 @@ from controllers.event import event_bp
 from controllers.application import application_bp
 from controllers.mypage import mypage_bp
 from controllers.admin import admin_bp
+from controllers.message import message_bp
 
 from util.logger import logger_config
 
@@ -28,8 +29,8 @@ app.register_blueprint(household_bp)
 app.register_blueprint(event_bp)
 app.register_blueprint(application_bp)
 app.register_blueprint(mypage_bp)
-app.register_blueprint(admin_bp) 
-
+app.register_blueprint(admin_bp)
+app.register_blueprint(message_bp)
 
 # CSRF対策
 csrf = CSRFProtect(app)
@@ -37,6 +38,10 @@ csrf = CSRFProtect(app)
 @app.errorhandler(500)
 def internal_server_error(error):
     return render_template("error/500.html", title="500エラー"),500
+
+@app.errorhandler(404)
+def not_found_error(error):
+    return render_template("error/404.html", title="404エラー"),404
 
 # このファイルが直接実行される時のみ「ファイルの中身」を実行する。
 # このファイルがインポートされたときは「ファイルの中身」は実行されない。
