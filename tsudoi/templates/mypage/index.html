@@ -3,9 +3,35 @@
 {% block content %}
 
 <h1>マイページ</h1>
-<a href="{{ url_for('mypage.user_edit_view')}}">アカウント設定</a>
-{# 🦴追記しました #}
-<br><a href="{{ url_for('event.new_view')}}">← イベント作成</a>
-<br><a href="{{ url_for('event.list_view')}}">イベント一覧</a>
+
+<section>
+    <h3>参加予定のイベント</h3>
+
+    {% for application in applications %}
+        <div>
+            <p>{{ application["event_title"] }}</p>
+            <p>{{ application["event_start_at"] }}</p>
+        </div>
+    {% endfor %}
+</section>
+
+<section>
+    <h3>自分が主催のイベント</h3>
+
+    {% for event in events %}
+        <div>
+            <p>{{ event["title"] }}</p>
+            <p>{{ event["start_at"] }}</p>
+        </div>
+    {% endfor %}
+</section>
+
+<div>
+    <a href="{{ url_for('mypage.user_edit_view') }}">アカウント設定</a>
+    <br>
+    <a href="{{ url_for('event.new_view') }}">イベント作成</a>
+    <br>
+    <a href="{{ url_for('event.list_view') }}">イベント一覧</a>
+</div>
 
 {% endblock %}
