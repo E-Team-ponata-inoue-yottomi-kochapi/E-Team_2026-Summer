@@ -38,6 +38,10 @@ csrf = CSRFProtect(app)
 def internal_server_error(error):
     return render_template("error/500.html", title="500エラー"),500
 
+@app.errorhandler(404)
+def not_found_error(error):
+    return render_template("error/404.html", title="404エラー"),404
+
 # このファイルが直接実行される時のみ「ファイルの中身」を実行する。
 # このファイルがインポートされたときは「ファイルの中身」は実行されない。
 # app.run　Flaskの開発用サーバーを起動
