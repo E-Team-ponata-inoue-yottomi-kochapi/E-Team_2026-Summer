@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, redirect, url_for, request
-from services.mypage import get_current_user, update_user
+from services.mypage import get_current_user, update_user, get_mypage
 # auth_guard.py実装後に追加
 # from util.auth_guard import login_required
 
@@ -10,7 +10,15 @@ mypage_bp = Blueprint("mypage", __name__)
 # auth_guard.py実装後に追加
 # @login_required
 def mypage_view():
-    return render_template("mypage/index.html")
+    # ステージ2ではテスト用ユーザーIDを固定で使用
+    user_id = 3001
+    # serviceからマイページ表示に必要な情報を取得
+    mypage_data = get_mypage(user_id)
+    # mypage_dataにはapplicationsテーブルとeventsテーブルの情報が入っているので、それぞれで分けて変数に格納
+    applications = mypage_data["applications"]
+    events = mypage_data["events"]
+
+    return render_template("mypage/index.html", applications = applications, events = events)
 
 # ユーザー編集画面表示
 @mypage_bp.route("/user/edit", methods=["GET"])

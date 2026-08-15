@@ -135,3 +135,46 @@ VALUES
         '子ども',
         1000
     );
+
+-- 井上主催イベント作成
+-- inoue_event_id = '30010000-0000-4000-8000-000000000001'
+INSERT INTO
+    events (
+        id,
+        owner_id,
+        title,
+        start_at,
+        place,
+        address,
+        capacity,
+        deadline,
+        description,
+        items_to_bring,
+        schedule,
+        hold_condition,
+        cancellation_policy,
+        emergency_contact,
+        payment_method,
+        payment_deadline,
+        status
+    )
+VALUES
+    (
+        '30010000-0000-4000-8000-000000000001',
+        3001,
+        '井上主催テストイベント',
+        '2026-09-20 10:00:00',
+        '奈良公園',
+        '奈良県奈良市雑司町',
+        30,
+        '2026-09-15 23:59:59',
+        'F-028マイページ表示確認用のテストイベントです',
+        '飲み物・タオル',
+        '09:30集合 10:00開始 12:00終了',
+        '雨天決行',
+        '開催日前日までキャンセル可能',
+        '090-1234-5678',
+        '現地払い',
+        NULL,
+        '公開'
+    );

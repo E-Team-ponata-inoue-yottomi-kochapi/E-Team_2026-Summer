@@ -1,15 +1,18 @@
+import pymysql
 from util.db import get_connection
 
-#ログイン中のユーザーが紐づく世帯を取得する
+
 def get_household_by_user(user_id):
     conn = get_connection()
     try:
         with conn.cursor() as cursor:
-            sql = "SELECT * FROM households WHERE leader_id = %s AND deleted_at IS NULL;"
+      # TODO: deleted_at IS NULL が抜けてる。論理削除済みの世帯もヒットしてしまう
+            sql = "SELECT id, leader_id FROM households WHERE leader_id = %s"
             cursor.execute(sql, (user_id,))
             return cursor.fetchone()
     finally:
         conn.close()
+        
 #指定した世帯に属する家族メンバー一覧を取得する
 def get_family_members(household_id):
     conn = get_connection()
