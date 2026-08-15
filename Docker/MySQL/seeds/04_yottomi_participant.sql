@@ -12,7 +12,7 @@ SET @fee_rule_infant_id = 6663;  -- 未就学児の料金区分id
 -- users(参加者)
 -- パスワードはpasswordpassword
 INSERT INTO users (id, email, password_hash)
-VALUES (5001, 'yottomi@gmail.com', 'pbkdf2:sha256:260000$ltKpVAn9ZjKAsfOT$2e03ac183990ff20d783bbb2d4b3530c19badf56613c09d7b5db8e3573fbcbed');
+VALUES (5001, 'yottomi@gmail.com', 'pbkdf2:sha256:260000$JGJeFByTSQ2HO5d5$c6c6a0e479df614d0153a6fde007d59e77bd0023eb1f49624e6aa96d6c3a409d');
 SET @participant_id = 5001;
 
 -- households(よっとみの世帯)
