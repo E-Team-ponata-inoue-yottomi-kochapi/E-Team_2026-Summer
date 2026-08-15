@@ -4,7 +4,7 @@ message_bp = Blueprint("message", __name__, url_prefix="/events/<string:event_id
 
 @message_bp.route("/", methods=["GET"])
 def messages_view(event_id):
-    event = {"id": 1}
+    event = {"id": event_id}
     return render_template("message/message_list.html", title="チャットルーム", event=event)
 
 @message_bp.route("/", methods=["POST"])
