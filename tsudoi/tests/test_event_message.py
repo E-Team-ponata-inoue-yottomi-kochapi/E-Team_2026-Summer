@@ -31,7 +31,7 @@ class TestCreateFunction(unittest.TestCase):
             conn.close()
         result = get_open_event_messages(self.event_id)
         if result:
-            print(f"削除後：{ result[-1] }")
+            print(f"削除後：{ result[-1] }\n")
 
     # イベントメッセージ新規作成とその取得についてのテスト
     def test_create_event_messages(self):
@@ -75,7 +75,7 @@ class TestMessageController(unittest.TestCase):
             conn.close()
         result = get_open_event_messages(self.event_id)
         if result:
-            print(f"削除後：{ result[-1] }")
+            print(f"削除後：{ result[-1] }\n")
 
     def test_messages_view_as_logged_in_user(self):
         with self.app.session_transaction() as session:
@@ -87,6 +87,7 @@ class TestMessageController(unittest.TestCase):
                                 )
         self.assertEqual(200, response.status_code)
         print("TestMessageController\ntest_messages_view_as_logged_in_userテスト結果")
+        print(f"ステータスコード：{response.status_code}")
 
     def test_create_process_as_logged_in_user(self):
         self.body = "これは第３段階テスト用です"
@@ -105,6 +106,7 @@ class TestMessageController(unittest.TestCase):
         self.event_message_id = result[-1]["id"]
         self.assertEqual(self.body, result[-1]["body"])
         print("TestMessageController\ntest_create_process_as_logged_in_userテスト結果")
+        print(f"ステータスコード：{response.status_code}")
         print(f"登録後：{ result[-1] }")
 
 if __name__ == '__main__':
