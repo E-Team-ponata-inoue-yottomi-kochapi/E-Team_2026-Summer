@@ -20,7 +20,7 @@ def get_open_event_messages(event_id):
     try:
         with conn.cursor() as cursor:
             # メッセージ一覧は古い順
-            sql = "SELECT f.name, em.body, em.created_at FROM event_messages as em INNER JOIN households as h ON em.user_id=h.leader_id INNER JOIN family_members as f ON h.id=f.household_id WHERE em.event_id=%s AND f.relation='本人' AND em.deleted_at is NULL ORDER BY em.created_at ASC, em.id ASC;"
+            sql = "SELECT em.id, f.name, em.body, em.created_at FROM event_messages as em INNER JOIN households as h ON em.user_id=h.leader_id INNER JOIN family_members as f ON h.id=f.household_id WHERE em.event_id=%s AND f.relation='本人' AND em.deleted_at is NULL ORDER BY em.created_at ASC, em.id ASC;"
             cursor.execute(sql, (event_id,))
             open_event_messages = cursor.fetchall()
             return open_event_messages
