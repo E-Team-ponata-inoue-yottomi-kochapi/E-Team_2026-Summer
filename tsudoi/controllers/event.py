@@ -6,7 +6,7 @@ from util.auth_guard import login_required
 import logging
 
 event_bp = Blueprint("event", __name__, url_prefix="/events")
-
+logger = logging.getLogger(__name__)
 
 # イベント一覧表示画面
 @event_bp.route("/", methods=["GET"])
