@@ -8,7 +8,7 @@ mypage_bp = Blueprint("mypage", __name__)
 @mypage_bp.route("/mypage", methods=["GET"])
 @login_required
 def mypage_view():
-    # セッションからログイン中のユーザーIDを取得r
+    # セッションからログイン中のユーザーIDを取得
     user_id = session.get("user_id")
     # serviceからマイページ表示に必要な情報を取得
     mypage_data = get_mypage(user_id)
