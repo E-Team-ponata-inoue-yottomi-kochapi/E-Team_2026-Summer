@@ -33,7 +33,7 @@ class TestMessageModel(unittest.TestCase):
         if result:
             print(f"削除後：{ result[-1] }\n")
 
-    # １．イベントメッセージ新規作成とその取得についてのテスト
+    # ２nd-１．イベントメッセージ新規作成とその取得についてのテスト
     def test_create_event_messages(self):
         # self.assertEqual("event_message_id_0001", test_case[0])
         # self.assertEqual(1234567890, test_case[1])
@@ -49,7 +49,7 @@ class TestMessageModel(unittest.TestCase):
         self.event_message_id = create_event_message(user_id, self.event_id, self.body)
         result = get_open_event_messages(self.event_id)
         print(f"TestMessageModel\ntest_create_event_messages")
-        print("１．イベントメッセージ新規作成とその取得についてのテスト")
+        print("２nd-１．イベントメッセージ新規作成とその取得についてのテスト")
         print(f"登録後：{ result[-1] }")
         # get_open_event_messagesが昇順のため、最後のメッセージを取得
         self.assertEqual(self.body, result[-1]["body"])
@@ -85,7 +85,7 @@ class TestMessageControllerAuthenticated(unittest.TestCase):
         if result:
             print(f"削除後：{ result[-1] }\n")
 
-    # ２．ログイン済ユーザー：画面表示テスト
+    # ３rd-１．ログイン済ユーザー：画面表示テスト
     def test_messages_view_as_authenticated_user(self):
         # ログイン処理
         with self.app.session_transaction() as session:
@@ -100,10 +100,10 @@ class TestMessageControllerAuthenticated(unittest.TestCase):
         # 正常に処理
         self.assertEqual(200, response.status_code)
         print("TestMessageControllerAuthenticated\ntest_messages_view_as_authenticated_user")
-        print("２．ログイン済ユーザー：画面表示テスト")
+        print("３rd-１．ログイン済ユーザー：画面表示テスト")
         print(f"ステータスコード：{response.status_code}\n")
 
-    # ３．ログイン済ユーザー：投稿テスト
+    # ３rd-２．ログイン済ユーザー：投稿テスト
     def test_create_process_as_authenticated_user(self):
         self.body = "これは第３段階テスト用です"
 
@@ -127,11 +127,11 @@ class TestMessageControllerAuthenticated(unittest.TestCase):
         self.event_message_id = result[-1]["id"]
         self.assertEqual(self.body, result[-1]["body"])
         print("TestMessageControllerAuthenticated\ntest_create_process_as_authenticated_user")
-        print("３．ログイン済ユーザー：投稿テスト")
+        print("３rd-２．ログイン済ユーザー：投稿テスト")
         print(f"ステータスコード：{response.status_code}")
         print(f"登録後：{ result[-1] }")
 
-    # ４．未ログインユーザー：画面表示テスト
+    # ３rd-３．未ログインユーザー：画面表示テスト
     def test_messages_view_as_unauthenticated_user(self):
         # 未ログインのままHTTPリクエスト
         response = self.app.get(f"/events/{self.event_id}/messages/",
@@ -142,10 +142,10 @@ class TestMessageControllerAuthenticated(unittest.TestCase):
         self.assertEqual(302, response.status_code)
         self.assertIn("login", response.location)
         print("TestMessageControllerAuthenticated\ntest_messages_view_as_unauthenticated_user")
-        print("４．未ログインユーザー：画面表示テスト")
+        print("３rd-３．未ログインユーザー：画面表示テスト")
         print(f"ステータスコード：{response.status_code}\n")
 
-    # ５．未ログインユーザー：投稿テスト
+    # ３rd-４．未ログインユーザー：投稿テスト
     def test_create_process_as_unauthenticated_user(self):
         self.body = "これは第３段階テスト用です"
 
@@ -159,7 +159,7 @@ class TestMessageControllerAuthenticated(unittest.TestCase):
         self.assertEqual(302, response.status_code)
         self.assertIn("login", response.location)
         print("TestMessageControllerAuthenticated\ntest_create_process_as_unauthenticated_user")
-        print("５．未ログインユーザー：投稿テスト")
+        print("３rd-４．未ログインユーザー：投稿テスト")
         print(f"ステータスコード：{response.status_code}\n")
 
 # 第４段階：認可用
@@ -177,7 +177,7 @@ class TestMessageAuthorization(unittest.TestCase):
         self.event_id                  = "b8e4d521-9f6a-4c37-a812-5d7e3f9b2c64"
         self.body                      = None
 
-    # ６．ログイン済＆イベント未申込ユーザー：画面表示テスト
+    # ４th-１．ログイン済＆イベント未申込ユーザー：画面表示テスト
     def test_messages_view_as_unauthorized_user(self):
         # ログイン処理
         with self.app.session_transaction() as session:
@@ -192,10 +192,10 @@ class TestMessageAuthorization(unittest.TestCase):
         # 権限エラー
         self.assertEqual(403, response.status_code)
         print("TestMessageAuthorization\ntest_messages_view_as_unauthorized_user")
-        print("６．ログイン済＆イベント未申込ユーザー：画面表示テスト")
+        print("４th-１．ログイン済＆イベント未申込ユーザー：画面表示テスト")
         print(f"ステータスコード：{response.status_code}\n")
 
-    # ７．ログイン済＆イベント未申込ユーザー：投稿テスト
+    # ４th-２．ログイン済＆イベント未申込ユーザー：投稿テスト
     def test_create_process_as_unauthorized_user(self):
         self.body = "これは第４段階テスト用です"
 
@@ -213,7 +213,7 @@ class TestMessageAuthorization(unittest.TestCase):
         # 権限エラー
         self.assertEqual(403, response.status_code)
         print("TestMessageAuthorization\ntest_create_process_as_unauthorized_user")
-        print("７．ログイン済＆イベント未申込ユーザー：投稿テスト")
+        print("４th-２．ログイン済＆イベント未申込ユーザー：投稿テスト")
         print(f"ステータスコード：{response.status_code}\n")
 
 if __name__ == '__main__':
