@@ -5,7 +5,79 @@
 <h2>イベント作成画面</h2>
 <hr>
 <br><br>
-<p>ここにイベント作成フォームが表示されます</p>
+
+<form action="{{url_for('event.create_process')}}" method="POST">
+    <input type="hidden" name="csrf_token" value="{{csrf_token()}}">
+
+    <label>イベント名<br>
+        <input type="text" name="title" required>
+    </label><br>
+
+    <label>開催日時<br>
+        <input type="datetime-local" name="start_at" required>
+    </label><br>
+
+    <label>開催場所<br>
+        <input type="text" name="place" required>
+    </label><br>
+
+    <label>住所<br>
+        <input type="text" name="adress" required>
+    </label><br>
+
+    <label>定員<br>
+        <input type="number" name="capacity" required>
+    </label><br>
+
+    <label>申し込み締切<br>
+        <input type="datetime-local" name="deadline" required>
+    </label><br>
+
+    <label>イベント説明<br>
+        <textarea name="description" required></textarea>
+    </label><br>
+
+    <label>持ち物<br>
+        <textarea name="items_to_bring" required></textarea>
+    </label><br>
+
+    <label>当日スケジュール<br>
+        <textarea name="schedule" required></textarea>
+    </label><br>
+
+    <label>開催条件<br>
+        <select name="hold_condition" required>
+            <option value="">選択してください</option>
+            <option value="雨天決行">雨天決行</option>
+            <option value="雨天中止">雨天中止</option>
+        </select>
+    </label><br>
+
+    <label>キャンセルポリシー<br>
+        <textarea name="cancellation_policy" required></textarea>
+    </label><br>
+
+    <label>緊急連絡先<br>
+        <input type="text" name="emergency_contact" required>
+    </label><br>
+
+    <label>支払い方法<br>
+        <select name="payment_method" required>
+            <option value="">選択してください</option>
+            <option value="現地払い">現地払い</option>
+            <option value="事前払い">事前払い</option>
+        </select>
+    </label><br>
+
+    <label>支払い期限<br>
+        <input type="date" name="payment_deadline">
+    </label><br>
+
+    <br>
+    <button type="submit">イベントを作成する</button>
+
+</form>
+
 <br><br>
 <hr><br>
 <a href="{{ url_for('event.detail_view', id=1)}}">作成済みイベント詳細へ</a>

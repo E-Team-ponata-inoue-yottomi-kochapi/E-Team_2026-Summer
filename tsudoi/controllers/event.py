@@ -53,6 +53,5 @@ def new_view():
 @event_bp.route("/", methods=["POST"])
 # @login_required
 def create_process():
-    #仮ID
-    event_id = 1
-    return redirect(url_for("event.detail_view", id=event_id))
+
+    return redirect(url_for("event.detail_view", event_id=event_id))
