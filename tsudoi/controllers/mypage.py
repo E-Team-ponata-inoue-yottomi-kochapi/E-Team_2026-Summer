@@ -1,17 +1,15 @@
-from flask import Blueprint, render_template, redirect, url_for, request
+from flask import Blueprint, render_template, redirect, url_for, request, session
 from services.mypage import get_current_user, update_user, get_mypage
-# auth_guard.py実装後に追加
-# from util.auth_guard import login_required
+from util.auth_guard import login_required
 
 mypage_bp = Blueprint("mypage", __name__)
 
 # マイページ
 @mypage_bp.route("/mypage", methods=["GET"])
-# auth_guard.py実装後に追加
-# @login_required
+@login_required
 def mypage_view():
-    # ステージ2ではテスト用ユーザーIDを固定で使用
-    user_id = 3001
+    # セッションからログイン中のユーザーIDを取得
+    user_id = session.get("user_id")
     # serviceからマイページ表示に必要な情報を取得
     mypage_data = get_mypage(user_id)
     # mypage_dataにはapplicationsテーブルとeventsテーブルの情報が入っているので、それぞれで分けて変数に格納
