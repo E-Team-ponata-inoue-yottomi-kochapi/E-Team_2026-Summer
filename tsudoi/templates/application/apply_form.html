@@ -12,6 +12,9 @@
   <label>
     <input type="checkbox" name="member_ids" value="{{ member.id }}">
     {{ member.name }}
+    {% if preview_by_id.get(member.id) %}
+        ({{ preview_by_id[member.id].fee_rule_name_snapshot }}: {{ preview_by_id[member.id].amount }}円)
+    {% endif %}
   </label>
   {% endfor %}
 

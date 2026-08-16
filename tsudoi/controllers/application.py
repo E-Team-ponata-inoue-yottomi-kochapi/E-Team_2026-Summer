@@ -1,89 +1,97 @@
-from functools import wraps
-from flask import Blueprint, session, render_template, redirect, url_for
+from flask import Blueprint, session, request, render_template, redirect, url_for
 from flask import flash
 # auth_guard.py実装後に追加
-# from util.auth_guard import login_required
+from util.auth_guard import login_required
 
+#必要なデータの呼び出し
+from models.household import get_household_by_user, get_family_members
+from models.application import get_application, cancel_application
+from services.application import build_participants_preview, create_application, update_application
+from models.event import find_event_by_id
 
 application_bp = Blueprint("application", __name__, url_prefix="/apply")
-
-# ログイン権限デコレータ
-def login_required(func):
-    @wraps(func)
-    def wrapper(*args, **kwargs):
-        if session.get('user_id') is None:
-            return redirect(url_for('auth.login_view'))
-        return func(*args, **kwargs)
-    return wrapper
 
 
 # 集計画面
 @application_bp.route("/events/<string:event_id>/applications", methods=["GET"])
 # auth_guard.py実装後に追加
-# @login_required
+@login_required
 def summary_view(event_id):
     return render_template("event/summary.html", event_id = event_id)
     
 
 #申込フォーム表示/参加メンバー選択画面
-@application_bp.route('/events/<string:event_id>/', methods=["GET"])
-# @login_required
+@application_bp.route('/events/<string:event_id>/', methods=["GET", "POST"])
+@login_required
 def apply_view(event_id):
-    members = [
-        {"id": 1, "name": "田中太郎"},
-        {"id": 2, "name": "田中花子"},
-    ]  # 仮データ
-    return render_template('application/apply_form.html', event_id=event_id, members=members, application=None)
+    household = get_household_by_user(session['user_id'])
+    members = get_family_members(household['id'])
+    #メンバー全員の料金を計算して表示する
+    all_member_ids = [str(m['id']) for m in members]
+    participants_preview = build_participants_preview(event_id, household['id'], all_member_ids)
+    preview_by_id = {p['member_id']: p for p in participants_preview}
+    return render_template('application/apply_form.html', event_id=event_id, members=members, application=None,preview_by_id=preview_by_id,)
 
   
 #申し込み内容確認画面
-@application_bp.route('/events/<string:event_id>/confirm', methods=["GET","POST"])
-# @login_required
+@application_bp.route('/events/<string:event_id>/confirm', methods=["POST"])
+@login_required
 def apply_confirmation_view(event_id):
     # フォームで選択されたmember_idsを受け取り、まだ保存せず画面表示のみ
-    event = {"id": event_id, "name": "サンプルイベント"}
-    participants = [
-        {"member_name_snapshot": "田中太郎", "fee_rule_name_snapshot": "大人", "amount": 3000},
-        {"member_name_snapshot": "田中花子", "fee_rule_name_snapshot": "子供", "amount": 1500},
-    ]
+    household = get_household_by_user(session['user_id'])
+    member_ids = request.form.getlist('member_ids')
+    #申込画面に表示するデータの取得
+    participants = build_participants_preview(event_id, household['id'], member_ids)
     total_amount = sum(p["amount"] for p in participants)
+    event = find_event_by_id(event_id)
     return render_template(
         'application/apply_confirmation.html', event=event, event_id=event_id, participants=participants, total_amount=total_amount
     )
   
 #申し込み確定処理
 @application_bp.route('/events/<string:event_id>/create', methods=["POST"])
-# @login_required
+@login_required
 def apply_create_process(event_id):
-    application_id = 1  # 仮:保存後に発行されたID
+    household = get_household_by_user(session['user_id'])
+    member_ids = request.form.getlist('member_ids')
+    #申込完了ページがないため変数の代入をしていません
+    create_application(event_id, household['id'], member_ids)
     flash("申し込みが完了しました")
-    return redirect(url_for('event.detail_view', id=event_id))
+    return redirect(url_for('event.detail_view', event_id=event_id))
 
   
 #申し込み内容編集画面
 @application_bp.route('/applications/<int:id>/edit', methods=["GET"])
-# @login_required
+@login_required
 def apply_edit_view(id):
-    application = {"id": id}
-    members = [
-        {"id": 1, "name": "田中太郎", "age": 40},
-        {"id": 2, "name": "田中花子", "age": 8},
-    ]
-    return render_template('application/apply_form.html', event_id=None, members=members, application=application)
+    application = get_application(id)
+    household = get_household_by_user(session['user_id'])
+    members = get_family_members(household['id'])
+    #メンバー全員の料金を計算して表示する
+    all_member_ids = [str(m['id']) for m in members]
+    participants_preview = build_participants_preview(application['event_id'], household['id'], all_member_ids)
+    preview_by_id = {p['member_id']: p for p in participants_preview}
+    return render_template('application/apply_form.html', event_id=None, members=members, application=application,preview_by_id=preview_by_id,)
 
   
 #申し込み編集処理
 @application_bp.route('/applications/<int:id>/edit', methods=["POST"])
-# @login_required
+@login_required
 def apply_edit_process(id):
+    application = get_application(id)
+    household = get_household_by_user(session['user_id'])
+    member_ids = request.form.getlist('member_ids')
+
+    update_application(id, application['event_id'], household['id'], member_ids)
+
+    flash("申し込み内容を更新しました")
     return redirect(url_for('mypage.mypage_view'))
 
   
 #キャンセル処理→マイページに遷移
 @application_bp.route('/applications/<int:id>/cancel',methods=["POST"])
-# @login_required
+@login_required
 def apply_cancel_process(id):
+    cancel_application(id)
+    flash("申し込みをキャンセルしました")
     return redirect(url_for('mypage.mypage_view'))
-
-
-

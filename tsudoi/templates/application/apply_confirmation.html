@@ -4,13 +4,25 @@
 
  {% block content %}
 <h2 class="page-title">申し込み確認</h2>
+<h3>{{ event.title }}</h3>
 
+<ul>
+  {% for p in participants %}
+  <li>
+    {{ p.member_name_snapshot }} ({{p.fee_rule_name_snapshot}}): {{ p.amount }}円
+  </li>
+  {% endfor %}
+</ul>
+<p>合計金額: {{ total_amount }}</p>
 <form action="{{ url_for('application.apply_create_process', event_id=event_id) }}" method="POST">
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  {% for p in participants %}
+  <input type="hidden" name="member_ids" value="{{ p.member_id }}">
+  {% endfor %}
   <button type="submit">申し込み確定</button>
 </form>
 
-<form action="{{ url_for('application.apply_view', event_id=event_id) }}">
+<form action="{{ url_for('application.apply_view', event_id=event_id) }}" method="POST">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <button type="submit">戻る</button>
 </form>
