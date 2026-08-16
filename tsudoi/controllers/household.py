@@ -1,5 +1,5 @@
-from functools import wraps
 from flask import Blueprint, session, render_template, redirect, url_for, request
+from util.auth_guard import login_required
 
 from models.household import (
     get_household_by_user,
@@ -10,14 +10,6 @@ from models.household import (
 )
 
 household_bp = Blueprint("household", __name__, url_prefix="/household")
-
-def login_required(func):
-    @wraps(func)
-    def wrapper(*args, **kwargs):
-        if session.get('user_id') is None:
-            return redirect(url_for('auth.login_view'))
-        return func(*args, **kwargs)
-    return wrapper
 
 #家族一覧ページ表示
 @household_bp.route('/', methods=["GET"])
