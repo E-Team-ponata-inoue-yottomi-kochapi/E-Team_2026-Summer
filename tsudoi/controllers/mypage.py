@@ -20,11 +20,10 @@ def mypage_view():
 
 # ユーザー編集画面表示
 @mypage_bp.route("/user/edit", methods=["GET"])
-# auth_guard.py実装後に追加
-# @login_required
+@login_required
 def user_edit_view():
-    # ステージ2ではテスト用ユーザーIDを固定で使用
-    user_id = 3001
+    # セッションからログイン中のユーザーIDを取得
+    user_id = session.get("user_id")
 
     # serviceからユーザー情報を取得
     user = get_current_user(user_id)
