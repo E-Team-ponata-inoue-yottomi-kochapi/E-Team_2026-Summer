@@ -1,0 +1,39 @@
+<!-- base.htmlを利用する -->
+{% extends "base.html" %}
+
+<!-- ここからbaseのheadに差し込まれる -->
+{% block css%}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/message.css') }}">
+{% endblock %}
+<!-- ここまで -->
+
+<!-- ここからbaseのbodyに差し込まれる -->
+{% block content %}
+<div>
+    <a href="{{ url_for('event.detail_view', event_id=event_id) }}">イベント詳細へ戻る</a>
+</div>
+<div>
+<h1>チャットルーム</h1>
+</div>
+<!-- 古い順に表示される -->
+{% if event_messages %}
+    {% for event_message in event_messages %}
+    <div>
+        <p>{{ event_message.name }} {{ event_message.created_at}}</p>
+        <p>{{ event_message.body }}</p>
+    </div>
+    {% endfor %}
+{% else %}
+<div>
+    <p>まだ投稿されたメッセージはありません</p>
+</div>
+{% endif %}
+<div>
+    <!-- CSSで画面下に固定予定 -->
+    <form method="POST" action="{{ url_for('message.create_process', event_id=event_id)}}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token()}}">
+        <input type="text" id="message" name="body" placeholder="メッセージを入力...">
+        <button type="submit">投稿</button>
+    </form>
+</div>
+{% endblock %}

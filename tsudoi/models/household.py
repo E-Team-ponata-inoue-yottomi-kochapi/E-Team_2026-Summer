@@ -1,15 +1,19 @@
+import uuid
 from util.db import get_connection
 
-#ログイン中のユーザーが紐づく世帯を取得する
+
+#　user_idから世帯を特定する
 def get_household_by_user(user_id):
     conn = get_connection()
     try:
         with conn.cursor() as cursor:
-            sql = "SELECT * FROM households WHERE leader_id = %s AND deleted_at IS NULL;"
+      # TODO: deleted_at IS NULL が抜けてる。論理削除済みの世帯もヒットしてしまう
+            sql = "SELECT id, leader_id FROM households WHERE leader_id = %s"
             cursor.execute(sql, (user_id,))
             return cursor.fetchone()
     finally:
         conn.close()
+        
 #指定した世帯に属する家族メンバー一覧を取得する
 def get_family_members(household_id):
     conn = get_connection()
@@ -68,5 +72,29 @@ def delete_family_member(member_id):
             sql = "UPDATE family_members SET deleted_at = NOW() WHERE id = %s"
             cursor.execute(sql, (member_id,))
         conn.commit()
+    finally:
+        conn.close()
+
+# idから家族メンバーを1件取得する
+def get_family_member_by_id(member_id):
+    conn = get_connection()
+    try:
+        with conn.cursor() as cursor:
+            sql = "SELECT * FROM family_members WHERE id=%s AND deleted_at IS NULL;"
+            cursor.execute(sql, (member_id,))
+            return cursor.fetchone()
+    finally:
+        conn.close()
+
+# 新規登録と同時にhouseholdIDを生成する
+def create_household(leader_id):
+    conn = get_connection()
+    try:
+        with conn.cursor() as cursor:
+            new_id = str(uuid.uuid4())
+            sql = "INSERT INTO households (id, leader_id) VALUES (%s, %s);"
+            cursor.execute(sql, (new_id, leader_id))
+            conn.commit()
+            return new_id
     finally:
         conn.close()

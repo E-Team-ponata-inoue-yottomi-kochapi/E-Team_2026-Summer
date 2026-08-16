@@ -2,7 +2,53 @@
 
 {% block content %}
 
-<h1>集計画面</h1>
-<p>イベントID：{{ event_id }}</p>
+<h1>参加者一覧・集計</h1>
+<h2>{{ event["title"] }}</h2>
+<hr>
+
+<h4>サマリー</h4>
+<p>
+    参加人数：{{ total_participants }}名
+    合計金額：{{ total_amount }}円
+</p>
+<hr>
+
+<h4>年齢・料金区分別</h4>
+{% for fee_name, fee_data in fee_summary.items() %}
+    <p>
+        {{ fee_name }}：
+        {{ fee_data["count"] }}名 /
+        {{ fee_data["amount"] }}円
+    </p>
+{% endfor %}
+<p>合計：{{ total_amount }}円</p>
+<hr>
+
+<h4>性別区分別</h4>
+{% for gender, count in gender_summary.items() %}
+    <p>
+        {{ gender }}：
+        {{ count }}名
+    </p>
+{% endfor %}
+<p>合計：{{ total_participants }}名</p>
+<hr>
+
+<h4>参加者リスト({{ total_participants }}名/{{ household_count }}グループ)</h4>
+{% for household_data in household_summary.values() %}
+    <p>
+        {{ household_data["count"]}}名
+        小計：{{ household_data["amount"]}}円
+    </p>
+    {% for member in household_data["members"] %}
+        <p>
+            {{ member["name"] }}
+            {{ member["age"] }}歳
+            {{ member["gender"] }}
+            {{ member["fee_rule_name"] }}
+            {{ member["amount"] }}円
+        </p>
+    {% endfor %}
+{% endfor %}
 
 {% endblock %}

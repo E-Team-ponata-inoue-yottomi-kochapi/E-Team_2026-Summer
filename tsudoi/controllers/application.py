@@ -1,5 +1,6 @@
 from flask import Blueprint, session, request, render_template, redirect, url_for
 from flask import flash
+from services.application import summarize_applications
 # auth_guard.py実装後に追加
 from util.auth_guard import login_required, host_required, applicant_required
 
@@ -17,8 +18,20 @@ application_bp = Blueprint("application", __name__, url_prefix="/apply")
 @login_required
 @host_required
 def summary_view(event_id):
-    return render_template("event/summary.html", event_id = event_id)
-    
+    summary = summarize_applications(event_id)
+
+    return render_template(
+        "event/summary.html",
+        event_id = event_id,
+        total_participants = summary["total_participants"],
+        total_amount = summary["total_amount"],
+        fee_summary = summary["fee_summary"],
+        gender_summary = summary["gender_summary"],
+        household_summary = summary["household_summary"],
+        household_count = summary["household_count"],
+        event = summary["event"]
+        )
+
 
 #申込フォーム表示/参加メンバー選択画面
 @application_bp.route('/events/<string:event_id>/', methods=["GET", "POST"])
