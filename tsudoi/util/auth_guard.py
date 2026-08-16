@@ -7,7 +7,7 @@ from models.admin import find_admin_by_id
 from models.household import get_household_by_user, get_family_member_by_id
 from models.event import find_event_by_id
 from models.application import find_application_by_id
-
+from services.message import can_access_event_chat
 
 # ログイン権限デコレータ(L)
 def login_required(func):
@@ -68,4 +68,16 @@ def applicant_required(func):
         application = find_application_by_id(application_id)
         verify_household_owner(application)
         return func(*args, **kwargs)
+    return wrapper
+
+# チャット機能権限
+def chat_required(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        event_id = kwargs.get('id') or kwargs.get('event_id')
+        result = can_access_event_chat(event_id)
+        if result:
+            return func(*args, **kwargs)
+        else:
+            return abort(403)
     return wrapper

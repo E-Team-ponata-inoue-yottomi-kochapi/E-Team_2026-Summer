@@ -63,3 +63,14 @@ def summarize_applications_by_event(event_id):
     finally:
         conn.close()
 
+# チャット機能権限用
+def find_application_by_event_id_and_household_id(event_id, household_id):
+    conn = get_connection()
+    try:
+        with conn.cursor() as cursor:
+            sql = "SELECT * FROM applications WHERE event_id=%s AND household_id=%s AND canceled_at IS NULL;"
+            cursor.execute(sql, (event_id, household_id))
+            result = cursor.fetchone()
+            return result
+    finally:
+        conn.close()

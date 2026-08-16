@@ -4,6 +4,7 @@ from services.event import get_event_detail
 import pymysql
 from util.auth_guard import login_required
 import logging
+from services.message import can_access_event_chat
 
 event_bp = Blueprint("event", __name__, url_prefix="/events")
 logger = logging.getLogger(__name__)
@@ -32,10 +33,12 @@ def detail_view(event_id):
         event = result["event"]
         owner = result["owner"]
         fee_rules = result["fee_rules"]
+        # 画面の表示切り分け用
+        can_chat = can_access_event_chat(event_id)
     except pymysql.MySQLError as e:
         logger.exception('MySQLエラーが発生しました: %s', e)
         abort(500)
-    return render_template("event/event_detail.html", title="イベント詳細", event=event, owner=owner, fee_rules=fee_rules)
+    return render_template("event/event_detail.html", title="イベント詳細", event=event, owner=owner, fee_rules=fee_rules, can_chat=can_chat)
 
 
 # イベント作成画面表示
