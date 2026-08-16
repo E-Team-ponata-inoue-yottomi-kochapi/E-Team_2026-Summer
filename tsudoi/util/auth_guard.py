@@ -64,7 +64,8 @@ def host_required(func):
 def applicant_required(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
-        application = find_application_by_id(kwargs.get('application_id'))
+        application_id = kwargs.get('application_id') or kwargs.get('id')
+        application = find_application_by_id(application_id)
         verify_household_owner(application)
         return func(*args, **kwargs)
     return wrapper
