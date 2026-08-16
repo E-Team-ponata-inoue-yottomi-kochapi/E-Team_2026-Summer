@@ -1,4 +1,5 @@
 from models.user import User
+from models.household import create_household
 from werkzeug.security import generate_password_hash, check_password_hash
 import re
 
@@ -48,6 +49,7 @@ def signup(email, password, password_confirmation):
     # 全チェック通過したらパスワードのハッシュ化・ユーザー新規作成
     password_hash = generate_password_hash(password)
     user_id = User.create_user(email, password_hash)
+    create_household(user_id)
     return {"valid": True, "data": {"user_id": user_id}}
 
 def login(email, password):
