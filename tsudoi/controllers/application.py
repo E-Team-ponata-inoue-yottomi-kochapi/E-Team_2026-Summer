@@ -1,7 +1,7 @@
 from flask import Blueprint, session, request, render_template, redirect, url_for
 from flask import flash
 # auth_guard.py実装後に追加
-from util.auth_guard import login_required
+from util.auth_guard import login_required, host_required, applicant_required
 
 #必要なデータの呼び出し
 from models.household import get_household_by_user, get_family_members
@@ -14,8 +14,8 @@ application_bp = Blueprint("application", __name__, url_prefix="/apply")
 
 # 集計画面
 @application_bp.route("/events/<string:event_id>/applications", methods=["GET"])
-# auth_guard.py実装後に追加
 @login_required
+@host_required
 def summary_view(event_id):
     return render_template("event/summary.html", event_id = event_id)
     
@@ -63,6 +63,7 @@ def apply_create_process(event_id):
 #申し込み内容編集画面
 @application_bp.route('/applications/<int:id>/edit', methods=["GET"])
 @login_required
+@applicant_required
 def apply_edit_view(id):
     application = get_application(id)
     household = get_household_by_user(session['user_id'])
@@ -77,6 +78,7 @@ def apply_edit_view(id):
 #申し込み編集処理
 @application_bp.route('/applications/<int:id>/edit', methods=["POST"])
 @login_required
+@applicant_required
 def apply_edit_process(id):
     application = get_application(id)
     household = get_household_by_user(session['user_id'])
@@ -91,6 +93,7 @@ def apply_edit_process(id):
 #キャンセル処理→マイページに遷移
 @application_bp.route('/applications/<int:id>/cancel',methods=["POST"])
 @login_required
+@applicant_required
 def apply_cancel_process(id):
     cancel_application(id)
     flash("申し込みをキャンセルしました")
