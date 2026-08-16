@@ -43,6 +43,10 @@ def internal_server_error(error):
 def not_found_error(error):
     return render_template("error/404.html", title="404エラー"),404
 
+@app.errorhandler(403)
+def forbidden_error(error):
+    return render_template("error/403.html", title="403エラー"),403
+
 # このファイルが直接実行される時のみ「ファイルの中身」を実行する。
 # このファイルがインポートされたときは「ファイルの中身」は実行されない。
 # app.run　Flaskの開発用サーバーを起動
