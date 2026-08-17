@@ -32,19 +32,19 @@ def user_edit_view():
 
 # ユーザー編集処理
 @mypage_bp.route("/user", methods=["POST"])
-# auth_guard.py実装後に追加
-# @login_required
+@login_required
 def user_edit_process():
     errors =[]
 
-    # 第2段階ではテスト用ユーザーIDを固定
-    user_id = 3001
+    # セッションからログイン中のユーザーIDを取得
+    user_id = session.get("user_id")
 
     # フォームから入力値を取得
     email = request.form.get("email")
     password = request.form.get("password")
     
-    # TODO: 入力チェックは後続段階で実装
+    # TODO: 第5段階で入力チェックを実装
+    # TODO: 第5段階で、パスワードが空欄の場合は既存のパスワードを変更せずメールアドレスのみ更新する
     # 例：
     # if ユーザー名が空欄:
     # errors.append("エラー時遷移確認用のエラーです")
