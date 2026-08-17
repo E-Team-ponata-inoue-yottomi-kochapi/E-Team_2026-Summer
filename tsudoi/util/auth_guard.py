@@ -76,8 +76,12 @@ def chat_required(func):
     def wrapper(*args, **kwargs):
         event_id = kwargs.get('id') or kwargs.get('event_id')
         result = can_access_event_chat(event_id)
-        if result:
+        # 存在しないイベントの場合は404
+        if result is None:
+            abort(404)
+        elif result:
             return func(*args, **kwargs)
+        # 存在するイベントで権限がない場合は403
         else:
-            return abort(403)
+            abort(403)
     return wrapper
