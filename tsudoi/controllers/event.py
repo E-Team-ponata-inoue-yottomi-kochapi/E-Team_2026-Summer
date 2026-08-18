@@ -1,5 +1,5 @@
 from flask import Blueprint, session, render_template, redirect, url_for, request, abort
-from models.event import get_open_events, create_event
+from models.event import get_open_events, create_event, create_fee_rule
 from services.event import get_event_detail
 import pymysql
 from util.auth_guard import login_required
@@ -72,4 +72,22 @@ def create_process():
         # TODO：ステータスの定数化をする
         status='公開',
     )
+    tier_names=request.form.getlist('tier_name')
+    min_ages=request.form.getlist('min_age')
+    max_ages=request.form.getlist('max_age')
+    genders=request.form.getlist('gender')
+    fees=request.form.getlist('fee')
+
+    for tier_name, min_age, max_age, gender, fee in zip(tier_names, min_ages, max_ages, genders, fees):
+        if not tier_name:
+            continue
+        create_fee_rule(
+            event_id=event_id,
+            tier_name=tier_name,
+            min_age=min_age,
+            max_age=max_age,
+            gender=gender or None,
+            fee=fee,
+        )
+
     return redirect(url_for("event.detail_view", event_id=event_id))

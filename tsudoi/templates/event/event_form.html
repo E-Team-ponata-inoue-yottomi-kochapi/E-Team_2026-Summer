@@ -2,7 +2,8 @@
 
 {% block content %}
 
-<h2>イベント作成画面</h2>
+<h2>新しいイベントを作成します</h2>
+<p>基本情報</p>
 <hr>
 <br><br>
 
@@ -24,16 +25,19 @@
     <label>住所<br>
         <input type="text" name="address" required>
     </label><br>
-
+    <a href="">地図で見る</a><br>
     <label>定員<br>
         <input type="number" name="capacity" required>
     </label><br>
 
-    <label>申し込み締切<br>
+    <label>申込期限<br>
         <input type="datetime-local" name="deadline" required>
     </label><br>
-
-    <label>イベント説明<br>
+    <br>
+    <br>
+    <p>詳細情報</p>
+    <hr>
+    <label>イベントの説明<br>
         <textarea name="description" required></textarea>
     </label><br>
 
@@ -41,38 +45,105 @@
         <textarea name="items_to_bring" required></textarea>
     </label><br>
 
-    <label>当日スケジュール<br>
+    <label>当日のスケジュール<br>
         <textarea name="schedule" required></textarea>
     </label><br>
 
-    <label>開催条件<br>
-        <select name="hold_condition" required>
-            <option value="">選択してください</option>
-            <option value="雨天決行">雨天決行</option>
-            <option value="雨天中止">雨天中止</option>
-        </select>
-    </label><br>
+    <p>開催条件</p><br>
+    <label>
+    <input type="radio" name="hold_condition" value="雨天決行" required >
+    雨天決行
+    </label>
+    <br>
+    <label>
+    <input type="radio" name="hold_condition" value="雨天中止" required >
+    雨天中止
+    </label>
+    
+    <br>
 
-    <label>キャンセルポリシー<br>
-        <textarea name="cancellation_policy" required></textarea>
+    <label>中止時の対応・連絡方法<br>
+        <textarea name="cancellation_policy" placeholder="見本のテキストが入ります"></textarea>
     </label><br>
 
     <label>緊急連絡先<br>
         <input type="text" name="emergency_contact" required>
     </label><br>
 
-    <label>支払い方法<br>
-        <select name="payment_method" required>
-            <option value="">選択してください</option>
-            <option value="現地払い">現地払い</option>
-            <option value="事前払い">事前払い</option>
-        </select>
-    </label><br>
+   
 
     <label>支払い期限<br>
         <input type="date" name="payment_deadline">
     </label><br>
+    <hr>
+    <h3>料金設定</h3>
+    <p>（必要な分だけ入力、空欄は無視されます）</p>
 
+    <fieldset>
+        <legend>区分</legend>
+        <label>区分名
+            <input type="text" name="tier_name" placeholder="例：大人">
+        </label><br>
+
+        <label>最小年齢
+            <input type="number" name="min_age" placeholder="18">
+        </label>
+
+        <label>最大年齢
+            <input type="number" name="max_age" placeholder="120">
+        </label><br>
+
+        <label>性別
+            <select name="gender">
+                <option value="">指定なし</option>
+                <option value="男">男</option>
+                <option value="女">女</option>
+                <option value="その他">その他</option>
+            </select>
+        </label>
+        <br>
+        <label>金額（円）
+            <input type="number" name="fee" placeholder="1500">
+        </label>
+    </fieldset>
+    <fieldset>
+        <legend>区分</legend>
+        <label>区分名
+            <input type="text" name="tier_name" placeholder="例：子供">
+        </label><br>
+
+        <label>最小年齢
+            <input type="number" name="min_age" placeholder="6">
+        </label>
+
+        <label>最大年齢
+            <input type="number" name="max_age" placeholder="17">
+        </label><br>
+
+        <label>性別
+            <select name="gender">
+                <option value="">指定なし</option>
+                <option value="男">男</option>
+                <option value="女">女</option>
+                <option value="その他">その他</option>
+            </select>      
+        </label>
+        <br>
+        <label>金額（円）
+            <input type="number" name="fee" placeholder="500">
+        </label>
+    </fieldset>
+
+    <p>集金方法（現金のみ）</p><br>
+    <label>
+    <input type="radio" name="payment_method" value="現地払い" required >
+    現地払い
+    </label>
+    <br>
+    <label>
+    <input type="radio" name="payment_method" value="事前払い" required >
+    事前払い
+    </label>
     <br>
     <button type="submit">イベントを作成する</button>
 
@@ -84,6 +155,6 @@
 <!-- <a href="javascript:history.back()">← 戻る</a>}でも可　-->
 <br><hr><br>
 
-{# ログアウトは未実装 #}
+
 
 {% endblock %}

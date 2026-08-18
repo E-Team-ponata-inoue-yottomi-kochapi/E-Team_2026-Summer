@@ -35,6 +35,10 @@ def build_participants_preview(event_id, household_id, member_ids):
         age = calculate_age(member['birth_date'])
         fee_rule = find_fee_rule(fee_rules, age)
 
+        # 応急処置
+        if fee_rule is None:
+            continue
+
         participants.append({
             'member_id': member['id'],
             'member_name_snapshot': member['name'],
