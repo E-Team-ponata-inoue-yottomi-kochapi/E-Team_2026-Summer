@@ -69,7 +69,7 @@ def create_process():
         emergency_contact=request.form.get('emergency_contact'),
         payment_method=request.form.get('payment_method'),
         payment_deadline=request.form.get('payment_deadline') or None,
-        # ステータスの定数化をする
+        # TODO：ステータスの定数化をする
         status='公開',
     )
     return redirect(url_for("event.detail_view", event_id=event_id))
