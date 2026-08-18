@@ -7,6 +7,27 @@
 <a href="{{ url_for('mypage.mypage_view')}}">← マイページに戻る</a>
 
 <h2 class="page-title">家族一覧</h2>
+{# 本人未登録時にフォームを表示 #}
+{% if not has_self %}
+<div class="self-registration">
+  <h2>本人アカウントの登録</h2>
+  <form action="{{ url_for('household.member_create_process') }}" method="POST">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <input type="hidden" name="relation" value="本人">
+    <input type="text" name="name" placeholder="お名前">
+    <input type="date" name="birth_date" required>
+    <input type="email" name="email" value="{{ user_email }}">
+    <select name="gender">
+      <option value="">性別を選択</option>
+      <option value="男">男</option>
+      <option value="女">女</option>
+      <option value="その他">その他</option>
+    </select>
+    <button type="submit">登録する</button>
+  </form>
+</div>
+
+{% else %}
 {# 追加フォーム #}
 <h2>追加する</h2>
 <form action="{{ url_for('household.member_create_process')}}" method="POST">
@@ -59,4 +80,5 @@
   </li>
   {% endfor %}
 </ul>
+{% endif %}
 {% endblock %}
