@@ -1,8 +1,8 @@
 from flask import Blueprint, session, render_template, redirect, url_for, request, abort
-from models.event import get_open_events, create_event, create_fee_rule
+from models.event import get_open_events, create_event, create_fee_rule, update_event, delete_fee_rules_by_event
 from services.event import get_event_detail
 import pymysql
-from util.auth_guard import login_required
+from util.auth_guard import login_required, host_required
 import logging
 from services.message import can_access_event_chat
 
@@ -46,7 +46,7 @@ def detail_view(event_id):
 @login_required
 def new_view():
  
-    return render_template("event/event_form.html")
+    return render_template("event/event_form.html", event=None, fee_rules=None)
 
 
 # イベント作成処理
@@ -90,4 +90,58 @@ def create_process():
             fee=fee,
         )
 
+    return redirect(url_for("event.detail_view", event_id=event_id))
+
+# イベント編集画面表示
+@event_bp.route("/<string:event_id>/edit", methods=["GET"])
+@login_required
+@host_required
+def event_edit_view(event_id):
+    result = get_event_detail(event_id)
+    if result is None:
+        abort(404)
+    return render_template("event/event_form.html", event=result["event"],fee_rules=result["fee_rules"])
+
+# イベント編集処理
+@event_bp.route("/<string:event_id>/edit", methods=["POST"])
+@login_required
+@host_required
+def event_edit_process(event_id):
+    update_event(
+        event_id=event_id,
+        title=request.form.get('title'),
+        start_at=request.form.get('start_at'),
+        place=request.form.get('place'),
+        address=request.form.get('address'),
+        capacity=request.form.get('capacity') or None,
+        deadline=request.form.get('deadline') or None,
+        description=request.form.get('description'),
+        items_to_bring=request.form.get('items_to_bring'),
+        schedule=request.form.get('schedule'),
+        hold_condition=request.form.get('hold_condition'),
+        cancellation_policy=request.form.get('cancellation_policy'),
+        emergency_contact=request.form.get('emergency_contact'),
+        payment_method=request.form.get('payment_method'),
+        payment_deadline=request.form.get('payment_deadline') or None,
+    )
+
+    delete_fee_rules_by_event(event_id)
+
+    tier_names = request.form.getlist('tier_name')
+    min_ages = request.form.getlist('min_age')
+    max_ages = request.form.getlist('max_age')
+    genders = request.form.getlist('gender')
+    fees = request.form.getlist('fee')
+
+    for tier_name, min_age, max_age, gender, fee in zip(tier_names, min_ages, max_ages, genders, fees):
+        if not tier_name:
+            continue
+        create_fee_rule(
+            event_id=event_id,
+            tier_name=tier_name,
+            min_age=min_age,
+            max_age=max_age,
+            gender=gender or None,
+            fee=fee,
+        )
     return redirect(url_for("event.detail_view", event_id=event_id))
