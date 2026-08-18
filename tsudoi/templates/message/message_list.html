@@ -28,11 +28,20 @@
     <p>まだ投稿されたメッセージはありません</p>
 </div>
 {% endif %}
+{% if error_msgs %}
+<div>
+    <ul>
+        {% for error_msg in error_msgs%}
+        <li>{{ error_msg }}</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endif %}
 <div>
     <!-- CSSで画面下に固定予定 -->
     <form method="POST" action="{{ url_for('message.create_process', event_id=event_id)}}">
         <input type="hidden" name="csrf_token" value="{{ csrf_token()}}">
-        <input type="text" id="message" name="body" placeholder="メッセージを入力...">
+        <input type="text" id="message" name="body" placeholder="メッセージを入力..." value="{{ body }}">
         <button type="submit">投稿</button>
     </form>
 </div>

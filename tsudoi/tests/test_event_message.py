@@ -21,6 +21,8 @@ from app import app
 class TestMessageModel(unittest.TestCase):
     # 各テストメソッドの実行後に呼ばれ、テストで登録したデータを削除する
     def tearDown(self):
+        if self.event_message_id is None:
+            return
         conn = get_connection()
         try:
             with conn.cursor() as cursor:
@@ -58,6 +60,7 @@ class TestMessageModel(unittest.TestCase):
 class TestMessageControllerAuthenticated(unittest.TestCase):
     # 各テストメソッドの実行前に呼ばる
     def setUp(self):
+        self.title                     = "TestMessageControllerAuthenticated"
         # テストのため無効化
         app.config['WTF_CSRF_ENABLED'] = False
         self.app                       = app.test_client()
@@ -99,7 +102,7 @@ class TestMessageControllerAuthenticated(unittest.TestCase):
 
         # 正常に処理
         self.assertEqual(200, response.status_code)
-        print("TestMessageControllerAuthenticated\ntest_messages_view_as_authenticated_user")
+        print(f"{self.title}\ntest_messages_view_as_authenticated_user")
         print("３rd-１．ログイン済ユーザー：画面表示テスト")
         print(f"ステータスコード：{response.status_code}\n")
 
@@ -126,7 +129,7 @@ class TestMessageControllerAuthenticated(unittest.TestCase):
         result = get_open_event_messages(self.event_id)
         self.event_message_id = result[-1]["id"]
         self.assertEqual(self.body, result[-1]["body"])
-        print("TestMessageControllerAuthenticated\ntest_create_process_as_authenticated_user")
+        print(f"{self.title}\ntest_create_process_as_authenticated_user")
         print("３rd-２．ログイン済ユーザー：投稿テスト")
         print(f"ステータスコード：{response.status_code}")
         print(f"登録後：{ result[-1] }")
@@ -141,7 +144,7 @@ class TestMessageControllerAuthenticated(unittest.TestCase):
         # ログイン画面へ遷移
         self.assertEqual(302, response.status_code)
         self.assertIn("login", response.location)
-        print("TestMessageControllerAuthenticated\ntest_messages_view_as_unauthenticated_user")
+        print(f"{self.title}\ntest_messages_view_as_unauthenticated_user")
         print("３rd-３．未ログインユーザー：画面表示テスト")
         print(f"ステータスコード：{response.status_code}\n")
 
@@ -158,7 +161,7 @@ class TestMessageControllerAuthenticated(unittest.TestCase):
         # ログイン画面へ遷移
         self.assertEqual(302, response.status_code)
         self.assertIn("login", response.location)
-        print("TestMessageControllerAuthenticated\ntest_create_process_as_unauthenticated_user")
+        print(f"{self.title}\ntest_create_process_as_unauthenticated_user")
         print("３rd-４．未ログインユーザー：投稿テスト")
         print(f"ステータスコード：{response.status_code}\n")
 
@@ -166,10 +169,10 @@ class TestMessageControllerAuthenticated(unittest.TestCase):
 class TestMessageAuthorization(unittest.TestCase):
     # 各テストメソッドの実行前に呼ばる
     def setUp(self):
+        self.title                     = "TestMessageAuthorization"
         # テストのため無効化
         app.config['WTF_CSRF_ENABLED'] = False
         self.app                       = app.test_client()
-        self.event_message_id          = None
         # イベント主催者＆イベント参加未申込
         # 第４段階ではController経由で認可チェックを行うため、
         # ログイン済みでも、このイベントには参加申込していないため、閲覧・投稿ともに権限エラー（403）になるユーザー
@@ -191,7 +194,7 @@ class TestMessageAuthorization(unittest.TestCase):
 
         # 権限エラー
         self.assertEqual(403, response.status_code)
-        print("TestMessageAuthorization\ntest_messages_view_as_unauthorized_user")
+        print(f"{self.title}\ntest_messages_view_as_unauthorized_user")
         print("４th-１．ログイン済＆イベント未申込ユーザー：画面表示テスト")
         print(f"ステータスコード：{response.status_code}\n")
 
@@ -212,9 +215,134 @@ class TestMessageAuthorization(unittest.TestCase):
 
         # 権限エラー
         self.assertEqual(403, response.status_code)
-        print("TestMessageAuthorization\ntest_create_process_as_unauthorized_user")
+        print(f"{self.title}\ntest_create_process_as_unauthorized_user")
         print("４th-２．ログイン済＆イベント未申込ユーザー：投稿テスト")
         print(f"ステータスコード：{response.status_code}\n")
+
+# 第５段階：検証用
+class TestMessageAbnormalCase(unittest.TestCase):
+    # 各テストメソッドの実行前に呼ばる
+    def setUp(self):
+        self.title                     = "TestMessageAbnormalCase"
+        # テストのため無効化
+        app.config['WTF_CSRF_ENABLED'] = False
+        self.app                       = app.test_client()
+        self.user_id                   = 3001
+        self.existent_event_id         = "b8e4d521-9f6a-4c37-a812-5d7e3f9b2c64"
+        self.body                      = None
+        messages = get_open_event_messages(self.existent_event_id)
+        self.bef_msgs_count = len(messages)
+        self.nonexistent_event_id      = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+
+    # ５th-１：未入力テスト
+    def test_create_process_as_empty_body(self):
+        self.error_msg = "メッセージを入力してください".encode('utf-8')
+
+        # ログイン処理
+        with self.app.session_transaction() as session:
+            session["user_id"] = self.user_id
+        self.assertEqual(self.user_id, session["user_id"])
+
+        # HTTPリクエスト
+        response = self.app.post(f"/events/{self.existent_event_id}/messages/",
+                                data={"body": self.body},
+                                follow_redirects=False,
+                                )
+
+        messages = get_open_event_messages(self.existent_event_id)
+        self.aft_msgs_count = len(messages)
+
+        # 未入力時は画面再表示
+        self.assertEqual(200, response.status_code)
+        self.assertIn(self.error_msg, response.data)
+        # DB増減チェック
+        self.assertEqual(self.bef_msgs_count, self.aft_msgs_count)
+
+        print(f"{self.title}\ntest_create_process_as_empty_body")
+        print("５th-１：未入力テスト")
+        print(f"ステータスコード：{response.status_code}")
+        print(f"POST前のDB数：{self.bef_msgs_count}件")
+        print(f"POST後のDB数：{self.aft_msgs_count}件\n")
+
+    # ５th-２：文字数制限テスト
+    def test_create_process_as_too_long_body(self):
+        self.body = "あ" * 301
+        self.error_msg = "300文字以内で入力してください".encode('utf-8')
+
+        # ログイン処理
+        with self.app.session_transaction() as session:
+            session["user_id"] = self.user_id
+        self.assertEqual(self.user_id, session["user_id"])
+
+        # HTTPリクエスト
+        response = self.app.post(f"/events/{self.existent_event_id}/messages/",
+                                data={"body": self.body},
+                                follow_redirects=False,
+                                )
+
+        messages = get_open_event_messages(self.existent_event_id)
+        self.aft_msgs_count = len(messages)
+
+        # 入力文字オーバー時は画面再表示
+        self.assertEqual(200, response.status_code)
+        self.assertIn(self.error_msg, response.data)
+        # DB増減チェック
+        self.assertEqual(self.bef_msgs_count, self.aft_msgs_count)
+
+        print(f"{self.title}\ntest_create_process_as_too_long_body")
+        print("５th-２：文字数制限テスト")
+        print(f"ステータスコード：{response.status_code}")
+        print(f"POST前のDB数：{self.bef_msgs_count}件")
+        print(f"POST後のDB数：{self.aft_msgs_count}件\n")
+
+    # ５th-３：存在しないイベントIDのチャット画面表示テスト
+    def test_messages_view_as_nonexistent_event(self):
+        # ログイン処理
+        with self.app.session_transaction() as session:
+            session["user_id"] = self.user_id
+        self.assertEqual(self.user_id, session["user_id"])
+
+        # HTTPリクエスト
+        response = self.app.get(f"/events/{self.nonexistent_event_id}/messages/",
+                                follow_redirects=False,
+                                )
+
+        # チャット対象のイベントが存在しない場合は404
+        self.assertEqual(404, response.status_code)
+
+        print(f"{self.title}\ntest_messages_view_as_nonexistent_event")
+        print("５th-３：存在しないイベントIDの画面表示テスト")
+        print(f"ステータスコード：{response.status_code}")
+
+    # ５th-４：存在しないイベントIDへの投稿テスト
+    def test_create_process_as_nonexistent_event(self):
+        self.body = "これは第５段階テスト用です"
+    
+        # ログイン処理
+        with self.app.session_transaction() as session:
+            session["user_id"] = self.user_id
+        self.assertEqual(self.user_id, session["user_id"])
+
+        # HTTPリクエスト
+        response = self.app.post(f"/events/{self.nonexistent_event_id}/messages/",
+                                data={"body": self.body},
+                                follow_redirects=False,
+                                )
+
+        messages = get_open_event_messages(self.existent_event_id)
+        self.aft_msgs_count = len(messages)
+
+        # チャット対象のイベントが存在しない場合は404
+        self.assertEqual(404, response.status_code)
+
+        # DB増減チェック
+        self.assertEqual(self.bef_msgs_count, self.aft_msgs_count)
+
+        print(f"{self.title}\ntest_create_process_as_nonexistent_event")
+        print("５th-４：存在しないイベントIDへの投稿テスト")
+        print(f"ステータスコード：{response.status_code}")
+        print(f"POST前のDB数：{self.bef_msgs_count}件")
+        print(f"POST後のDB数：{self.aft_msgs_count}件\n")
 
 if __name__ == '__main__':
     unittest.main()
