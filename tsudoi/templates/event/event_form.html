@@ -2,7 +2,8 @@
 
 {% block content %}
 
-<h2>イベント作成画面</h2>
+<h2>新しいイベントを作成します</h2>
+<p>基本情報</p>
 <hr>
 <br><br>
 
@@ -24,16 +25,19 @@
     <label>住所<br>
         <input type="text" name="address" required>
     </label><br>
-
+    <a href="">地図で見る</a><br>
     <label>定員<br>
         <input type="number" name="capacity" required>
     </label><br>
 
-    <label>申し込み締切<br>
+    <label>申込期限<br>
         <input type="datetime-local" name="deadline" required>
     </label><br>
-
-    <label>イベント説明<br>
+    <br>
+    <br>
+    <p>詳細情報</p>
+    <hr>
+    <label>イベントの説明<br>
         <textarea name="description" required></textarea>
     </label><br>
 
@@ -41,38 +45,114 @@
         <textarea name="items_to_bring" required></textarea>
     </label><br>
 
-    <label>当日スケジュール<br>
+    <label>当日のスケジュール<br>
         <textarea name="schedule" required></textarea>
     </label><br>
 
-    <label>開催条件<br>
-        <select name="hold_condition" required>
-            <option value="">選択してください</option>
-            <option value="雨天決行">雨天決行</option>
-            <option value="雨天中止">雨天中止</option>
-        </select>
-    </label><br>
+    <p>開催条件</p><br>
+    <label>
+    <input type="radio" name="hold_condition" value="雨天決行" required >
+    雨天決行
+    </label>
+    <br>
+    <label>
+    <input type="radio" name="hold_condition" value="雨天中止" required >
+    雨天中止
+    </label>
+    
+    <br>
 
-    <label>キャンセルポリシー<br>
-        <textarea name="cancellation_policy" required></textarea>
+    <label>中止時の対応・連絡方法<br>
+        <textarea name="cancellation_policy" placeholder="見本のテキストが入ります"></textarea>
     </label><br>
 
     <label>緊急連絡先<br>
         <input type="text" name="emergency_contact" required>
     </label><br>
 
-    <label>支払い方法<br>
-        <select name="payment_method" required>
-            <option value="">選択してください</option>
-            <option value="現地払い">現地払い</option>
-            <option value="事前払い">事前払い</option>
-        </select>
-    </label><br>
+   
 
     <label>支払い期限<br>
         <input type="date" name="payment_deadline">
     </label><br>
+    <hr>
+    <h3>料金設定</h3>
+    <button type="button" id="add-fee-rule">＋ 区分を追加</button>
+    <p>（必要な分だけ入力、空欄は無視されます）</p>
+    <div id="fee-rules-container">
+    {% set default_hints =[
+        {'tier_name': '大人', 'min_age':18, 'max_age':120, 'fee':1500},
+        {'tier_name': '子供', 'min_age':6, 'max_age':17, 'fee':500}
+    ] %}
+    {% for i in range(fee_rules|length if fee_rules else default_hints|length) %}
+        {% set fee_rule = fee_rules[i] if fee_rules else None %}
+        {% set hint = default_hints[i] if not fee_rules and i < default_hints|length else None %}
+    <fieldset>
+        <legend>区分</legend>
+        <label>区分名
+            <input type="text" name="tier_name" value="{{ fee_rule.tier_name if fee_rule else '' }}" placeholder="{{'例：'~hint.tier_name if hint else ''}}">
+        </label><br>
 
+        <label>最小年齢
+            <input type="number" name="min_age" value="{{ fee_rule.min_age if fee_rule else '' }}" placeholder="{{'例：'~hint.min_age if hint else ''}}">
+        </label>
+
+        <label>最大年齢
+            <input type="number" name="max_age" value="{{ fee_rule.max_age if fee_rule else '' }}" placeholder="{{'例：'~hint.max_age if hint else ''}}">
+        </label><br>
+
+        <label>性別
+            <select name="gender">
+                <option value="">指定なし</option>
+                <option value="男">男</option>
+                <option value="女">女</option>
+                <option value="その他">その他</option>
+            </select>
+        </label>
+        <br>
+        <label>金額（円）
+            <input type="number" name="fee" value="{{ fee_rule.fee if fee_rule else '' }}" placeholder="{{'例：'~hint.fee if hint else ''}}">
+        </label>
+    </fieldset>
+    {% endfor %}
+    </div>
+<template id="fee-rule-template">
+    <fieldset class="fee-rule-row">
+        <legend>区分</legend>
+        <label>区分名
+            <input type="text" name="tier_name" placeholder="区分名を入力">
+        </label><br>
+        <label>最小年齢
+            <input type="number" name="min_age" placeholder="最小年齢">
+        </label>
+        <label>最大年齢
+            <input type="number" name="max_age" placeholder="最大年齢">
+        </label><br>
+        <label>性別
+            <select name="gender">
+                <option value="">指定なし</option>
+                <option value="男">男</option>
+                <option value="女">女</option>
+                <option value="その他">その他</option>
+            </select>      
+        </label>
+        <br>
+        <label>金額（円）
+            <input type="number" name="fee" placeholder="金額">
+        </label>
+    </fieldset>
+</template>
+
+    <p>集金方法（現金のみ）</p><br>
+    <label>
+    <input type="radio" name="payment_method" value="現地払い" required >
+    現地払い
+    </label>
+    <br>
+    <label>
+    <input type="radio" name="payment_method" value="事前払い" required >
+    事前払い
+    </label>
     <br>
     <button type="submit">イベントを作成する</button>
 
@@ -84,6 +164,9 @@
 <!-- <a href="javascript:history.back()">← 戻る</a>}でも可　-->
 <br><hr><br>
 
-{# ログアウトは未実装 #}
 
+
+{% endblock %}
+{% block js %}
+<script src="{{ url_for('static', filename='js/pages/event.js')}}"></script>
 {% endblock %}
