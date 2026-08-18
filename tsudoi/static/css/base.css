@@ -1,9 +1,11 @@
+/* 初期化 */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
+/* 共通設定 */
 li {
   list-style: none;
 }
@@ -12,8 +14,19 @@ a {
   text-decoration: none;
 }
 
+/* 全体 */
 /*　画面幅を375ｐｘ　中央に固定　*/
 body {
   max-width: 375px;
   margin: 0 auto;
+}
+
+.site-wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.site-wrapper main {
+  flex: 1;
 }

@@ -13,12 +13,15 @@
     {% block css %}{% endblock %}
 </head>
 <body>
-    <hr>
+    <div class="site-wrapper">
     <!-- 共通部品を埋め込む -->
     {% include 'common/header.html' %}
-    <!-- ページごとに内容が変わる部分 -->
-    {% block content %}{% endblock %}
+        <main>
+            <!-- ページごとに内容が変わる部分 -->
+            {% block content %}{% endblock %}
+        </main>
     <!-- 共通部品を埋め込む -->
     {# {% include 'common/footer.html' %} #}
+    </div>
 </body>
 </html>
