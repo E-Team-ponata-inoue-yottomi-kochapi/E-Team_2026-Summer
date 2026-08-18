@@ -2,78 +2,79 @@
 
 {% block content %}
 
-<h2>新しいイベントを作成します</h2>
+<h2>{{'イベントを編集します' if event else '新しいイベントを作成します'}}</h2>
 <p>基本情報</p>
 <hr>
 <br><br>
 
-<form action="{{url_for('event.create_process')}}" method="POST">
+<form action="{{
+    url_for('event.event_edit_process', event_id=event.id) if event else url_for('event.create_process')}}" method="POST">
     <input type="hidden" name="csrf_token" value="{{csrf_token()}}">
 
     <label>イベント名<br>
-        <input type="text" name="title" required>
+        <input type="text" name="title" value="{{ event.title if event else ''}}" required >    
     </label><br>
 
     <label>開催日時<br>
-        <input type="datetime-local" name="start_at" required>
+        <input type="datetime-local" name="start_at" value="{{ event.start_at if event else ''}}" required >
     </label><br>
 
     <label>開催場所<br>
-        <input type="text" name="place" required>
+        <input type="text" name="place" value="{{ event.place if event else ''}}" required >
     </label><br>
 
     <label>住所<br>
-        <input type="text" name="address" required>
+        <input type="text" name="address" value="{{ event.address if event else ''}}" required >
     </label><br>
     <a href="">地図で見る</a><br>
     <label>定員<br>
-        <input type="number" name="capacity" required>
+        <input type="number" name="capacity" value="{{ event.capacity if event else ''}}" required >
     </label><br>
 
     <label>申込期限<br>
-        <input type="datetime-local" name="deadline" required>
+        <input type="datetime-local" name="deadline" value="{{ event.deadline if event else ''}}" required >
     </label><br>
     <br>
     <br>
     <p>詳細情報</p>
     <hr>
     <label>イベントの説明<br>
-        <textarea name="description" required></textarea>
+        <textarea name="description" required>{{ event.description if event else'' }}</textarea>
     </label><br>
 
     <label>持ち物<br>
-        <textarea name="items_to_bring" required></textarea>
+        <textarea name="items_to_bring" required>{{ event.items_to_bring if event else'' }}</textarea>
     </label><br>
 
     <label>当日のスケジュール<br>
-        <textarea name="schedule" required></textarea>
+        <textarea name="schedule" required>{{ event.schedule if event else'' }}</textarea>
     </label><br>
 
     <p>開催条件</p><br>
     <label>
-    <input type="radio" name="hold_condition" value="雨天決行" required >
+    <input type="radio" name="hold_condition" value="雨天決行" {% if event and event.hold_condition == '雨天決行' %}checked{% endif %} required >
     雨天決行
     </label>
     <br>
     <label>
-    <input type="radio" name="hold_condition" value="雨天中止" required >
+    <input type="radio" name="hold_condition" value="雨天中止" {% if event and event.hold_condition == '雨天中止' %}checked{% endif %} required >
     雨天中止
     </label>
     
     <br>
 
     <label>中止時の対応・連絡方法<br>
-        <textarea name="cancellation_policy" placeholder="見本のテキストが入ります"></textarea>
+        <textarea name="cancellation_policy" placeholder="見本のテキストが入ります">{{ event.cancellation_policy if event else'' }}</textarea>
     </label><br>
 
     <label>緊急連絡先<br>
-        <input type="text" name="emergency_contact" required>
+        <input type="text" name="emergency_contact" value="{{ event.emergency_contact if event else'' }}" required>
     </label><br>
 
    
 
     <label>支払い期限<br>
-        <input type="date" name="payment_deadline">
+        <input type="date" name="payment_deadline" value="{{ event.payment_deadline if event else'' }}" >
     </label><br>
     <hr>
     <h3>料金設定</h3>
@@ -103,10 +104,10 @@
 
         <label>性別
             <select name="gender">
-                <option value="">指定なし</option>
-                <option value="男">男</option>
-                <option value="女">女</option>
-                <option value="その他">その他</option>
+                <option value="" {% if not fee_rule or not fee_rule.gender %}selected{% endif %}>指定なし</option>
+                <option value="男" {% if fee_rule and fee_rule.gender == '男' %}selected{% endif %}>男</option>
+                <option value="女" {% if fee_rule and fee_rule.gender == '女' %}selected{% endif %}>女</option>
+                <option value="その他"　{% if fee_rule and fee_rule.gender == 'その他' %}selected{% endif %}>その他</option>
             </select>
         </label>
         <br>
@@ -145,16 +146,16 @@
 
     <p>集金方法（現金のみ）</p><br>
     <label>
-    <input type="radio" name="payment_method" value="現地払い" required >
+    <input type="radio" name="payment_method" value="現地払い" {% if event and event.payment_method == '現地払い' %}checked{% endif %} required >
     現地払い
     </label>
     <br>
     <label>
-    <input type="radio" name="payment_method" value="事前払い" required >
+    <input type="radio" name="payment_method" value="事前払い" {% if event and event.payment_method == '事前払い' %}checked{% endif %} required >
     事前払い
     </label>
     <br>
-    <button type="submit">イベントを作成する</button>
+    <button type="submit">{{ '更新する' if event else 'イベントを作成する' }}</button>
 
 </form>
 
