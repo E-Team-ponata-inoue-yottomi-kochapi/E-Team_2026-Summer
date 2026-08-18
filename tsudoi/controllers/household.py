@@ -1,5 +1,6 @@
 from flask import Blueprint, session, render_template, redirect, url_for, request
 from util.auth_guard import login_required
+from models.user import User
 
 from models.household import (
     get_household_by_user,
@@ -17,7 +18,14 @@ household_bp = Blueprint("household", __name__, url_prefix="/household")
 def household_list_view():
     household = get_household_by_user(session['user_id'])
     members = get_family_members(household['id'])
-    return render_template('household/household_list.html', members=members)
+    has_self = any(m['relation'] == '本人' for m in members)
+
+    user_email = None
+    if not has_self:
+        user = User.find_user_by_id(session['user_id'])
+        user_email = user['email']
+
+    return render_template('household/household_list.html', members=members,has_self=has_self,user_email=user_email)
 
 #家族追加処理→家族一覧表示
 @household_bp.route('/member/create', methods=["POST"])
