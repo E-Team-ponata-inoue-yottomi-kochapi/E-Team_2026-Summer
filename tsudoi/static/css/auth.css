@@ -1,0 +1,55 @@
+/* ==========================================================
+   ログインページ
+   ========================================================== */
+/* 全体を中央揃え・上寄せ */
+.login-page {
+  padding-top: 48px;
+  text-align: center;
+}
+
+/* タイトルとキャッチコピーの感覚 */
+.login-title h1 {
+  margin-bottom: 8px;
+}
+
+/* キャッチコピーの文字の装飾 */
+.login-title p {
+  color: var(--muted-foreground);
+  margin-bottom: 32px;
+}
+
+/*　　カードの文字を左寄せ */
+.login-card {
+  text-align: left;
+}
+
+/* form-groupの間隔 */
+.form-group {
+  margin-bottom: 16px;
+}
+
+/* エラーメッセージの装飾 */
+.form-errors {
+  color: var(--flow-danger);
+  font-size: 14px;
+}
+
+/* li */
+.form-errors li {
+  margin-bottom: 4px;
+}
+
+/* ログインボタンを横いっぱいに広げる */
+.btn-block {
+  width: 100%;
+  margin-top: 24px;
+}
+/* 新規登録はこちらの装飾 */
+.login-footer {
+  margin-top: 24px;
+}
+
+.login-footer a {
+  color: var(--primary);
+  font-weight: 500;
+}
