@@ -1,32 +1,222 @@
-/* 初期化 */
+/* ==========================================================
+   ① リセット
+   ========================================================== */
+/* 余白のリセット */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-/* 共通設定 */
+/* リスト装飾のリセット */
 li {
   list-style: none;
 }
 
+/* リンク装飾のリセット */
 a {
   text-decoration: none;
 }
 
-/* 全体 */
+/* フィールドセット装飾のリセット */
+fieldset {
+  border: none;
+  padding: 0;
+}
+
+/* フォーム要素のリセット */
+button,
+input,
+select,
+textarea {
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+}
+
+/* 画像のはみ出し防止（念の為） */
+img {
+  max-width: 100%;
+  display: block;
+}
+
+/* ==========================================================
+   ② カラー（デザイン）トークン：定義
+   ========================================================== */
+:root {
+  /* ブランドカラー（パステル） */
+  --brand-link: #4a3a5a; /* リンク文字色 */
+  --brand-cream: #fdf7ee; /* 画面全体のメイン背景色 */
+  --brand-mint: #9fe0c8; /* デザインミント */
+  --brand-peach: #fbbfa0; /* デザインピーチ */
+  --brand-lavender: #c9b8e8; /* デザインラベンダー */
+
+  /* 共通部品別の配色 */
+  --background: #fdf9f3; /* 画面全体のサブ背景色 */
+  --foreground: #3d3730; /* 見出し・本文の文字色 */
+  --primary: #6b5b4a; /* メインボタンなどの基本色 */
+  --secondary: #fdeee1; /* 補助的な背景色 */
+  --muted: #f6efe5; /* 控えめな背景色 */
+  --muted-foreground: #8a7f72; /* 控えめな文字色 */
+  --accent: #fce9d6; /* 背景用のアクセント色 */
+  --border: rgba(120, 90, 60, 0.15); /* カード・フォームなどの枠線色 */
+  --input-background: #fbf5ec; /* 入力欄の背景色 */
+  --radius: 1.1rem; /* カードなどの角丸量 */
+
+  /* フロー別の識別配色 */
+  --flow-apply: #0ea5e9; /* 参加フロー */
+  --flow-create: #fb923c; /* 作成フロー */
+  --flow-danger: #e07a7a; /* 警告・エラー */
+  --flow-admin: #7c3aed; /* 管理者フロー */
+}
+
+/* ==========================================================
+  ③ タイポグラフィ
+   ========================================================== */
+/* フォント */
+body {
+  font-family:
+    "M PLUS Rounded 1c", "Hiragino Maru Gothic ProN", "Hiragino Sans",
+    "Yu Gothic UI", "Meiryo", system-ui, sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--foreground);
+  background: var(--background);
+}
+
+/* 見出し */
+h1 {
+  font-size: 24px;
+  font-weight: 500;
+}
+h2 {
+  font-size: 20px;
+  font-weight: 500;
+}
+h3 {
+  font-size: 18px;
+  font-weight: 500;
+}
+
+/* 補足テキスト */
+small {
+  font-size: 14px;
+}
+.text-xs {
+  font-size: 12px;
+}
+
+/* ==========================================================
+   ④ レイアウト
+   ========================================================== */
 /*　画面幅を375ｐｘ　中央に固定　*/
 body {
   max-width: 375px;
   margin: 0 auto;
 }
 
+/* フッター */
 .site-wrapper {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
 }
 
+/* 画面幅からコンテンツまでの余白 */
 .site-wrapper main {
   flex: 1;
+  padding: 0 16px;
+}
+
+/* ==========================================================
+   ⑤ 共通コンポーネント
+   ========================================================== */
+/* ボタン（共通） */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 36px;
+  padding: 0 16px;
+  border: none;
+  border-radius: 9999px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+/* 標準ボタン */
+.btn-primary {
+  background: var(--primary);
+  color: #fff;
+}
+
+/* 参加フロー内ボタン */
+.btn-apply {
+  background: var(--flow-apply);
+  color: #fff;
+}
+
+/* 作成フロー内ボタン */
+.btn-create {
+  background: var(--flow-create);
+  color: #fff;
+}
+
+/*　ボタンアウトライン */
+.btn-outline {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--foreground);
+}
+
+/* セカンダリボタン */
+.btn-secondary {
+  background: var(--secondary);
+  color: var(--foreground);
+}
+
+/* 削除・警告ボタン */
+.btn-danger {
+  background: var(--flow-danger);
+  color: #fff;
+}
+
+/* カード（標準） */
+.card {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+}
+
+/* 入力欄 */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="date"],
+input[type="datetime-local"],
+select,
+textarea {
+  width: 100%;
+  height: 36px;
+  padding: 0 12px;
+  background: var(--input-background);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+/* textareaの高さをレスポンシブにする */
+textarea {
+  height: auto;
+  padding: 8px 12px;
+  min-height: 80px;
+}
+
+/* ラベルと入力欄の感覚 */
+label {
+  display: block;
+  margin-bottom: 8px;
 }
