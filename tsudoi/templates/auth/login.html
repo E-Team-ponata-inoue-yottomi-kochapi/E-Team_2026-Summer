@@ -37,10 +37,10 @@
             
             <button class="btn btn-primary btn-block" type="submit">ログイン</button>
         </form>
-    </div>
-    <div class="login-footer">
-        <!-- <a href="#">パスワードをお忘れですか？</a> -->
-        <a href="{{ url_for('auth.signup_view')}}">新規登録はこちら</a>
+        <div class="login-footer btn btn-outline btn-block">
+            <!-- <a href="#">パスワードをお忘れですか？</a> -->
+            <a href="{{ url_for('auth.signup_view')}}">新規登録はこちら</a>
+        </div>
     </div>
 </div>
 {% endblock %}
