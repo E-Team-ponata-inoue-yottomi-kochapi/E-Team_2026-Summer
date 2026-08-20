@@ -2,6 +2,7 @@ from flask import Blueprint, session, render_template, redirect, url_for, reques
 import pymysql
 from util.auth_guard import login_required
 from services.auth import signup, login
+from models.household import get_household_by_user, get_family_members
 import logging
 
 auth_bp = Blueprint("auth", __name__)

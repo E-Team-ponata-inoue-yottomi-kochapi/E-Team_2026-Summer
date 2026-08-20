@@ -235,6 +235,12 @@ textarea {
   border-radius: 8px;
 }
 
+/* プレースホルダーの文字の色 */
+input::placeholder,
+textarea::placeholder {
+  color: #b0b0b0;
+}
+
 /* textareaの高さをレスポンシブにする */
 textarea {
   height: auto;
@@ -341,6 +347,9 @@ textarea:focus {
 
 /* ログイン後の共通のヘッダー */
 .app-header {
+  /* position: sticky;
+  top: 0;
+  z-index: 10; */
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -367,6 +376,7 @@ textarea:focus {
   background: none;
   border: none;
   color: var(--muted-foreground);
+  margin-left: auto; /* マイページへの戻るボタンが消えた時用 */
 }
 
 .app-header__logout i {
