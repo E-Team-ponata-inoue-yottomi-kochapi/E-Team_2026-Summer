@@ -34,15 +34,17 @@
                 <p class="field-hint">アカウント登録後は、<br>家族情報の登録へ進みます</p>
             </div>
             <!-- 入力チェックでエラーの場合、ここにメッセージを表示 -->
-            <div>
+            
                 {% if messages %}
-                <ul>
-                    {% for message in messages %}
-                    <li>{{ message }}</li>
-                    {% endfor %}
-                </ul>
+                <div class="form-errors">
+                    <ul>
+                        {% for message in messages %}
+                        <li>{{ message }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
                 {% endif %}
-            </div>
+            
             <button class="btn btn-peach btn-block" type="submit">アカウントを作成する</button>
         </form>
     <div class="btn btn-outline btn-block">

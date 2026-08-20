@@ -1,9 +1,14 @@
-<header>
 {% if session.get("user_id") %}
-<form action="{{ url_for('auth.logout')}}" method="POST">
-    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-    <button type="submit">ログアウト</button>
-</form>
-<i class="fa-solid fa-users"></i>
-{% endif %}
+<header class="app-header">
+    <a href="{{ url_for('mypage.mypage_view')}}" class="app-header__back">
+        <i class="fa-solid fa-chevron-left"></i>マイページに戻る
+    </a>
+    <form class="app-header__logout" action="{{ url_for('auth.logout')}}" method="POST" >
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button type="submit">
+            <i class="fa-solid fa-door-open"></i>
+            <span class="text-xs">ログアウト</span>
+        </button>
+    </form>
 </header>
+{% endif %}

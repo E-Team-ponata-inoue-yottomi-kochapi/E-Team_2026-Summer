@@ -335,6 +335,41 @@ textarea:focus {
     /*3個目（ラベンダー）*/ 
     /* calc(100% - 40px) calc(100% - 60px), */
     calc(100% + 10px) 365px,
-    /*４個目(ピーチ)*/ 
+    /*４個目(ピーチ)*/
     20px calc(100% + 20px);
+}
+
+/* ログイン後の共通のヘッダー */
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 56px;
+  padding: 0 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+/* 左上の戻るのリンク */
+.app-header__back {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 14px;
+  color: var(--foreground);
+}
+
+/*　右上のログアウトのアイコンと文字（薄め）　*/
+.app-header__logout button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  background: none;
+  border: none;
+  color: var(--muted-foreground);
+}
+
+.app-header__logout i {
+  margin-top: 8px;
+  font-size: 16px;
 }
