@@ -9,12 +9,12 @@
 
 <!-- ここからbaseのbodyに差し込まれる -->
 {% block content %}
-<div class="login-page">
-    <div class="login-title">
+<div class="auth-page">
+    <div class="title auth-title">
         <h1>イベント管理アプリ</h1>
-        <p>家族・地域・サークルのイベントに</p>
+        <p>家族・地域・のイベントをかろやかに</p>
     </div>
-    <div class="card login-card">
+    <div class="card auth-card">
         <form action="{{ url_for('auth.login_process')}}" method="POST">
             <input type="hidden" name="csrf_token" value="{{ csrf_token()}}">
             <div class="form-group">
@@ -37,7 +37,7 @@
             
             <button class="btn btn-primary btn-block" type="submit">ログイン</button>
         </form>
-        <div class="login-footer btn btn-outline btn-block">
+        <div class="create-account-btn btn btn-outline btn-block">
             <!-- <a href="#">パスワードをお忘れですか？</a> -->
             <a href="{{ url_for('auth.signup_view')}}">新規登録はこちら</a>
         </div>
