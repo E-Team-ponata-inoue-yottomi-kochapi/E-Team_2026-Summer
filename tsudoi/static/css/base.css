@@ -168,10 +168,18 @@ body {
   color: #fff;
 }
 
+/* イベント一覧等のボタン */
+.btn-mint {
+  background: var(--brand-mint);
+  color: #fff;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.25);
+}
+
 /*　LPなどの新規登録用のボタン　*/
 .btn-peach {
   background: var(--brand-peach);
   color: #fff;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.25);
 }
 
 /* 参加フロー内ボタン */
@@ -193,7 +201,20 @@ body {
   color: var(--foreground);
 }
 
+/*　ボタンアウトライン（二重線ver） */
+.btn-outline2 {
+  background: transparent;
+  border: 1.5px solid var(--brand-mint);
+  /* outline: 1.5px solid var(--brand-mint);
+  outline-offset: 2px; */
+  color: var(--foreground);
+}
+
 .btn-outline:hover {
+  box-shadow: inset 0 0 0 999px rgba(0, 0, 0, 0.06);
+}
+
+.btn-outline2:hover {
   box-shadow: inset 0 0 0 999px rgba(0, 0, 0, 0.06);
 }
 
@@ -211,7 +232,8 @@ body {
 
 /* カード（標準） */
 .card {
-  background: #fff;
+  /* background: #fff; */
+  background: rgba(255, 255, 255, 0.5);
   border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 20px;
