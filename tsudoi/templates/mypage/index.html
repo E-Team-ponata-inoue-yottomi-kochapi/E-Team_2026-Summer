@@ -4,6 +4,12 @@
 
 <h1>マイページ</h1>
 
+{% for message in get_flashed_messages() %}
+<hr>
+    <p>{{ message }}</p>
+<hr>
+{% endfor %}
+
 <section>
     <h3>参加予定のイベント</h3>
 

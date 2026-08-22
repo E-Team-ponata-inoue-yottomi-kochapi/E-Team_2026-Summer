@@ -1,8 +1,11 @@
-from flask import Blueprint, render_template, redirect, url_for, request, session
-from services.mypage import get_current_user, update_user, get_mypage
+from flask import Blueprint, render_template, redirect, url_for, request, session, flash, abort
+import pymysql
+import logging
+from services.mypage import get_current_user, update_user, get_mypage, validate_user_update
 from util.auth_guard import login_required
 
 mypage_bp = Blueprint("mypage", __name__)
+logger = logging.getLogger(__name__)
 
 # マイページ
 @mypage_bp.route("/mypage", methods=["GET"])
@@ -34,27 +37,48 @@ def user_edit_view():
 @mypage_bp.route("/user", methods=["POST"])
 @login_required
 def user_edit_process():
-    errors =[]
-
     # セッションからログイン中のユーザーIDを取得
     user_id = session.get("user_id")
 
     # フォームから入力値を取得
-    email = request.form.get("email")
-    password = request.form.get("password")
+    # メールアドレスは前後の空白を除去
+    email = request.form.get("email", "").strip()
+    # パスワードは空白を除去しない、空白が含まれていた場合はバリデーションでエラーにする
+    password = request.form.get("password", "")
     
-    # TODO: 第5段階で入力チェックを実装
-    # TODO: 第5段階で、パスワードが空欄の場合は既存のパスワードを変更せずメールアドレスのみ更新する
-    # 例：
-    # if ユーザー名が空欄:
-    # errors.append("エラー時遷移確認用のエラーです")
+    try:
+        # Serviceで入力チェック
+        errors = validate_user_update(user_id, email, password)
 
-    # エラーがある場合
-    if errors:
-        return render_template("mypage/settings.html", error_messages=errors) # errorsリストの内容をerror_massegesとしてHTMLで利用できるようにする
+        # 入力エラーがある場合
+        if errors:
+            user = get_current_user(user_id)
+            #入力したパスワードを画面に残す
+            user["email"] = email
+            return render_template("mypage/settings.html", user=user, error_messages=errors)
 
-    # Serviceを使ってユーザー情報を更新(受け取ったupdate_countは現状使っていないが、後々異常系判定に利用する)
-    updated_count = update_user(user_id, email, password)
+        # Serviceに更新処理を依頼
+        result = update_user(user_id, email, password)
 
-    # 更新成功後はマイページへ移動
+    except pymysql.MySQLError as e:
+        logger.exception("MySQLエラーが発生しました: %s", e)
+        abort(500)
+
+    # Serviceの結果によってメッセージを変更
+    if result == "email_password_updated":
+        flash("メールアドレスとパスワードを更新しました")
+
+    elif result == "email_updated":
+        flash("メールアドレスを更新しました")
+
+    elif result == "password_updated":
+        flash("パスワードを更新しました")
+
+    elif result == "no_change":
+        flash("変更はありません")
+
+    elif result == "update_failed":
+        flash("ユーザー情報を更新できませんでした")
+
+    # 更新処理後はマイページへ移動
     return redirect(url_for("mypage.mypage_view"))
