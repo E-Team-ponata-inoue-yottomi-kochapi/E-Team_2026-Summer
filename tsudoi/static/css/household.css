@@ -1,0 +1,141 @@
+/* ==========================================================
+   家族一覧ページ
+   ========================================================== */
+/* 家族情報見出しのタイトルと補足の装飾 */
+.household-header {
+    padding-top: 24px;
+    margin-bottom: 24px;
+}
+
+.household-subheader {
+    
+}
+
+/* .household-header h2 {
+    margin-bottom: 8px;
+} */
+
+/* 本人登録時のカード */
+.household-card {
+    margin-top: 8px;
+}
+
+.household-card h2 {
+    margin-bottom: 16px;
+}
+
+.household-card .text-xs {
+    margin-bottom: 24px;
+}
+
+/* 追加ボタンの位置 */
+.household-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    margin-bottom: 16px;
+}
+
+.household-form {
+    margin-bottom: 16px;
+}
+
+/* 家族カードの間隔 */
+.household-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    /* background: color-mix(in srgb, var(--flow-create) 25%, transparent); */
+}
+
+.household-member {
+    padding: 16px 20px;
+}
+
+/* 編集中のカードの枠線の色 */
+.household-member--editing {
+    border-color: var(--flow-create);
+}
+
+.household-member__view {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+/* 家族メンバーカードの中の氏名の文字のスタイル */
+.household-member__name {
+    font-weight: 500;
+}
+
+/* 家族メンバーカードの中の続柄のスタイル */
+.household-member__relation {
+    font-size: 12px;
+    color: var(--muted-foregroud);
+    margin-left: 4px;
+}
+
+/* 家族メンバーカードの中の情報のスタイル */
+.household-member__meta {
+    font-size: 12px;
+    color: var(--muted-foregroud);
+    margin-top: 2px;
+}
+
+/* 家族メンバーカードの中のえんぽつのアイコンのスタイル */
+.household-member__edit-btn {
+    background: none;
+    border: none;
+    color: var(--muted-foregroud);
+    cursor: pointer;
+    padding: 8px;
+}
+
+/* 編集画面のタイトルの上下の間隔 */
+.household-edit-title {
+    margin-top: 8px;
+    margin-bottom: 16px;
+}
+
+/* 編集画面の入力必須のアスタリスクの色 */
+.required {
+    color: var(--flow-danger);
+}
+
+/* 編集画面のキャンセル・更新ｂｔんを同じ幅にする */
+.household-edit-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 8px;
+}
+
+.household-edit-actions .btn {
+    flex: 1;
+}
+
+/* 編集画面の削除ボタンの文字の装飾 */
+.household-delete-form {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+    font-size: 12px;
+    
+}
+
+.household-delete-btn {
+    width: 100%;
+    height: 36px;
+    background: none;
+    border: 1px solid var(--flow-danger);
+    border-radius: 9999px;
+    color: var(--flow-danger);
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.household-delete-btn i {
+    font-size: 12px;
+}
+
+
+

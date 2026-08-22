@@ -344,5 +344,28 @@ class TestMessageAbnormalCase(unittest.TestCase):
         print(f"POST前のDB数：{self.bef_msgs_count}件")
         print(f"POST後のDB数：{self.aft_msgs_count}件\n")
 
+# 第1段階：ウォーキングスケルトン用
+class TestMessageController(unittest.TestCase):
+    # 各テストメソッドの実行前に呼ばる
+    def setUp(self):
+        self.title                     = "TestMessageController"
+        # テストのため無効化
+        app.config['WTF_CSRF_ENABLED'] = False
+        self.app                       = app.test_client()
+    
+    # １st-１：メッセージ削除のController疎通テスト
+    def test_delete_process(self):
+        # HTTPリクエスト
+        response = self.app.delete(f"/events/test-event/messages/delete-message",
+                                follow_redirects=False,
+                                )
+
+        self.assertEqual(200, response.status_code)
+        self.assertEqual("メッセージ削除".encode('utf-8'), response.data)
+
+        print(f"{self.title}\ntest_delete_process")
+        print("１st-１：メッセージ削除のController疎通テスト")
+        print(f"ステータスコード：{response.status_code}")
+
 if __name__ == '__main__':
     unittest.main()

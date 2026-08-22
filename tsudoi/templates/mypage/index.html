@@ -1,8 +1,12 @@
 {% extends "base.html" %}
 
-{% block content %}
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/mypage.css')}}">
+{% endblock %}
 
-<h1>マイページ</h1>
+{% block content %}
+<div class="card mypage-page">
+    <h1>マイページ</h1>
 
 {% for message in get_flashed_messages() %}
 <hr>
@@ -10,34 +14,50 @@
 <hr>
 {% endfor %}
 
-<section>
-    <h3>参加予定のイベント</h3>
+    <section class="mypage-section">
+        <h3>参加予定のイベント</h3>
+        {% if applications %}
+        <ul class="mypage-list">
+            {% for application in applications %}
+            <li class="card mypage-item">
+                <a class="mypage-item__link" href="{{ url_for('event.detail_view',event_id=application['event_id'])}}">
+                    <p class="mypage-item__title">{{ application["event_title"] }}</p>
+                    <p class="mypage-item__meta">{{ application["event_start_at"]}}</p>
+                </a>
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p class="text-xs">参加予定のイベントはまだありません</p>
+        {% endif %}
+        <div class="mypage-actions">
+            <a class="btn btn-primary" href="{{ url_for('event.list_view') }}">開催中のイベント一覧</a>
 
-    {% for application in applications %}
-        <div>
-            <p>{{ application["event_title"] }}</p>
-            <p>{{ application["event_start_at"] }}</p>
         </div>
-    {% endfor %}
-</section>
+    </section>
 
-<section>
-    <h3>自分が主催のイベント</h3>
+    <section class="mypage-section">
+        <h3>自分が主催のイベント</h3>
+        {% if events %}
+        <ul class="mypage-list">
+            {% for event in events %}
+            <li class="card mypage-item">
+                <a class="mypage-item__link" href="{{ url_for('event.detail_view',event_id=event['id'])}}">
+                    <p class="mypage-item__title">{{ event['title'] }}</p>
+                    <p class="mypage-item__meta">{{ event['start_at'] }}</p>
+                </a>
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p class="text-xs">主催しているイベントはまだありません</p>
+        {% endif %}
+    </section>
 
-    {% for event in events %}
-        <div>
-            <p>{{ event["title"] }}</p>
-            <p>{{ event["start_at"] }}</p>
-        </div>
-    {% endfor %}
-</section>
-
-<div>
-    <a href="{{ url_for('mypage.user_edit_view') }}">アカウント設定</a>
-    <br>
-    <a href="{{ url_for('event.new_view') }}">イベント作成</a>
-    <br>
-    <a href="{{ url_for('event.list_view') }}">イベント一覧</a>
+    <div class="mypage-actions">
+        <a class="btn btn-create" href="{{ url_for('event.new_view') }}">イベント作成</a>
+        <a class="btn btn-outline2" href="{{ url_for('household.household_list_view')}}">家族一覧/編集</a>
+        <a class="btn btn-outline" href="{{ url_for('mypage.user_edit_view')}}">アカウント設定</a>
+    </div>
 </div>
-
 {% endblock %}

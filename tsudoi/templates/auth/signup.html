@@ -5,46 +5,52 @@
 {% endblock %}
 
 {% block content %}
-<div>
-    <!-- usersテーブルにはnameが無いので email / password のみ -->
-    <form method="POST" action="{{ url_for('auth.signup_process')}}">
-        <!-- CSRF対策：トークン -->
-        <input type="hidden" name="csrf_token" value="{{ csrf_token()}}">
-        <header>
-            <h1>新規登録</h1>
-        </header>
-        <div>
-            <label for="email">メールアドレス</label>
-            <!-- value：入力エラー時もメールアドレスを保持 -->
-            <input type="text" id="email" name="email" value="{{ email }}" required>
-        </div>
-        <div>
-            <label for="password">パスワード</label>
-            <input type="password" id="password" name="password" required>
-            <p>15文字以上入力してください</p>
-            <p>スペースは使用できません</p>
-        </div>
-        <div>
-            <label for="password_confirmation">パスワード(確認)</label>
-            <input type="password" id="password_confirmation" name="password_confirmation" required>
-        </div>
-        <!-- 入力チェックでエラーの場合、ここにメッセージを表示 -->
-        <div>
-            {% if messages %}
-            <ul>
-                {% for message in messages %}
-                <li>{{ message }}</li>
-                {% endfor %}
-            </ul>
-            {% endif %}
-        </div>
-        <div>
-            <p>アカウント登録後、プロフィールや家族情報の登録へ進みます</p>
-            <button type="submit">登録する</button>
-        </div>
-    </form>
-    <div>
+<div class="auth-page">
+    <header class="title auth-title">
+        <h1>新規アカウント作成</h1>
+    </header>
+    <div class="card auth-card">
+        <!-- usersテーブルにはnameが無いので email / password のみ -->
+        <form method="POST" action="{{ url_for('auth.signup_process')}}">
+            <!-- CSRF対策：トークン -->
+            <input type="hidden" name="csrf_token" value="{{ csrf_token()}}">
+
+            <div class="form-group">
+                <label for="email">メールアドレス</label>
+                <!-- value：入力エラー時もメールアドレスを保持 -->
+                <input type="text" id="email" name="email" value="{{ email }}" required>
+            </div>
+            <div class="form-group">
+                <label for="password">パスワード</label>
+                <input type="password" id="password" name="password" required>
+                <div class="field-hint">
+                    <p>15文字以上入力してください</p>
+                    <p>スペースは使用できません</p>
+                </div>    
+            </div>
+            <div class="form-group">
+                <label for="password_confirmation">パスワード(確認)</label>
+                <input type="password" id="password_confirmation" name="password_confirmation" required>
+                <p class="field-hint">アカウント登録後は、<br>家族情報の登録へ進みます</p>
+            </div>
+            <!-- 入力チェックでエラーの場合、ここにメッセージを表示 -->
+            
+                {% if messages %}
+                <div class="form-errors">
+                    <ul>
+                        {% for message in messages %}
+                        <li>{{ message }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+            
+            <button class="btn btn-peach btn-block" type="submit">アカウントを作成する</button>
+        </form>
+    <div class="btn btn-outline btn-block">
         <a href="{{ url_for('auth.login_view') }}">ログインはこちら</a>
     </div>
+    </div>
+    
 </div>
 {% endblock %}

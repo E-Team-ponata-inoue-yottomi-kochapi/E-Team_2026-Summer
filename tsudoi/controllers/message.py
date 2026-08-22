@@ -38,3 +38,8 @@ def create_process(event_id):
         return render_template("message/message_list.html", title="チャットルーム", event_id=event_id, event_messages=event_messages, error_msgs=result["error_msgs"], body=body)
 
     return redirect(url_for("message.messages_view", event_id=event_id))
+
+# メッセージ削除
+@message_bp.route("/<string:event_message_id>", methods=["DELETE"])
+def delete_process(event_id, event_message_id):
+    return "メッセージ削除"

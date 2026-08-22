@@ -1,0 +1,46 @@
+/* ==========================================================
+   ログイン/新規登録ページ
+   ========================================================== */
+/* 全体を中央揃え・上寄せ */
+.auth-page {
+  padding-top: 48px;
+  text-align: center;
+}
+
+/* タイトルの下の余白 */
+.title {
+    margin-bottom: 48px;
+}
+
+/* タイトルとキャッチコピーの感覚 */
+.auth-title h1 {
+  margin-bottom: 8px;
+}
+
+/* キャッチコピーの文字の装飾 */
+.auth-title p {
+  color: var(--muted-foreground);
+  margin-bottom: 32px;
+}
+
+/*　　カードの文字を左寄せ */
+.auth-card {
+  text-align: left;
+}
+
+/* ログインボタンを横いっぱいに広げる */
+.btn-block {
+  width: 100%;
+  margin-top: 24px;
+}
+
+/* 新規登録はこちらの装飾 */
+.create-account-btn {
+  margin-top: 24px;
+}
+
+.create-account-btn a {
+  color: var(--primary);
+  font-weight: 500;
+  font-size: 12px;
+}

@@ -1,32 +1,411 @@
-/* 初期化 */
+/* ==========================================================
+   ① リセット
+   ========================================================== */
+/* 余白のリセット */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-/* 共通設定 */
+/* リスト装飾のリセット */
 li {
   list-style: none;
 }
 
+/* リンク装飾のリセット */
 a {
   text-decoration: none;
 }
 
-/* 全体 */
+/* フィールドセット装飾のリセット */
+fieldset {
+  border: none;
+  padding: 0;
+}
+
+/* フォーム要素のリセット */
+button,
+input,
+select,
+textarea {
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+}
+
+/* 画像のはみ出し防止（念の為） */
+img {
+  max-width: 100%;
+  display: block;
+}
+
+/* リンク装飾ののリセット */
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* ==========================================================
+   ② カラー（デザイン）トークン：定義
+   ========================================================== */
+:root {
+  /* ブランドカラー（パステル） */
+  --brand-link: #4a3a5a; /* リンク文字色 */
+  --brand-cream: #fdf7ee; /* 画面全体のメイン背景色 */
+  --brand-mint: #9fe0c8; /* デザインミント */
+  --brand-peach: #fbbfa0; /* デザインピーチ */
+  --brand-lavender: #c9b8e8; /* デザインラベンダー */
+
+  /* 共通部品別の配色 */
+  --background: #fdf9f3; /* 画面全体のサブ背景色 */
+  --foreground: #3d3730; /* 見出し・本文の文字色 */
+  --primary: #6b5b4a; /* メインボタンなどの基本色 */
+  --secondary: #fdeee1; /* 補助的な背景色 */
+  --muted: #f6efe5; /* 控えめな背景色 */
+  --muted-foreground: #8a7f72; /* 控えめな文字色 */
+  --accent: #fce9d6; /* 背景用のアクセント色 */
+  --border: rgba(120, 90, 60, 0.15); /* カード・フォームなどの枠線色 */
+  --input-background: #fbf5ec; /* 入力欄の背景色 */
+  --radius: 1.1rem; /* カードなどの角丸量 */
+
+  /* フロー別の識別配色 */
+  --flow-apply: #0ea5e9; /* 参加フロー */
+  --flow-create: #fb923c; /* 作成フロー */
+  --flow-danger: #e07a7a; /* 警告・エラー */
+  --flow-admin: #7c3aed; /* 管理者フロー */
+}
+
+/* ==========================================================
+  ③ タイポグラフィ
+   ========================================================== */
+/* フォント */
+body {
+  font-family:
+    "M PLUS Rounded 1c", "Hiragino Maru Gothic ProN", "Hiragino Sans",
+    "Yu Gothic UI", "Meiryo", system-ui, sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--primary);
+  background: var(--background);
+}
+
+/* 見出し */
+h1 {
+  font-size: 24px;
+  font-weight: 500;
+  color: var(--primary);
+}
+h2 {
+  font-size: 20px;
+  font-weight: 500;
+  color: var(--primary);
+}
+h3 {
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--primary);
+}
+
+/* 補足テキスト */
+small {
+  font-size: 14px;
+}
+.text-xs {
+  font-size: 12px;
+}
+
+/* ==========================================================
+   ④ レイアウト
+   ========================================================== */
 /*　画面幅を375ｐｘ　中央に固定　*/
 body {
   max-width: 375px;
   margin: 0 auto;
+  box-shadow: 0 0 24px rgba(0, 0, 0, 0.08);
 }
 
+/* フッター */
 .site-wrapper {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
 }
 
+/* 画面幅からコンテンツまでの余白 */
 .site-wrapper main {
   flex: 1;
+  padding: 0 16px;
+}
+
+/* ==========================================================
+   ⑤ 共通コンポーネント
+   ========================================================== */
+/* ボタン（共通） */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 36px;
+  padding: 0 16px;
+  border: none;
+  border-radius: 9999px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: box-shadow 0.15s ease;
+}
+
+.btn:hover {
+  box-shadow: inset 0 0 0 999px rgba(255, 255, 255, 0.15);
+}
+
+/* 標準ボタン */
+.btn-primary {
+  background: var(--primary);
+  color: #fff;
+}
+
+/* イベント一覧等のボタン */
+.btn-mint {
+  background: var(--brand-mint);
+  color: #fff;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.25);
+}
+
+/*　LPなどの新規登録用のボタン　*/
+.btn-peach {
+  background: var(--brand-peach);
+  color: #fff;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.25);
+}
+
+/* 参加フロー内ボタン */
+.btn-apply {
+  background: var(--flow-apply);
+  color: #fff;
+}
+
+/* 作成フロー内ボタン */
+.btn-create {
+  background: var(--flow-create);
+  color: #fff;
+}
+
+/*　ボタンアウトライン */
+.btn-outline {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--foreground);
+}
+
+/*　ボタンアウトライン（二重線ver） */
+.btn-outline2 {
+  background: transparent;
+  border: 1.5px solid var(--brand-mint);
+  /* outline: 1.5px solid var(--brand-mint);
+  outline-offset: 2px; */
+  color: var(--foreground);
+}
+
+.btn-outline:hover {
+  box-shadow: inset 0 0 0 999px rgba(0, 0, 0, 0.06);
+}
+
+.btn-outline2:hover {
+  box-shadow: inset 0 0 0 999px rgba(0, 0, 0, 0.06);
+}
+
+/* セカンダリボタン */
+.btn-secondary {
+  background: var(--secondary);
+  color: var(--foreground);
+}
+
+/* 削除・警告ボタン */
+.btn-danger {
+  background: var(--flow-danger);
+  color: #fff;
+}
+
+/* カード（標準） */
+.card {
+  /* background: #fff; */
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+}
+
+.mypage-item__link {
+  display: block;
+}
+
+/* 入力欄 */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="date"],
+input[type="datetime-local"],
+select,
+textarea {
+  width: 100%;
+  height: 36px;
+  padding: 0 12px;
+  background: var(--input-background);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+/* プレースホルダーの文字の色 */
+input::placeholder,
+textarea::placeholder {
+  color: #b0b0b0;
+}
+
+/* textareaの高さをレスポンシブにする */
+textarea {
+  height: auto;
+  padding: 8px 12px;
+  min-height: 80px;
+}
+
+/* ラベルと入力欄の感覚 */
+label {
+  display: block;
+  margin-bottom: 8px;
+}
+
+/* form-group（ラベルと入力欄のセット）の装飾 */
+.form-group {
+  margin-bottom: 16px;
+}
+
+/* 入力欄に関するエラーメッセージの装飾 */
+.form-errors {
+  color: var(--flow-danger);
+  font-size: 14px;
+}
+
+/* li */
+.form-errors li {
+  margin-bottom: 4px;
+}
+
+/* formにフォーカスした時の枠線をブラウンにする */
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+
+/* 入力欄の下の補足文章 */
+.field-hint {
+  color: var(--muted-foreground);
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+/* ==========================================================
+   　背景のまあるい玉
+   ========================================================== */
+.blob-bg {
+  position: relative;
+  overflow: hidden;
+  background-color: var(--background);
+  background-repeat: no-repeat;
+
+  /*　まるを描画するキャンパスのサイズ　*/
+  background-size:
+    /*1個目(ミント）*/
+    220px 220px,
+    /*2個目(ピーチ)*/ 
+    110px 110px,
+    /*3個目（ラベンダー）*/ 
+    260px 260px,
+    /*４個目(ピーチ)*/ 
+    70px 70px;
+
+  /*　まるのキャンパス内でのサイズ　*/
+  background-image:
+  /*1個目(ミント）*/
+    radial-gradient(
+      circle,
+      color-mix(in srgb, var(--brand-mint) 25%, transparent) 70%,
+      transparent 71%
+    ),
+    /*2個目(ピーチ)*/
+    radial-gradient(
+        circle,
+        color-mix(in srgb, var(--brand-peach) 25%, transparent) 70%,
+        transparent 71%
+      ),
+    /*3個目（ラベンダー）*/
+    radial-gradient(
+        circle,
+        color-mix(in srgb, var(--brand-lavender) 25%, transparent) 70%,
+        transparent 71%
+      ),
+    /*４個目(ピーチ)*/
+    radial-gradient(
+        circle,
+        color-mix(in srgb, var(--brand-peach) 25%, transparent) 70%,
+        transparent 71%
+      );
+
+  /*　まるの位置　*/
+  background-position:
+    /*1個目(ミント）*/
+    -70px -70px,
+    /*2個目(ピーチ)*/ 
+    calc(100% + 20px) 60px,
+    /*3個目（ラベンダー）*/ 
+    /* calc(100% - 40px) calc(100% - 60px), */
+    calc(100% + 10px) 365px,
+    /*４個目(ピーチ)*/
+    20px calc(100% + 20px);
+}
+
+/* ログイン後の共通のヘッダー */
+.app-header {
+  /* position: sticky;
+  top: 0;
+  z-index: 10; */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 56px;
+  padding: 0 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+/* 左上の戻るのリンク */
+.app-header__back {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 14px;
+  color: var(--foreground);
+}
+
+/*　右上のログアウトのアイコンと文字（薄め）　*/
+.app-header__logout button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  background: none;
+  border: none;
+  color: var(--muted-foreground);
+  margin-left: auto; /* マイページへの戻るボタンが消えた時用 */
+}
+
+.app-header__logout i {
+  margin-top: 8px;
+  font-size: 16px;
 }
