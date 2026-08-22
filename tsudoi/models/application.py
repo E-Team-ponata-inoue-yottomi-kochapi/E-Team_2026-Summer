@@ -168,13 +168,12 @@ def summarize_applications_by_event(event_id):
                 "FROM applications "
                 "INNER JOIN application_participants ON applications.id = application_participants.application_id "
                 "INNER JOIN family_members ON application_participants.member_id = family_members.id "
-                "WHERE applications.event_id = %s"
+                "WHERE applications.event_id = %s "
+                "AND applications.canceled_at IS NULL"
             )
             cursor.execute(sql, (event_id,))
             summary_rows = cursor.fetchall()
             return summary_rows
-#     except pymysql.MySQLError:
-#         raise
     finally:
         conn.close()
 

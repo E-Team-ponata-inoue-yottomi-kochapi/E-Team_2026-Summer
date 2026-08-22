@@ -1,7 +1,13 @@
 from datetime import date
 from models.household import get_family_members
-from models.application import get_fee_rules, insert_application, insert_application_participant,update_application_total,delete_application_participants
-from models.application import summarize_applications_by_event
+from models.application import (
+    get_fee_rules, 
+    insert_application, 
+    insert_application_participant, 
+    update_application_total, 
+    delete_application_participants, 
+    summarize_applications_by_event
+)
 from models.event import find_event_by_id
 
 # 生年月日から、現在の年齢を計算する
