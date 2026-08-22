@@ -13,8 +13,18 @@ logger = logging.getLogger(__name__)
 def mypage_view():
     # セッションからログイン中のユーザーIDを取得
     user_id = session.get("user_id")
-    # serviceからマイページ表示に必要な情報を取得
-    mypage_data = get_mypage(user_id)
+    try:
+        # serviceからマイページ表示に必要な情報を取得
+        mypage_data = get_mypage(user_id)
+    except pymysql.MySQLError as e:
+        logger.exception("MySQLエラーが発生しました: %s", e)
+        abort(500)
+
+    # 世帯が存在しない場合
+    if mypage_data is None:
+        logger.error("ログインユーザーに紐づく世帯が存在しません: user_id=%s", user_id)
+        abort(500)
+
     # mypage_dataにはapplicationsテーブルとeventsテーブルの情報が入っているので、それぞれで分けて変数に格納
     applications = mypage_data["applications"]
     events = mypage_data["events"]

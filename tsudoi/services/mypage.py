@@ -109,7 +109,13 @@ def update_user(user_id, email, password):
 
 def get_mypage(user_id):
     household = get_household_by_user(user_id)
-    household_id = household["id"] # TODO: householdがNoneの場合の考慮が無い
+
+    # 世帯が存在しない場合
+    if household is None:
+        return None
+    
+    household_id = household["id"]
+    
     applications = list_applications_by_household(household_id)
     events = list_events_by_owner(user_id)
 

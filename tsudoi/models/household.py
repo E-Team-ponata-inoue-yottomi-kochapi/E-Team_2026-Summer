@@ -7,8 +7,12 @@ def get_household_by_user(user_id):
     conn = get_connection()
     try:
         with conn.cursor() as cursor:
-      # TODO: deleted_at IS NULL が抜けてる。論理削除済みの世帯もヒットしてしまう
-            sql = "SELECT id, leader_id FROM households WHERE leader_id = %s"
+            sql = (
+                "SELECT id, leader_id "
+                "FROM households "
+                "WHERE leader_id = %s "
+                "AND deleted_at IS NULL"
+            )
             cursor.execute(sql, (user_id,))
             return cursor.fetchone()
     finally:
