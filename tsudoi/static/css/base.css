@@ -240,6 +240,10 @@ body {
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
 }
 
+.mypage-item__link {
+  display: block;
+}
+
 /* 入力欄 */
 input[type="text"],
 input[type="email"],

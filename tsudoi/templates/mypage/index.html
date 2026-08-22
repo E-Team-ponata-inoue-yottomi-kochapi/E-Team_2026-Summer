@@ -14,8 +14,10 @@
         <ul class="mypage-list">
             {% for application in applications %}
             <li class="card mypage-item">
-                <p class="mypage-item__title">{{ application["event_title"] }}</p>
-                <p class="mypage-item__meta">{{ application["event_start_at"]}}</p>
+                <a class="mypage-item__link" href="{{ url_for('event.detail_view',event_id=application['event_id'])}}">
+                    <p class="mypage-item__title">{{ application["event_title"] }}</p>
+                    <p class="mypage-item__meta">{{ application["event_start_at"]}}</p>
+                </a>
             </li>
             {% endfor %}
         </ul>
@@ -33,8 +35,10 @@
         <ul class="mypage-list">
             {% for event in events %}
             <li class="card mypage-item">
-                <p class="mypage-item__title">{{ event['title'] }}</p>
-                <p class="mypage-item__meta">{{ event['start_at'] }}</p>
+                <a class="mypage-item__link" href="{{ url_for('event.detail_view',event_id=event['id'])}}">
+                    <p class="mypage-item__title">{{ event['title'] }}</p>
+                    <p class="mypage-item__meta">{{ event['start_at'] }}</p>
+                </a>
             </li>
             {% endfor %}
         </ul>
