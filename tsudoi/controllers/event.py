@@ -5,6 +5,10 @@ import pymysql
 from util.auth_guard import login_required, host_required
 import logging
 from services.message import can_access_event_chat
+from datetime import datetime, timedelta
+from models.household import get_household_by_user
+from models.application import list_applications_by_household
+
 
 event_bp = Blueprint("event", __name__, url_prefix="/events")
 logger = logging.getLogger(__name__)
@@ -18,6 +22,22 @@ def list_view():
     except pymysql.MySQLError as e:
         logger.exception('MySQLエラーが発生しました: %s', e)
         abort(500)
+
+    # 申込済みイベントのIDを取得する
+    household = get_household_by_user(session['user_id'])
+    applied_event_ids = set()
+    if household:
+        applications = list_applications_by_household(household['id'])
+        applied_event_ids = {a['event_id'] for a in applications}
+
+    # バッジをつける処理
+    for event in events:
+        if event['id'] in applied_event_ids:
+            event['badge_status'] = 'sakura'
+        elif event['deadline'] and event['deadline'] - datetime.now() <= timedelta(days=3):
+            event['badge_status'] = 'dry'
+        else:
+            event['badge_status'] = 'open'
 
     return render_template("event/event_list.html", title="イベント一覧", events=events)
 

@@ -25,6 +25,7 @@
    }
 
    .mypage-item {
+    position: relative;
     padding: 14px 18px;
     transition: transform 0.15s ease, box-shadow 0.15s ease;
    }
@@ -40,7 +41,7 @@
 
    .mypage-item__meta {
     font-size: 12px;
-    color: var(__muted-foreground);
+    color: var(--muted-foreground);
     margin-top: 2px;
    }
 

@@ -1,0 +1,37 @@
+/* ==========================================================
+   イベント一覧
+   ========================================================== */
+   .event-list-page {
+    padding: 24px 0;
+   }
+
+   .event-list-page h1 {
+    margin-bottom: 24px;
+   }
+
+   .mypage-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+   }
+
+   .mypage-item {
+    position: relative;
+    padding: 14px 18px;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+   }
+
+   .mypage-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+   }
+
+   .mypage-item__title {
+    font-weight: 500;
+   }
+
+   .mypage-item__meta {
+    font-size: 12px;
+    color: var(--muted-foreground);
+    margin-top: 2px;
+   }
