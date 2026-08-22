@@ -36,7 +36,7 @@ def member_create_process():
         household_id=household['id'],
         relation=request.form.get('relation'),
         name=request.form.get('name'),
-        gender=request.form.get('gender'),
+        gender=request.form.get('gender') or None,
         birth_date=request.form.get('birth_date'),
         email=request.form.get('email'),
     )
@@ -50,7 +50,7 @@ def member_edit_process(id):
         member_id=id,
         relation=request.form.get('relation'),
         name=request.form.get('name'),
-        gender=request.form.get('gender'),
+        gender=request.form.get('gender') or None,
         birth_date=request.form.get('birth_date'),
         email=request.form.get('email'),
     )

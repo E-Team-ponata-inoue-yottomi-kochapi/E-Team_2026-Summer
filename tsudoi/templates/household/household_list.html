@@ -1,114 +1,198 @@
 {% extends "base.html" %}
 {% block title %}家族一覧{% endblock %}
+{% block css %}
+<link rel="stylesheet" href="{{url_for('static', filename='css/household.css')}}">
+{% endblock %}
+
 {% block content %}
 
-{# TODO: span の入れ子が文法違反、要修正 #}
 {# TODO: Jsのコードをstatic/pages/フォルダに移動したい #}
 {# TODO: 削除ボタンにポップアップつけたい #}
 
-{# 🦴追記しました。 #}
-<a href="{{ url_for('mypage.mypage_view')}}">← マイページに戻る</a>
+<div class="household-page">
+  <div class="household-header">
+    <h2>家族一覧</h2>
+  </div>  
+  <div class="card household-card">
+    {# 本人未登録時にフォームを表示 #}
+    {% if not has_self %}
+    <!-- <div class="self-registration"> -->  
+    <h2>本人情報を登録する</h2>
+    <p class="text-xs">自分の情報を登録すると<br>他のページに移動できるようになります</p>
+    <form action="{{ url_for('household.member_create_process') }}" method="POST">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <input type="hidden" name="relation" value="本人">
+      <div class="form-group">
+        <label for="name">名前（任意）</label>
+        <input type="text" id="name" name="name" placeholder="氏名">
+      </div>
+      <div class="form-group"> 
+        <label for="birth_date" >生年月日<span class="required">*</span></label>
+        <input type="date" id="birth_date" name="birth_date" required>
+      </div>
+      <div class="form-group">
+        <label for="email">メールアドレス（任意）</label>    
+        <input type="email" id="email" name="email" value="{{ user_email }}" placeholder="example@sample.com">
+      </div>
+      <div class="form-group">
+        <label for="gender">性別（任意）</label>  
+        <select id="gender" name="gender">
+          <option value="">性別を選択</option>
+          <option value="男">男</option>
+          <option value="女">女</option>
+          <option value="その他">その他</option>
+        </select>
+      </div>
+      <button class="btn btn-create " type="submit">登録する</button>
+    </form>
+  </div>
 
-<h2 class="page-title">家族一覧</h2>
-{# 本人未登録時にフォームを表示 #}
-{% if not has_self %}
-<div class="self-registration">
-  <h2>本人アカウントの登録</h2>
-  <form action="{{ url_for('household.member_create_process') }}" method="POST">
-    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-    <input type="hidden" name="relation" value="本人">
-    <input type="text" name="name" placeholder="お名前">
-    <input type="date" name="birth_date" required>
-    <input type="email" name="email" value="{{ user_email }}">
-    <select name="gender">
-      <option value="">性別を選択</option>
-      <option value="男">男</option>
-      <option value="女">女</option>
-      <option value="その他">その他</option>
-    </select>
-    <button type="submit">登録する</button>
-  </form>
-</div>
 
 {% else %}
-{# 追加フォーム #}
-{# トグル処理を追加する #}
-<button type="button" onclick="toggleAddForm()">追加</button>
-<div id="add-form" style="display:none;">
-  <form action="{{ url_for('household.member_create_process')}}" method="POST">
-    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-    <input type="text" name="name" placeholder="田中太郎">
-    <select name="relation" required>
-      <option value="">続柄を選択</option>
-      {% for option in ['本人','夫','妻','息子','娘','父','母','祖母','祖父','その他'] %}
-        <option value="{{ option }}">{{ option }}</option>
-      {% endfor %}
-    </select>
-    <select name="gender">
-      <option value="">性別を選択</option>
-      <option value="男">男</option>
-      <option value="女">女</option>
-      <option value="その他">その他</option>
-    </select>
-    <input type="date" name="birth_date" required>
-    <input type="email" name="email" placeholder="メールアドレス">
-    <button type="submit">登録</button>
-    <button type="button" onclick="toggleAddForm()">キャンセル</button>
-  </form>
-</div>
-{# 編集フォーム #}
-<ul>
-  {% for member in members %}
-  <li id="member-{{ member.id }}">
-    <span class="view-mode">
-      {{ member.name }} {{ member.relation }}
-      <button type="button" onclick="toggleEditForm({{ member.id }})">編集</button>
-    </span>
 
-    <span class="edit-mode" style="display: none;">
-      <form action="{{ url_for('household.member_edit_process', id=member.id) }}" method="POST">
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-        <input type="text" name="name" value="{{member.name}}">
-        <select name="relation" required>
+
+  <div class="household-subheader">
+    <!-- <h2>家族情報</h2> -->
+    <i class="fa-regular fa-circle-question"></i> ヒント<br>
+    <p class="text-xs">このページで登録した家族のメンバーが、<br>イベントの参加申込時に選択肢できるようになります。</p>
+  </div>
+
+  <div class="household-toolbar">
+    {# 追加フォーム #}
+    {# トグル処理を追加する #}
+    <button class="btn btn-primary" type="button" onclick="toggleAddForm()">
+      <i class="fa-solid fa-plus"></i>追加する
+    </button>
+  </div>
+
+  <div id="add-form" class="card household-form" style="display:none;">
+    <form action="{{ url_for('household.member_create_process')}}" method="POST">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <div class="form-group">
+        <label for="relation">続柄 <span class="required">*</span></label>
+        <select id="relation" name="relation" required>
+          <option value="">続柄を選択</option>
           {% for option in ['本人','夫','妻','息子','娘','父','母','祖母','祖父','その他'] %}
-            <option value="{{ option }}" {% if member.relation==option %}selected{% endif %}>{{ option }}</option>
+            <option value="{{ option }}">{{ option }}</option>
           {% endfor %}
         </select>
-        {# すでに選択肢が存在するため一致条件を追加 #}
-        <select name="gender">
-          {% for option in ['男','女','その他'] %}
-            <option value="{{ option }}" {% if member.gender==option %}selected{% endif %}>{{ option }}</option>
-          {% endfor %}
+      </div>
+      <div class="form-group">
+        <label for="name">名前（任意）</label>
+        <input type="text" id="name" name="name" placeholder="氏名">
+      </div>
+      <div class="form-group">
+        <label for="gender">性別（任意）</label>
+        <select id="gender" name="gender">
+          <option value="">性別を選択</option>
+          <option value="男">男</option>
+          <option value="女">女</option>
+          <option value="その他">その他</option>
         </select>
-        <input type="date" name="birth_date" value="{{ member.birth_date }}" required>
-        <input type="email" name="email" value="{{ member.email or '' }}">
-        <button type="submit">更新</button>
-        <button type="button" onclick="toggleEditForm({{ member.id }})">キャンセル</button>
-      </form>
-      <form action="{{ url_for('household.member_delete_process', id=member.id) }}" method="POST">
+      </div>
+      <div class="form-group">
+        <label for="birth_date">生年月日<span class="required">*</span></label>
+        <input type="date" id="birth_date" name="birth_date" required>
+      </div>
+      <div class="form-group">
+        <label for="email">メールアドレス（任意）</label>
+        <input type="email" id="email" name="email" placeholder="example@sample.com">
+      </div>
+      <div class="household-edit-actions">
+        <button class="btn btn-outline" type="button" onclick="toggleAddForm()">キャンセル</button>
+        <button class="btn btn-create" type="submit">登録</button>
+      </div>
+    </form>
+  </div>
+
+  {# 編集フォーム #}
+  <ul class="household-list">
+    {% for member in members %}
+    <li class="card household-member" id="member-{{ member.id }}">
+      <div class="household-member__view">
+        <div class="household-member__info">
+          <p class="household-member__name">
+            {{ member.name }} <span class="household-member__relation"> {{ member.relation }} </span>
+          </p>
+          <p class="household-member__meta">
+            {{ member.gender or "未選択" }} / {{ member.birth_date }}
+          </p>
+          
+          <p class="household-member__meta">{{ member.email or "メールアドレス未登録" }}</p>
+          
+        </div>
+        <button class="household-member__edit-btn" type="button" onclick="toggleEditForm({{ member.id }})">
+          <i class="fa-solid fa-pen"></i>
+        </button>
+      </div>
+      
+      <div class="household-member__edit" style="display: none;">
+        <h3 class="household-edit-title">家族情報を編集</h3>
+        <form action="{{ url_for('household.member_edit_process', id=member.id) }}" method="POST">
           <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-          <button type="submit">この家族メンバーを削除する</button>
-      </form>
-    </span>
-  </li>
-  {% endfor %}
-</ul>
-{# スクリプトを追記 #}
-<script>
-function toggleAddForm() {
-  const form = document.getElementById('add-form');
-  form.style.display = form.style.display === 'none' ? 'block' : 'none';
-}
+          <div class="form-group">
+            <label for="edit-relation-{{ member.id }}">続柄 <span class="required">*</span></label>
+            <select id="edit-relation-{{ member.id }}" name="relation" required>
+              {% for option in ['本人','夫','妻','息子','娘','父','母','祖母','祖父','その他'] %}
+                <option value="{{ option }}" {% if member.relation==option %}selected{% endif %}>{{ option }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          {# すでに選択肢が存在するため一致条件を追加 #}
+          <div class="form-group">
+            <label for="edit-name-{{ member.id }}">名前（任意）</label>
+            <input type="text" id="edit-name-{{ member.id}}" name="name" value="{{ member.name}}">
+          </div>
+          <div class="form-group">
+            <label for="edit-gender-{{ member.id }}">性別（任意）</label>
+            <select id="edit-gender-{{ member.id }}" name="gender">
+              {% for option in ['男','女','その他'] %}
+                <option value="{{ option }}" {% if member.gender==option %}selected{% endif %}>{{ option }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="edit-birth-{{ member.id}}">生年月日 <span class="required">*</span></label>
+            <input type="date" id="edit-birth-{{ member.id }}" name="birth_date" value="{{ member.birth_date}}" required>
+          </div>
+          <div class="form-group">
+            <label for="edit-email-{{ member.id}}">メールアドレス（任意）</label>
+            <input type="email" id="edit-email-{{ member.id}}" name="email" value="{{ member.email or ''}}">
+          </div>
+          <div class="household-edit-actions">
+            <button class="btn btn-outline" type="button" onclick="toggleEditForm({{ member.id }})">キャンセル</button>
+            <button class="btn btn-create" type="submit">更新する</button>
+          </div>
+        </form>
+        <form class="household-delete-form" action="{{ url_for('household.member_delete_process', id=member.id) }}" method="POST">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <button class="household-delete-btn" type="submit">
+            <i class="fa-regular fa-trash-can"></i> この家族メンバーを削除する
+          </button>
+        </form>
+      </div>
+    </li>
+    {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
 
-function toggleEditForm(id) {
-  const li = document.getElementById('member-' + id);
-  const viewMode = li.querySelector('.view-mode');
-  const editMode = li.querySelector('.edit-mode');
-  const isEditing = editMode.style.display !== 'none';
-  viewMode.style.display = isEditing ? 'inline': 'none';
-  editMode.style.display = isEditing ? 'none': 'inline';
-}
-</script>
+  {# スクリプトを追記 #}
+    <script>
+    function toggleAddForm() {
+      const form = document.getElementById('add-form');
+      form.style.display = form.style.display === 'none' ? 'block' : 'none';
+    }
 
-{% endif %}
-{% endblock %}
+    function toggleEditForm(id) {
+      const li = document.getElementById('member-' + id);
+      const viewMode = li.querySelector('.household-member__view');
+      const editMode = li.querySelector('.household-member__edit');
+      const isEditing = editMode.style.display !== 'none';
+      viewMode.style.display = isEditing ? 'flex': 'none';
+      editMode.style.display = isEditing ? 'none': 'block';
+      li.classList.toggle('household-member--editing', !isEditing);
+    }
+    </script>
+</div>
+  {% endblock %}

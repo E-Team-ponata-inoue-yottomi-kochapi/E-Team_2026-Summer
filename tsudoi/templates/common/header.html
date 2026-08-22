@@ -6,7 +6,7 @@
     <form class="app-header__logout" action="{{ url_for('auth.logout')}}" method="POST" >
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <button type="submit">
-            <i class="fa-solid fa-door-open"></i>
+            <i class="fa-solid fa-arrow-right-from-bracket"></i>
             <span class="text-xs">ログアウト</span>
         </button>
     </form>
