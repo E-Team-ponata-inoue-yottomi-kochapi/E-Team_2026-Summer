@@ -1,7 +1,7 @@
-from flask import Blueprint, session, request, render_template, redirect, url_for
-from flask import flash
+from flask import Blueprint, session, request, render_template, redirect, url_for, abort, flash
+import pymysql
+import logging
 from services.application import summarize_applications
-# auth_guard.py実装後に追加
 from util.auth_guard import login_required, host_required, applicant_required
 
 #必要なデータの呼び出し
@@ -11,6 +11,7 @@ from services.application import build_participants_preview, create_application,
 from models.event import find_event_by_id
 
 application_bp = Blueprint("application", __name__, url_prefix="/apply")
+logger = logging.getLogger(__name__)
 
 
 # 集計画面
@@ -18,7 +19,12 @@ application_bp = Blueprint("application", __name__, url_prefix="/apply")
 @login_required
 @host_required
 def summary_view(event_id):
-    summary = summarize_applications(event_id)
+    try:
+        summary = summarize_applications(event_id)
+
+    except pymysql.MySQLError as e:
+        logger.exception("MySQLエラーが発生しました: %s", e)
+        abort(500)
 
     return render_template(
         "event/summary.html",
