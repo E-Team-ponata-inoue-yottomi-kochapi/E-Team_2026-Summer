@@ -172,12 +172,15 @@ def list_events_by_owner(user_id):
     conn = get_connection()
     try:
         with conn.cursor() as cursor:
-            sql = "SELECT id, title, start_at, status FROM events WHERE owner_id = %s"
+            sql = (
+                "SELECT id, title, start_at, status "
+                "FROM events "
+                "WHERE owner_id = %s "
+                "AND deleted_at IS NULL"
+                )
             cursor.execute(sql, (user_id,))
             events = cursor.fetchall()
             return events
-    except pymysql.MySQLError:
-        raise
     finally:
         conn.close()
         

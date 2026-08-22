@@ -142,7 +142,9 @@ def list_applications_by_household(household_id):
                 "events.status AS event_status "
                 "FROM applications "
                 "INNER JOIN events ON applications.event_id = events.id "
-                "WHERE applications.household_id = %s"
+                "WHERE applications.household_id = %s "
+                "AND applications.canceled_at IS NULL "
+                "AND events.deleted_at IS NULL"
             )
             cursor.execute(sql, (household_id,))
             applications = cursor.fetchall()
