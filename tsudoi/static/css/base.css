@@ -409,3 +409,72 @@ textarea:focus {
   margin-top: 8px;
   font-size: 16px;
 }
+
+/* ==========================================================
+   イベント状態バッジ(葉っぱ・さくら)
+   ========================================================== */
+   /* バッジの位置(箱のサイズ)（右上はみ出す感じ） */
+   .badge-leaf {
+    position: absolute;
+    top: -8px;
+    right: 8px;
+    width: 50px;
+    height: 50px;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.35));
+   }
+
+   /* バッジの中の文字の位置（葉っぱの中央に配置） */
+   .badge-leaf__text {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-size: 9px;
+    font-weight: 700;
+    padding-top: 4px;
+    /* line-height: 0.8; */
+    color: #fff;
+    z-index: 1;
+   }
+
+   /* 若葉（募集中用） */
+   .badge-leaf--open::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 55% 40%,#5f9a5f 100%); /* #a3d19f 0%, #7cb37a 55%, */
+    border-radius: 35px 0 35px 0;
+   }
+
+   /* 枯れ葉（締切間近用）右上を齧られたようにする */
+   .badge-leaf--dry::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 55% 40%,  #9c6a44 100%); /*#d1a877 0%, #b8825a 55%,*/
+    border-radius: 35px 0 35px 0;
+    -webkit-mask-image: radial-gradient(circle 8px at 60% 12%, transparent 99%, black 100%);
+    mask-image: radial-gradient(circle 6px at 78% 12%, transparent 99%, black 100%);
+   }
+
+   /* さくらの花びら */
+   .badge-leaf--sakura::before,
+   .badge-leaf--sakura::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 55% 40%, #e88ba0 100%); /*#ffd9e0 0%, #f4a6b8 55%, */
+    border-radius: 64px 0 64px 0;
+    transform-origin: 0% 100%; /*左下固定*/
+   }
+   .badge-leaf--sakura::before {
+    transform: rotate(-10deg);
+   }
+   .badge-leaf--sakura::after {
+    transform: rotate(10deg);
+   }
+  
+
+ 
