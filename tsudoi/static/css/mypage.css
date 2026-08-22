@@ -56,6 +56,16 @@
     margin-bottom: 24px;
    }
 
+   .mypage-actions .btn-outline {
+    margin-bottom: 48px;
+   }
+
+   .mypage-page .btnarea  {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 36px;
+   }
+
    /* .card {
     background: rgba(255, 255, 255, 0.6);
    } */
