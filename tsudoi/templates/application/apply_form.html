@@ -8,16 +8,74 @@
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   {# 参加する家族をチェックボックス選択 #}
   <p>参加者を選択してください</p>
+
   {% for member in members %}
   <label>
-    <input type="checkbox" name="member_ids" value="{{ member.id }}">
-    {{ member.name }}
-    {% if preview_by_id.get(member.id) %}
-        ({{ preview_by_id[member.id].fee_rule_name_snapshot }}: {{ preview_by_id[member.id].amount }}円)
-    {% endif %}
+    {# データ属性にJS処理で使用する情報の埋め込み #}
+    <input type="checkbox"
+           name="member_ids" 
+           value="{{ member.id }}"
+           data-amount="{{ preview_by_id[member.id].amount if preview_by_id.get(member.id) else 0 }}"
+           data-name="{{ member.name }}"
+           data-age="{{ preview_by_id[member.id].age_at_application if preview_by_id.get(member.id) else '' }}"
+           data-gender="{{ member.gender or '' }}"
+           data-fee="{{ preview_by_id[member.id].fee_rule_name_snapshot if preview_by_id.get(member.id) else '' }}"
+           onchange="updateSummary()">
+    <div>
+      {# 家族メンバーを1人ずつカードとして表示 #}
+      <div>
+        {{ member.name }}<span>{{ member.relation }}</span>
+      </div>
+      <div>
+        {% if preview_by_id.get(member.id) %}
+          {{ preview_by_id[member.id].age_at_application }}歳・{{ member.gender }}
+        {% endif %}
+      </div>
+    </div> 
+    <div>
+      {% if preview_by_id.get(member.id) %}
+        <div>{{ preview_by_id[member.id].fee_rule_name_snapshot }}</div>
+        <div>¥{{ "{:,}".format(preview_by_id[member.id].amount) }}</div>
+      {% endif %}
+    </div>
   </label>
   {% endfor %}
 
+  {# リアルタイムに更新される内訳を表示 #}
+  <div id="summary">
+    <h2>内訳</h2>
+    <ul id="summary-list"></ul>
+    <hr>
+    <p>合計 
+      <span id="summary-total">¥0</span></p>
+  </div>
   <button type="submit">{{ "更新する" if application else "確認する" }}</button>
 </form>
+<script>
+//チェックの状態により合計金額を再計算して表示する
+function updateSummary() {
+  const checkboxes = document.querySelectorAll('input[name="member_ids"]:checked');
+  const summaryList = document.getElementById('summary-list');
+  const summaryTotal = document.getElementById('summary-total');
+  //選択変更の際に内訳をクリアする
+  summaryList.innerHTML = '';
+  let total = 0;
+  //選択されたメンバーの内訳を表示する行を作成する
+  checkboxes.forEach(function(checkbox) {
+    const name = checkbox.dataset.name;
+    const age = checkbox.dataset.age;
+    const gender = checkbox.dataset.gender;
+    const fee = checkbox.dataset.fee;
+    const amount = Number(checkbox.dataset.amount);
+  
+    const li = document.createElement('li');
+    li.textContent = name + '（' + age + '歳・' + gender + '）→ ' + fee + ' ¥' + amount.toLocaleString();
+    summaryList.appendChild(li);
+
+    total += amount;
+  });
+
+  summaryTotal.textContent = '¥' + total.toLocaleString();
+}
+</script>
 {% endblock %}
