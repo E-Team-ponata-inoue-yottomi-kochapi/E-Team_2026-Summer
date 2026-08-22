@@ -7,6 +7,13 @@
 {% block content %}
 <div class="mypage-page">
     <h1>マイページ</h1>
+
+    {% for message in get_flashed_messages() %}
+        <hr>
+        <p>{{ message }}</p>
+        <hr>
+    {% endfor %}
+
     <div class="card">
         <section class="mypage-section">
             <h3>参加予定のイベント</h3>

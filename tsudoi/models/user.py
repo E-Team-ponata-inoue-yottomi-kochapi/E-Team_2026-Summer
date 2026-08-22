@@ -55,6 +55,25 @@ class User:
         finally:
             conn.close()
 
+    # パスワード比較用にユーザー情報を取得
+    @classmethod
+    def find_user_with_password_by_id(cls, user_id):
+        conn = get_connection()
+        try:
+            with conn.cursor() as cursor:
+                sql = (
+                    "SELECT id, email, password_hash "
+                    "FROM users "
+                    "WHERE id = %s AND deleted_at IS NULL;"
+                )
+                cursor.execute(sql, (user_id,))
+                user = cursor.fetchone()
+                return user
+        except pymysql.MySQLError:
+            raise
+        finally:
+            conn.close()
+
     # ユーザー情報を更新
     @classmethod
     def update_user(cls, user_id, email, password_hash):
@@ -64,8 +83,23 @@ class User:
                 # 指定したユーザーのメールアドレスとパスワードを更新
                 sql = "UPDATE users SET email = %s, password_hash = %s WHERE id = %s;"
                 cursor.execute(sql, (email, password_hash, user_id))
-                conn.commit()              
+                conn.commit()
                 # 更新された行数を返す
+                return cursor.rowcount
+        except pymysql.MySQLError:
+            raise
+        finally:
+            conn.close()
+
+    # ユーザー情報のメールアドレスのみを更新
+    @classmethod
+    def update_email(cls, user_id, email):
+        conn = get_connection()
+        try:
+            with conn.cursor() as cursor:
+                sql = "UPDATE users SET email =%s WHERE id = %s;"
+                cursor.execute(sql, (email, user_id))
+                conn.commit()
                 return cursor.rowcount
         except pymysql.MySQLError:
             raise
