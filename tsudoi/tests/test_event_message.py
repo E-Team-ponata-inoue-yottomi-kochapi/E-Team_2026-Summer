@@ -419,5 +419,89 @@ class TestMessageModelForDelete(unittest.TestCase):
         self.assertIsNotNone(result["deleted_at"])
         print(f"論理削除後のDB：{ result }")
 
+# 第３段階：認証用
+class TestMessageControllerAuthenticatedForDelete(unittest.TestCase):
+    # 各テストメソッドの実行前に呼ばる
+    def setUp(self):
+        self.title                     = "TestMessageControllerAuthenticatedForDelete"
+        # テストのため無効化
+        app.config['WTF_CSRF_ENABLED'] = False
+        self.app                       = app.test_client()
+        self.user_id                   = 3001
+        self.event_id                  = "b8e4d521-9f6a-4c37-a812-5d7e3f9b2c64"
+        self.body                      = "これは第３段階テスト：削除用です"
+        self.event_message_id          = create_event_message(self.user_id, self.event_id, self.body)
+
+    # 各テストメソッドの実行後に呼ばれ、テストで登録したデータを削除する
+    def tearDown(self):
+        if self.event_message_id is None:
+            return
+        conn = get_connection()
+        try:
+            with conn.cursor() as cursor:
+                sql = "DELETE FROM event_messages WHERE id=%s;"
+                cursor.execute(sql, (self.event_message_id,))
+                conn.commit()
+        finally:
+            conn.close()
+        result = get_open_event_messages(self.event_id)
+        if result:
+            print(f"物理削除後：{ result[-1] }\n")
+
+    # ３rd-５：ログイン済みユーザー：論理削除テスト
+    def test_delete_message_as_authenticated_user(self):
+        # ログイン処理
+        with self.app.session_transaction() as session:
+            session["user_id"] = self.user_id
+        self.assertEqual(self.user_id, session["user_id"])
+
+        # HTTPリクエスト
+        response = self.app.delete(f"/events/{self.event_id}/messages/{self.event_message_id}",
+                                follow_redirects=False,
+                                )
+        self.assertEqual(302, response.status_code)
+        self.assertIn(self.event_id, response.location)
+
+        conn =get_connection()
+        try:
+            with conn.cursor()as cursor:
+                sql = "SELECT * FROM event_messages WHERE event_id=%s AND id=%s;"
+                cursor.execute(sql, (self.event_id, self.event_message_id))
+                result = cursor.fetchone()
+        finally:
+            conn.close()
+
+        self.assertIsNotNone(result["deleted_at"])
+
+        print(f"{self.title}\ntest_delete_message")
+        print("３rd-５：ログイン済みユーザー：論理削除テスト")
+        print(f"ステータスコード：{response.status_code}")
+        print(f"論理削除後のDB：{ result }")
+
+    # ３rd-６：未ログインユーザー：論理削除テスト
+    def test_delete_message_as_unauthenticated_user(self):
+        # 未ログインのままHTTPリクエスト
+        response = self.app.delete(f"/events/{self.event_id}/messages/{self.event_message_id}",
+                                follow_redirects=False,
+                                )
+
+        # ログイン画面へ遷移
+        self.assertEqual(302, response.status_code)
+        self.assertIn("login", response.location)
+
+        conn =get_connection()
+        try:
+            with conn.cursor()as cursor:
+                sql = "SELECT * FROM event_messages WHERE event_id=%s AND id=%s;"
+                cursor.execute(sql, (self.event_id, self.event_message_id))
+                result = cursor.fetchone()
+        finally:
+            conn.close()
+
+        print(f"{self.title}\ntest_delete_message_as_unauthenticated_user")
+        print("３rd-６：未ログインユーザー：論理削除テスト")
+        print(f"ステータスコード：{response.status_code}")
+        print(f"論理削除失敗後：{ result }")
+
 if __name__ == '__main__':
     unittest.main()
