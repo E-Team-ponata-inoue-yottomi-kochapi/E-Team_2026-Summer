@@ -1,5 +1,5 @@
 from flask import Blueprint, session, render_template, redirect, url_for, request, abort
-from models.message import get_open_event_messages
+from models.message import get_open_event_messages, soft_delete_event_message
 from util.auth_guard import login_required, chat_required
 from services.message import create_message
 import pymysql
@@ -41,5 +41,7 @@ def create_process(event_id):
 
 # メッセージ削除
 @message_bp.route("/<string:event_message_id>", methods=["DELETE"])
+@login_required
 def delete_process(event_id, event_message_id):
-    return "メッセージ削除"
+    soft_delete_event_message(event_id, event_message_id)
+    return redirect(url_for("message.messages_view", event_id=event_id))
