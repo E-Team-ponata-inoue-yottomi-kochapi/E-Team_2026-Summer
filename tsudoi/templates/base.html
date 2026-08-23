@@ -19,6 +19,15 @@
     <!-- 共通部品を埋め込む -->
     {% include 'common/header.html' %}
         <main>
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <ul class="flash-messages">
+                    {% for category, message in messages %}
+                    <li class="flash-{{ category }}">{{ message }}</li>
+                    {% endfor %}
+                    </ul>
+                {% endif %}
+            {% endwith %}
             <!-- ページごとに内容が変わる部分 -->
             {% block content %}{% endblock %}
         </main>

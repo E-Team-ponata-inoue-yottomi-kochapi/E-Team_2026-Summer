@@ -72,7 +72,7 @@
         <label for="relation">続柄 <span class="required">*</span></label>
         <select id="relation" name="relation" required>
           <option value="">続柄を選択</option>
-          {% for option in ['本人','夫','妻','息子','娘','父','母','祖母','祖父','その他'] %}
+          {% for option in ['夫','妻','息子','娘','父','母','祖母','祖父','その他'] %}
             <option value="{{ option }}">{{ option }}</option>
           {% endfor %}
         </select>
@@ -132,11 +132,19 @@
           <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
           <div class="form-group">
             <label for="edit-relation-{{ member.id }}">続柄 <span class="required">*</span></label>
+            {# 本人の場合は編集できないように処理を追加する #}
+            {% if member.relation == '本人' %}
+              <select id="edit-relation-{{ member.id }}" disabled>
+                <option value="本人" selected>本人</option>
+              </select>
+              <input type="hidden" name="relation" value="本人">
+            {% else %}
             <select id="edit-relation-{{ member.id }}" name="relation" required>
-              {% for option in ['本人','夫','妻','息子','娘','父','母','祖母','祖父','その他'] %}
+              {% for option in ['夫','妻','息子','娘','父','母','祖母','祖父','その他'] %}
                 <option value="{{ option }}" {% if member.relation==option %}selected{% endif %}>{{ option }}</option>
               {% endfor %}
             </select>
+            {% endif %}
           </div>
           {# すでに選択肢が存在するため一致条件を追加 #}
           <div class="form-group">

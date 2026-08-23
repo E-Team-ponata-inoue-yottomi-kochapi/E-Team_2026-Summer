@@ -74,6 +74,7 @@ a {
   --flow-create: #fb923c; /* 作成フロー */
   --flow-danger: #e07a7a; /* 警告・エラー */
   --flow-admin: #7c3aed; /* 管理者フロー */
+  --flow-success: #4caf50; /* 成功・完了フロー */
 }
 
 /* ==========================================================
@@ -482,5 +483,19 @@ textarea:focus {
     transform: rotate(10deg);
    }
   
+/*フラッシュの追加*/
+ .flash-success {
+  background-color: var(--flow-success);
+  color: #ffffff;
+  padding: 10px;
+  border-radius: 4px;
+  margin-bottom: 8px;
+}
 
- 
+.flash-error {
+  background-color: var(--flow-danger);
+  color: #ffffff;
+  padding: 10px;
+  border-radius: 4px;
+  margin-bottom: 8px;
+}
