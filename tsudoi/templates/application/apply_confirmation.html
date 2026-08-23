@@ -3,8 +3,7 @@
 {% block title %}申し込み確認{% endblock %}
 
  {% block content %}
-<h2 class="page-title">申し込み確認</h2>
-<h3>{{ event.title }}</h3>
+<h2 class="page-title">{{ event.title }}</h2>
 
 <ul>
   {% for p in participants %}
@@ -19,7 +18,7 @@
   {% for p in participants %}
   <input type="hidden" name="member_ids" value="{{ p.member_id }}">
   {% endfor %}
-  <button type="submit">申し込み確定</button>
+  <button type="submit">申込を確定</button>
 </form>
 
 <form action="{{ url_for('application.apply_view', event_id=event_id) }}" method="POST">

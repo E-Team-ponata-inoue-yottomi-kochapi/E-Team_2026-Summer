@@ -6,7 +6,7 @@ from util.auth_guard import login_required, host_required, applicant_required
 
 #必要なデータの呼び出し
 from models.household import get_household_by_user, get_family_members
-from models.application import get_application, cancel_application
+from models.application import get_application, cancel_application,get_application_participants
 from services.application import build_participants_preview, create_application, update_application
 from models.event import find_event_by_id
 
@@ -88,10 +88,23 @@ def apply_edit_view(id):
     household = get_household_by_user(session['user_id'])
     members = get_family_members(household['id'])
     #メンバー全員の料金を計算して表示する
-    all_member_ids = [str(m['id']) for m in members]
-    participants_preview = build_participants_preview(application['event_id'], household['id'], all_member_ids)
-    preview_by_id = {p['member_id']: p for p in participants_preview}
+    # all_member_ids = [str(m['id']) for m in members]
+    # participants_preview = build_participants_preview(application['event_id'], household['id'], all_member_ids)
+    # preview_by_id = {p['member_id']: p for p in participants_preview}
+    #⇩修正
+    # 既存申込み参加者は、保存されている年齢・料金を使う
+    saved_participants = get_application_participants(id)
+    preview_by_id = {p['member_id']: p for p in saved_participants}
+
+    # イベント申込みに追加されていないメンバーは、その場で新規に計算する
+    missing_member_ids = [str(m['id']) for m in members if m['id'] not in preview_by_id]
+    if missing_member_ids:
+        new_preview = build_participants_preview(application['event_id'], household['id'], missing_member_ids)
+        for p in new_preview:
+            preview_by_id[p['member_id']] = p
+    
     return render_template('application/apply_form.html', event_id=None, members=members, application=application,preview_by_id=preview_by_id,)
+    
 
   
 #申し込み編集処理
