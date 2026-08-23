@@ -36,6 +36,7 @@ def household_list_view():
 def member_create_process():
     household = get_household_by_user(session['user_id'])
     relation = request.form.get('relation')
+    birth_date = request.form.get('birth_date')
     
     # 必須項目・日付のバリデーション
     errors = validate_member_input(relation, birth_date)
