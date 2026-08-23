@@ -31,8 +31,26 @@
                 </a>
             <p class="capacity"><span class="m-title">定員：</span>{{ participant_count }} / {{ event.capacity }} 名</p>
             {% if event.deadline %}
-            <p><span class="m-title">申込期限：</span>{{ event.deadline.strftime('%Y年 %-m月%-d日 %H:%M~')}}</p>
+            <p class="event-deadline">
+                <span class="m-title">申込期限：</span>{{ event.deadline.strftime('%Y年 %-m月%-d日 %H:%M~')}}
+                {% if application %}
+                <span class="badge-leaf badge-leaf--sakura">
+                    <span class="badge-leaf__text">申込済み</span>
+                </span>
+                {% endif %}
+            </p>
             {% endif %}
+
+
+            <!-- {% if application %}
+            <p class="event-applied-notice">申込済みのイベントです
+                <span class="badge-leaf badge-leaf--sakura">
+                    <span class="badge-leaf__text">申込済み</span>
+                </span>
+            </p>
+            {% endif %} -->
+
+
             {% if event.payment_method == '現地払い' %}
             <p class="text-xs">当日、現地にて主催者に現金でお支払いください。</p>
             {% else %}
@@ -81,7 +99,7 @@
 <!-- イベント参加者のみ下記を追加表示（主催者は含まない） -->
 {% if can_chat %}
 <div class="event-detail-chat">
-    <p class="text-xs">イベントについて話しながら、みんなで楽しもう！</p>
+    <p class="text-xs">\ イベントについて話しながら、みんなで楽しもう /</p>
     <a 
     class="btn btn-outline btn-block" 
     href="{{ url_for('message.messages_view', event_id=event.id) }}">
@@ -91,12 +109,13 @@
 
 <!-- すでに申し込み済みの場合のみ下記を追加表示 -->
 {% if application %}
-<a class="event-applied-notice">申込済みです。</a>
-<a class="btn btn-outline btn-block btn-reapply" href="{{ url_for('application.apply_edit_view', id=application.id) }}">申込内容を編集する</a>
-<form action="{{ url_for('application.apply_cancel_process', id=application.id) }}" method="POST">
-    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-    <button class="btn btn-outline btn-block" type="submit">申し込みをキャンセルする</button>
-</form>
+<div class="ap-actions">
+    <a class="btn btn-outline btn-block btn-reapply" href="{{ url_for('application.apply_edit_view', id=application.id) }}">申込内容を編集する</a>
+    <form action="{{ url_for('application.apply_cancel_process', id=application.id) }}" method="POST" onsubmit="return confirm('本当にキャンセルしますか？')">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button class="btn btn-outline btn-block btn-cancell" type="submit"><i class="fa-regular fa-trash-can"></i>申し込みをキャンセルする</button>
+    </form>
+</div>
 {% else %}
 <a class="btn btn-apply btn-block" href="{{ url_for('application.apply_view', event_id=event.id) }}">参加申し込み</a>
 {% endif %}
