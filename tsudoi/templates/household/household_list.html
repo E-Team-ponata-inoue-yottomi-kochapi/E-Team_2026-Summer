@@ -7,7 +7,6 @@
 {% block content %}
 
 {# TODO: Jsのコードをstatic/pages/フォルダに移動したい #}
-{# TODO: 削除ボタンにポップアップつけたい #}
 
 <div class="household-page">
   <div class="household-header">
@@ -172,7 +171,7 @@
             <button class="btn btn-create" type="submit">更新する</button>
           </div>
         </form>
-        <form class="household-delete-form" action="{{ url_for('household.member_delete_process', id=member.id) }}" method="POST">
+        <form class="household-delete-form" action="{{ url_for('household.member_delete_process', id=member.id) }}" method="POST" onsubmit="return confirm('この家族メンバーを削除します。よろしいですか？');">
           <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
           <button class="household-delete-btn" type="submit">
             <i class="fa-regular fa-trash-can"></i> この家族メンバーを削除する
@@ -184,23 +183,8 @@
     </ul>
   </div>
   {% endif %}
-
-  {# スクリプトを追記 #}
-    <script>
-    function toggleAddForm() {
-      const form = document.getElementById('add-form');
-      form.style.display = form.style.display === 'none' ? 'block' : 'none';
-    }
-
-    function toggleEditForm(id) {
-      const li = document.getElementById('member-' + id);
-      const viewMode = li.querySelector('.household-member__view');
-      const editMode = li.querySelector('.household-member__edit');
-      const isEditing = editMode.style.display !== 'none';
-      viewMode.style.display = isEditing ? 'flex': 'none';
-      editMode.style.display = isEditing ? 'none': 'block';
-      li.classList.toggle('household-member--editing', !isEditing);
-    }
-    </script>
-</div>
   {% endblock %}
+
+{% block js %}
+<script src="{{ url_for('static', filename='js/pages/household.js') }}"></script>
+{% endblock %}
