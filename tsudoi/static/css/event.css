@@ -45,7 +45,7 @@
 
 .event-detail-1stsection {
     margin-top: 24px;
-    padding: 4px;
+    padding: 4px 12px;
 }
 
 .event-detail-1stsection h1 {
@@ -125,6 +125,10 @@
     margin-bottom: 8px;
 }
 
+.event-detail-card p {
+    padding: 0 12px;
+}
+
 .event-detail-card__label:first-child {
     margin-top: 0;
 }
@@ -132,6 +136,15 @@
 .event-detail-card .m-title {
     color: var(--border2);
     font-size: 14px;
+}
+
+.event-deadline {
+    position: relative;
+}
+
+.event-deadline .badge-leaf {
+    top: -20px;
+    right: 20px;
 }
 
 .event-detail-card p {
@@ -154,6 +167,7 @@
 
 /* 申し込み済み通知 */
 .event-applied-notice {
+    position: relative;
     display: block;
     background: color-mix(in srgb, var(--flow-apply)12%, white);
     border: 1px solid var(--flow-apply);
@@ -163,6 +177,7 @@
     font-size: 13px;
     text-align: center;
     margin-top: 16px;
+    font-size: ;
 }
 
 .event-detail-chat,
@@ -176,6 +191,11 @@
 .event-detail-owner-actions {
     padding-top: 24px;
     margin-bottom: 32px;
+    border-top: 1px solid var(--border);
+}
+
+.ap-actions {
+    padding-top: 32px;
     border-top: 1px solid var(--border);
 }
 
@@ -203,4 +223,22 @@
 .event-detail-owner-actions .btn-summary {
     background-color: var(--brand-lavender);
     /* box-shadow: 2px 2px 4px rgba(39, 40, 40, 0.964); */
+}
+
+.btn-apply {
+    margin-top: 24px;
+    margin-bottom: 32px;
+}
+
+.btn-reapply {
+    margin-bottom: 8px;
+    border: 1px solid var(--flow-create);
+}
+
+.btn-cancell {
+    margin-top: 8px;
+    margin-bottom: 32px;
+    background: none;
+    border: 1px solid var(--flow-danger);
+    color: var(--flow-danger);
 }
