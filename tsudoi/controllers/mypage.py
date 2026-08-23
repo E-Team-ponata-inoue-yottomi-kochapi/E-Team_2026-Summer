@@ -37,9 +37,18 @@ def mypage_view():
 def user_edit_view():
     # セッションからログイン中のユーザーIDを取得
     user_id = session.get("user_id")
+    try:
+        # serviceからユーザー情報を取得
+        user = get_current_user(user_id)
 
-    # serviceからユーザー情報を取得
-    user = get_current_user(user_id)
+    except pymysql.MySQLError as e:
+        logger.exception("MySQLエラーが発生しました: %s", e)
+        abort(500)
+
+    # ユーザーが存在しない場合
+    if user is None:
+        logger.error("ログイン中のユーザー情報が存在しません: %s", user_id)
+        abort(500)
 
     return render_template("mypage/settings.html", user = user)
 
