@@ -35,3 +35,172 @@
     color: var(--muted-foreground);
     margin-top: 2px;
    }
+
+/* ==========================================================
+   イベント詳細画面
+   ========================================================== */
+.site-wrapper.plain-bg {
+ background-image: none;
+}
+
+.event-detail-1stsection {
+    margin-top: 24px;
+    padding: 4px;
+}
+
+.event-detail-1stsection h1 {
+    font-size: 18px;
+}
+
+.event-detail-back {
+    display: inline-block;
+    margin-bottom: 16px;
+    font-size: 14px;
+    color: var(--muted-foreground);
+}
+
+.event-detail-owner {
+    font-size: 12px;
+    color: var(--muted-foreground);
+    margin-bottom: 16px;
+}
+
+/*更新お知らせ*/
+.event-updated-banner {
+    background: var(--secondary);
+    border: 1px solid var(--flow-create);
+    color: var(--flow-create);
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-size: 12px;
+    margin-bottom: 16px;
+}
+
+.event-detail-meta p  {
+    margin-bottom: 4px;
+    font-size: 14px;
+}
+
+.event-detail-meta .m-title {
+    color: var(--border2);
+}
+
+.event-detail-meta .text-xs {
+    margin-top: 24px;
+    padding: 8px;
+    border: 1px solid var(--brand-peach);
+    border-radius: 4px;
+    font-size: 12px;
+    text-align: center;
+}
+
+.event-detail-meta .address {
+    margin-bottom: 0;
+}
+
+.event-detail-map-link {
+    color: var(--flow-apply);
+    font-size: 12px;
+    margin-left: 4px;
+}
+
+.event-detail-meta .capacity {
+    margin-top: 12px;
+}
+
+.card {
+    padding: 8px 16px 16px 16px;
+    border-radius: 8px;
+    
+}
+
+.event-detail-card {
+    margin-top: 12px;
+}
+
+.event-derail-card__label {
+    color: var(--flow-apply);
+    /* font-size: 120px; */
+    margin-top: 16px;
+    margin-bottom: 8px;
+}
+
+.event-detail-card__label:first-child {
+    margin-top: 0;
+}
+
+.event-detail-card .m-title {
+    color: var(--border2);
+    font-size: 14px;
+}
+
+.event-detail-card p {
+    font-size: 14px;
+}
+
+/* 料金表（申込確認画面と同じ感じ） */
+.apply-confirm-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.apply-confirm-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    font-size: 13px;
+}
+
+/* 申し込み済み通知 */
+.event-applied-notice {
+    display: block;
+    background: color-mix(in srgb, var(--flow-apply)12%, white);
+    border: 1px solid var(--flow-apply);
+    color: var(--flow-apply);
+    border-radius: 8px;
+    padding: 12px 14px;
+    font-size: 13px;
+    text-align: center;
+    margin-top: 16px;
+}
+
+.event-detail-chat,
+.event-detail-owner-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    /* margin-top: 28px; */
+}
+
+.event-detail-owner-actions {
+    padding-top: 24px;
+    margin-bottom: 32px;
+    border-top: 1px solid var(--border);
+}
+
+.event-detail-chat a {
+    background-color: var(--brand-mint);
+    box-shadow: 0 4px 12px rgba(124, 125, 125, 0.35);
+    margin-bottom: 32px;
+}
+
+.event-detail-chat p {
+    margin-top: 18px;
+    text-align: center;
+}
+
+.btn-block {
+    margin-top: 4px;
+}
+
+.event-detail-owner-actions .btn-edit {
+    background-color: var(--flow-create);
+    /* box-shadow: 2px 2px 4px rgba(39, 40, 40, 0.964); */
+}
+
+
+.event-detail-owner-actions .btn-summary {
+    background-color: var(--brand-lavender);
+    /* box-shadow: 2px 2px 4px rgba(39, 40, 40, 0.964); */
+}

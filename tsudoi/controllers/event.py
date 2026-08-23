@@ -8,7 +8,8 @@ from services.message import can_access_event_chat
 from datetime import datetime, timedelta
 from models.household import get_household_by_user
 from models.application import list_applications_by_household
-
+from models.application import find_application_by_event_id_and_household_id
+from models.application import summarize_applications_by_event
 
 event_bp = Blueprint("event", __name__, url_prefix="/events")
 logger = logging.getLogger(__name__)
@@ -55,10 +56,18 @@ def detail_view(event_id):
         fee_rules = result["fee_rules"]
         # 画面の表示切り分け用
         can_chat = can_access_event_chat(event_id)
+
+        # ログイン中の世帯が表示中のイベントに参加済みかどうか
+        household = get_household_by_user(session['user_id'])
+        application = find_application_by_event_id_and_household_id(event_id,household['id'])
+
+        # 定員に対して今何人申し込んでるか？
+        participant_count = len(summarize_applications_by_event(event_id))
+
     except pymysql.MySQLError as e:
         logger.exception('MySQLエラーが発生しました: %s', e)
         abort(500)
-    return render_template("event/event_detail.html", title="イベント詳細", event=event, owner=owner, fee_rules=fee_rules, can_chat=can_chat)
+    return render_template("event/event_detail.html", title="イベント詳細", event=event, owner=owner, fee_rules=fee_rules, can_chat=can_chat, application=application, participant_count=participant_count)
 
 
 # イベント作成画面表示
