@@ -2,7 +2,7 @@
 # python -m unittest discover -s tests
 
 import unittest
-from models.message import create_event_message, get_open_event_messages
+from models.message import create_event_message, get_open_event_messages, soft_delete_event_message
 from util.db import get_connection
 from app import app
 
@@ -344,28 +344,80 @@ class TestMessageAbnormalCase(unittest.TestCase):
         print(f"POST前のDB数：{self.bef_msgs_count}件")
         print(f"POST後のDB数：{self.aft_msgs_count}件\n")
 
-# 第1段階：ウォーキングスケルトン用
-class TestMessageController(unittest.TestCase):
-    # 各テストメソッドの実行前に呼ばる
-    def setUp(self):
-        self.title                     = "TestMessageController"
-        # テストのため無効化
-        app.config['WTF_CSRF_ENABLED'] = False
-        self.app                       = app.test_client()
+# <追加機能：削除>
+# # 第1段階：ウォーキングスケルトン用
+# class TestMessageController(unittest.TestCase):
+#     # 各テストメソッドの実行前に呼ばる
+#     def setUp(self):
+#         self.title                     = "TestMessageController"
+#         # テストのため無効化
+#         app.config['WTF_CSRF_ENABLED'] = False
+#         self.app                       = app.test_client()
     
-    # １st-１：メッセージ削除のController疎通テスト
-    def test_delete_process(self):
-        # HTTPリクエスト
-        response = self.app.delete(f"/events/test-event/messages/delete-message",
-                                follow_redirects=False,
-                                )
+#     # １st-１：メッセージ削除のController疎通テスト
+#     def test_delete_process(self):
+#         # HTTPリクエスト
+#         response = self.app.delete(f"/events/test-event/messages/delete-message",
+#                                 follow_redirects=False,
+#                                 )
 
-        self.assertEqual(200, response.status_code)
-        self.assertEqual("メッセージ削除".encode('utf-8'), response.data)
+#         self.assertEqual(200, response.status_code)
+#         self.assertEqual("メッセージ削除".encode('utf-8'), response.data)
 
-        print(f"{self.title}\ntest_delete_process")
-        print("１st-１：メッセージ削除のController疎通テスト")
-        print(f"ステータスコード：{response.status_code}")
+#         print(f"{self.title}\ntest_delete_process")
+#         print("１st-１：メッセージ削除のController疎通テスト")
+#         print(f"ステータスコード：{response.status_code}")
+
+# 第２段階：ハッピーパス用（認証・認可確認なし）
+class TestMessageModelForDelete(unittest.TestCase):
+        # 各テストメソッドの実行後に呼ばれ、テストで登録したデータを物理削除する
+    def tearDown(self):
+        if self.event_message_id is None:
+            return
+        conn = get_connection()
+        try:
+            with conn.cursor() as cursor:
+                sql = "DELETE FROM event_messages WHERE id=%s;"
+                cursor.execute(sql, (self.event_message_id,))
+                conn.commit()
+        finally:
+            conn.close()
+        result = get_open_event_messages(self.event_id)
+        if result:
+            print(f"物理削除後：{ result[-1] }\n")
+
+    # ２nd-２：認証・認可なしのメッセージ論理削除テスト
+    def test_delete_message(self):
+        user_id = 3001
+        self.event_id = "b8e4d521-9f6a-4c37-a812-5d7e3f9b2c64"
+        self.body = "これは第２段階テスト：削除用です"
+        self.event_message_id = create_event_message(user_id, self.event_id, self.body)
+        result = get_open_event_messages(self.event_id)
+        bef_delete_msg = result[-1]
+        self.assertIn(self.body, bef_delete_msg["body"])
+
+        print(f"TestMessageModelForDelete\ntest_delete_message")
+        print("２nd-２：認証・認可なしのメッセージ論理削除テスト")
+        print(f"論理削除前のDB：{ bef_delete_msg }")
+
+        soft_delete_event_message(self.event_id, self.event_message_id)
+        results = get_open_event_messages(self.event_id)
+        id_list = []
+        for result in results:
+            id_list.append(result["id"])
+        self.assertNotIn(self.event_message_id, id_list)
+
+        conn =get_connection()
+        try:
+            with conn.cursor()as cursor:
+                sql = "SELECT * FROM event_messages WHERE event_id=%s AND id=%s;"
+                cursor.execute(sql, (self.event_id, self.event_message_id))
+                result = cursor.fetchone()
+        finally:
+            conn.close()
+
+        self.assertIsNotNone(result["deleted_at"])
+        print(f"論理削除後のDB：{ result }")
 
 if __name__ == '__main__':
     unittest.main()
