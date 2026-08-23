@@ -2,28 +2,50 @@
 
 {% block title %}申し込み確認{% endblock %}
 
- {% block content %}
-<h2 class="page-title">{{ event.title }}</h2>
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/application.css')}}">
+{% endblock %}
 
-<ul>
-  {% for p in participants %}
-  <li>
-    {{ p.member_name_snapshot }} ({{p.fee_rule_name_snapshot}}): {{ p.amount }}円
-  </li>
-  {% endfor %}
-</ul>
-<p>合計金額: {{ total_amount }}</p>
-<form action="{{ url_for('application.apply_create_process', event_id=event_id) }}" method="POST">
-  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-  {% for p in participants %}
-  <input type="hidden" name="member_ids" value="{{ p.member_id }}">
-  {% endfor %}
-  <button type="submit">申込を確定</button>
-</form>
+{% block content %}
+<div class="apply-page">
+  <p class="apply-event-title">{{ event.title }}</p>
+  <p class="apply-event-date">{{ event.start_at.strftime('開催日時：%Y年 %-m月%-d日 %H:%M~') }}</p>
+  <h1>申し込み内容の確認</h1>
 
-<form action="{{ url_for('application.apply_view', event_id=event_id) }}" method="POST">
-    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-  <button type="submit">戻る</button>
-</form>
+  <div class="card apply-confirm-card">
+    <h3 class="apply-confirm-card__label">内訳</h3>
+    <ul class="apply-confirm-list">
+    {% for p in participants %}
+      <li class="apply-confirm-row">
+        <span>
+          {{ p.member_name_snapshot }} ({{ p.age_at_application }}歳) → {{p.fee_rule_name_snapshot}}
+        </span>
+        <span class="apply-confirm-row__amount">
+          {{ "無料" if p.amount == 0 else "¥" ~"{:,}".format(p.amount) }}
+        </span>
+      </li>
+      {% endfor %}
+    </ul>
+    <div class="apply-confirm-total">
+      <span>合計金額</span>
+      <span class="apply-confirm-total__amaout">
+        ¥{{ "{:,}".format(total_amount)}}
+      </span>
+    </div>
+  </div>
 
+  <div class="apply-confirm-actions">
+    <form action="{{ url_for('application.apply_view', event_id=event_id) }}" method="POST">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <button class="btn btn-outline" type="submit">戻る</button>
+    </form>
+    <form action="{{ url_for('application.apply_create_process', event_id=event_id) }}" method="POST">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      {% for p in participants %}
+      <input type="hidden" name="member_ids" value="{{ p.member_id }}">
+      {% endfor %}
+      <button class="btn btn-apply" type="submit">申込を確定する</button>
+    </form>
+  </div>
+</div>
 {% endblock %}
