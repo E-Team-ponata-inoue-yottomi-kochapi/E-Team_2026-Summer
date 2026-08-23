@@ -5,67 +5,110 @@
 {% block css %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/event.css') }}">
 {% endblock %}
+{% block body_class %}plain-bg{% endblock %}
 <!-- ここまで -->
 
 <!-- ここからbaseのbodyに差し込まれる -->
 {% block content %}
-<div>
-    <a href="{{ url_for('event.list_view') }}">イベント一覧へ戻る</a>
-</div>
-<div>
-    <h1>{{ event.title }}</h1>
-    <p>主催：{{ owner.name }}</p>
-    <p>日時：{{ event.start_at }}</p>
-    <p>場所：{{ event.place }}</p>
-    <p>住所：{{ event.address }}</p>
-</div>
-<div>
-    <p>説明：</p>
-    <p>{{ event.description }}</p>
-    <p>持ち物：</p>
-    <p>{{ event.items_to_bring }}</p>
-    <p>当日のスケジュール：</p>
-    <p>{{ event.schedule }}</p>
-    <p>開催条件：</p>
-    <p>{{ event.hold_condition }}</p>
-    <p>中止時の対応・連絡方法：</p>
-    <p>{{ event.cancellation_policy }}</p>
-    <p>緊急連絡先：</p>
-    <p>{{ event.emergency_contact }}</p>
-</div>
-<div>
-    <p>料金表</p>
-    <table>
-        <tr>
-            <th>区分</th>
-            <th>年齢</th>
-            <th>金額</th>
-        </tr>
-        {% for fee_rule in  fee_rules %}
-        <tr>
-            <td>{{ fee_rule.tier_name }}</td>
-            <td>（{{ fee_rule.min_age }}～{{ fee_rule.max_age}}歳）</td>
-            <td>￥{{ fee_rule.fee }}</td>
-        </tr>
+<div class="event-detail-page">
+    <div class="event-detail-1stsection">
+        <h1>{{ event.title }}</h1>
+        <p class="event-detail-owner">主催：{{ owner.name }}</p>
+
+        {% if event.updated_at %}
+        <p class="event-updated-banner">このイベントは更新されました ({{event.updated_at.strftime('開催日時：%Y年 %-m月%-d日 %H:%M') }})</p>
+        {% endif %}
+
+        <div class="event-detail-meta">
+            <p><span class="m-title">日時：</span>{{ event.start_at.strftime('%Y年 %-m月%-d日 %H:%M~') }}</p>
+            <p><span class="m-title">場所：</span>{{ event.place }}</p>
+            <p class="address"><span class="m-title">住所：</span>{{ event.address }}</p>
+                <a class="event-detail-map-link"
+                    href="http://www.google.com/maps/search/?api=1&query={{ event.address | urlencode }}"
+                    target="_blank"
+                    rel="noopener"><i class="fa-solid fa-location-dot"></i> 
+                    地図で見る
+                </a>
+            <p class="capacity"><span class="m-title">定員：</span>{{ participant_count }} / {{ event.capacity }} 名</p>
+            {% if event.deadline %}
+            <p><span class="m-title">申込期限：</span>{{ event.deadline.strftime('%Y年 %-m月%-d日 %H:%M~')}}</p>
+            {% endif %}
+            {% if event.payment_method == '現地払い' %}
+            <p class="text-xs">当日、現地にて主催者に現金でお支払いください。</p>
+            {% else %}
+            <p class="text-xs">事前払い：{{ event.payment_deadline }}までにお支払いください。</p>
+            {% endif %}
+        </div>
+    </div>
+    
+    <div class="card event-detail-card">
+      
+        <h3 class="event-detail-card__label"><span class="m-title">説明：</span></h3>
+        <p>{{ event.description }}</p>
+
+        <h3 class="event-detail-card__label"><span class="m-title">持ち物：</span></h3>
+        <p>{{ event.items_to_bring }}</p>
+
+        <h3 class="event-detail-card__label"><span class="m-title">スケジュール：</span></h3>
+        <p>{{ event.schedule }}</p>
+
+        <h3 class="event-detail-card__label"><span class="m-title">開催条件：</span></h3>
+        <p>{{ event.hold_condition }}</p>
+
+        <h3 class="event-detail-card__label"><span class="m-title">中止時の対応・連絡方法：</span></h3>
+        <p>{{ event.cancellation_policy }}</p>
+
+        <h3 class="event-detail-card__label"><span class="m-title">緊急連絡先：</span></h3>
+        <p>{{ event.emergency_contact }}</p>
+    </div>
+
+<div class="card event-detail-card">
+    <h3 class="event-detail-card__label">料金</h3>
+    <ul class="apply-confirm-list">
+        {% for fee_rule in fee_rules %}
+        <li class="apply-confirm-row">
+            <span>
+                {{ fee_rule.tier_name }} ({{ fee_rule.min_age }}〜{{ fee_rule.max_age }}歳)
+            </span>
+            <span>
+                {{ "無料" if fee_rule.fee == 0 else "¥" ~ "{:,}".format(fee_rule.fee)}}
+            </span>
+        </li>
         {% endfor %}
-    </table>
+    </ul>
 </div>
-<div>
-    <a href="{{ url_for('application.apply_view', event_id=event.id) }}">参加申し込み</a>
-</div>
+
+<!-- イベント参加者のみ下記を追加表示（主催者は含まない） -->
 {% if can_chat %}
-<div>
-    <p>イベントについて話しながら、みんなで楽しもう！</p>
-    <a href="{{ url_for('message.messages_view', event_id=event.id) }}">チャットルームへ入室</a>
+<div class="event-detail-chat">
+    <p class="text-xs">イベントについて話しながら、みんなで楽しもう！</p>
+    <a 
+    class="btn btn-outline btn-block" 
+    href="{{ url_for('message.messages_view', event_id=event.id) }}">
+    チャットルームへ入室</a>
 </div>
 {% endif %}
+
+<!-- すでに申し込み済みの場合のみ下記を追加表示 -->
+{% if application %}
+<a class="event-applied-notice">申込済みです。</a>
+<a class="btn btn-outline btn-block btn-reapply" href="{{ url_for('application.apply_edit_view', id=application.id) }}">申込内容を編集する</a>
+<form action="{{ url_for('application.apply_cancel_process', id=application.id) }}" method="POST">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <button class="btn btn-outline btn-block" type="submit">申し込みをキャンセルする</button>
+</form>
+{% else %}
+<a class="btn btn-apply btn-block" href="{{ url_for('application.apply_view', event_id=event.id) }}">参加申し込み</a>
+{% endif %}
+
+
+
 <!-- イベント主催者の場合のみ下記を追加表示 -->
 {% if owner.owner_id == session["user_id"] %}
-<div>
-    <a href="{{ url_for('event.event_edit_view', event_id=event.id)}}">イベントを編集</a>
-</div>
-<div>
-    <a href="{{ url_for('application.summary_view', event_id=event.id) }}">参加者一覧・集計表を閲覧</a>
+<div class="event-detail-owner-actions">
+    <a class="btn btn-outline btn-block btn-edit" href="{{ url_for('event.event_edit_view', event_id=event.id)}}">イベントを編集</a>
+    <a class="btn btn-outline btn-block btn-summary" href="{{ url_for('application.summary_view', event_id=event.id) }}">参加者一覧・集計表を閲覧</a>
 </div>
 {% endif %}
+</div>
 {% endblock %}

@@ -66,6 +66,7 @@ a {
   --muted-foreground: #8a7f72; /* 控えめな文字色 */
   --accent: #fce9d6; /* 背景用のアクセント色 */
   --border: rgba(120, 90, 60, 0.15); /* カード・フォームなどの枠線色 */
+  --border2: rgba(6, 6, 6, 0.5);
   --input-background: #fbf5ec; /* 入力欄の背景色 */
   --radius: 1.1rem; /* カードなどの角丸量 */
 
@@ -96,16 +97,19 @@ h1 {
   font-size: 24px;
   font-weight: 500;
   color: var(--primary);
+  padding-left: 4px;
 }
 h2 {
   font-size: 20px;
   font-weight: 500;
   color: var(--primary);
+  padding-left: 4px;
 }
 h3 {
   font-size: 18px;
   font-weight: 500;
   color: var(--primary);
+  padding-left: 4px;
 }
 
 /* 補足テキスト */
@@ -241,7 +245,8 @@ body {
   /* background: #fff; */
   background: rgba(255, 255, 255, 0.5);
   border: 1px solid var(--border);
-  border-radius: var(--radius);
+  border-radius: 8px;
+  /* border-radius: var(--radius); */
   padding: 20px;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
 }
