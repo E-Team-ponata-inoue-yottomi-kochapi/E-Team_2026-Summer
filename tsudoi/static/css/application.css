@@ -155,3 +155,18 @@
     opacity: 0.4;
     cursor: not-allowed;
    }
+
+   /*　確認画面のボタンの配置とサイズ　*/
+   .apply-confirm-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 20px;
+   }
+
+   .apply-confirm-actions form {
+    flex: 1;
+   }
+
+   .apply-confirm-actions .btn {
+    width: 100%;
+   }
