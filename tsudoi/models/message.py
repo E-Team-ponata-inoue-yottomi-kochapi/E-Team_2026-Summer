@@ -26,3 +26,14 @@ def get_open_event_messages(event_id):
             return open_event_messages
     finally:
         conn.close()
+
+# メッセージの論理削除
+def soft_delete_event_message(event_id, event_message_id):
+    conn = get_connection()
+    try:
+        with conn.cursor() as cursor:
+            sql ="UPDATE event_messages SET deleted_at=NOW() WHERE event_id=%s AND id=%s;"
+            cursor.execute(sql, (event_id, event_message_id))
+            conn.commit()
+    finally:
+        conn.close()
