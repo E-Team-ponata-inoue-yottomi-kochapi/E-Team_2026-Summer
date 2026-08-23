@@ -28,12 +28,6 @@
   text-align: left;
 }
 
-/* ログインボタンを横いっぱいに広げる */
-.btn-block {
-  width: 100%;
-  margin-top: 24px;
-}
-
 /* 新規登録はこちらの装飾 */
 .create-account-btn {
   margin-top: 24px;

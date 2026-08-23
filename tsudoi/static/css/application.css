@@ -1,0 +1,157 @@
+/* ==========================================================
+   参加申し込みページ
+   ========================================================== */
+   .apply-page {
+    padding-top: 24px;
+   }
+
+   .apply-page h1 {
+    margin-bottom: 20px;
+    font-size: 18px;
+    margin-left: 2px;
+   }
+
+   .apply-page h3 {
+    margin-bottom: 16px;
+   }
+
+   .apply-event-title {
+    font-size: 16px;
+    color: var(--muted-foreground);
+    margin-left: 2px;
+   }
+
+   .apply-event-date {
+    font-size: 10px;
+    color: var(--muted-foreground);
+    margin-left: 2px;
+   }
+
+   .household-subheader {
+    margin-top: 8px;
+    margin-bottom: 28px;
+   }
+
+   /*　参加者リスト　*/
+   .apply-member-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+   }
+
+   .apply-member {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 8px 16px;
+    transition: border-color 0.15 ease;
+   }
+
+   /* チェックしたカードを強調する */
+   .apply-member:has(input:checked) {
+    border-color: var(--primary);
+    border-width: 1.5px;
+   }
+
+   .apply-member__label {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    margin-bottom: 0;
+   }
+
+   .apply-member__label input[type="checkbox"] {
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+    accent-color: var(--primary);
+   }
+
+   .apply-member__main {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+   }
+
+   .apply-member__name {
+    font-size: 14px;
+    font-weight: 500;
+   }
+
+   .apply-member__relation {
+    font-size: 12px;
+    color: var(--flow-apply);
+    margin-left: 4px;
+   }
+
+   .apply-member__meta {
+    font-size: 12px;
+    color: var(--muted-foreground);
+   }
+
+   .apply-member__price {
+    margin-left: auto;
+    text-align: right;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+   }
+
+   .apply-member__price > span:first-child {
+    font-weight: 500;
+    font-size: 13px;
+   }
+
+   .apply-member__price > span:last-child {
+    font-size: 13px;
+    color: var(--muted-foreground);
+   }
+
+   /* 料金内訳の表示部分（JSの部分） */
+   .apply-confirm-card {
+    margin-top: 16px;
+    margin-bottom: 16px;
+   }
+
+   .apply-confirm-card__label {
+    color: var(--flow-apply);
+    font-size: 14px;
+    margin-bottom: 16px;
+   }
+
+   .apply-confirm-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+   }
+
+   .apply-confirm-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    font-size: 13px;
+   }
+
+   .apply-confirm-row__amount {
+    white-space: nowrap;
+    color: var(--muted-foreground);
+   }
+
+   .apply-confirm-total {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+    font-weight: 500;
+   }
+
+   .apply-actions {
+    margin-top: 12px;
+   }
+
+   /* 送信ボタンが無効の時は薄くする */
+   .btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+   }

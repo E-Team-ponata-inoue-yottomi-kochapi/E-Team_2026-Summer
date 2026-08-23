@@ -1,65 +1,108 @@
 {% extends "base.html" %}
 {% block title %}{{ "申込編集" if application else "参加申し込み" }}{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/application.css') }}">
+{% endblock %}
+
 {% block content %}
-<h1>{{ "申込編集" if application else "参加申し込み" }}</h1>
+<div class="apply-page">
+  <p class="apply-event-title">{{ event.title }}</p>
+  <p class="apply-event-date">{{ event.start_at.strftime('開催日時：%Y年 %-m月%-d日 %H:%M~') }}</p>
+  <h1>{{ "申込編集" if application else "イベント参加申し込み" }}</h1>
 
-{# 申込みの編集or新規申込みのフォームを表示 #}
-<form action="{{ url_for('application.apply_edit_process', id=application.id) if application else url_for('application.apply_confirmation_view', event_id=event_id) }}" method="POST">
-  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-  {# 参加する家族をチェックボックス選択 #}
-  <p>参加者を選択してください</p>
-
-  {% for member in members %}
-  <label>
-    {# データ属性にJS処理で使用する情報の埋め込み #}
-    <input type="checkbox"
-           name="member_ids" 
-           value="{{ member.id }}"
-           data-amount="{{ preview_by_id[member.id].amount if preview_by_id.get(member.id) else 0 }}"
-           data-name="{{ member.name }}"
-           data-age="{{ preview_by_id[member.id].age_at_application if preview_by_id.get(member.id) else '' }}"
-           data-gender="{{ member.gender or '' }}"
-           data-fee="{{ preview_by_id[member.id].fee_rule_name_snapshot if preview_by_id.get(member.id) else '' }}"
-           onchange="updateSummary()">
-    <div>
-      {# 家族メンバーを1人ずつカードとして表示 #}
-      <div>
-        {{ member.name }}<span>{{ member.relation }}</span>
+  {# 申込みの編集or新規申込みのフォームを表示 #}  
+  <form action="{{ url_for('application.apply_edit_process', id=application.id) if application else url_for('application.apply_confirmation_view', event_id=event_id) }}" method="POST">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    
+    {# 参加する家族をチェックボックス選択 #}
+    <div class="card">
+      <div class="household-subheader">
+        <h3>参加者を選択してください</h3>
+        <i class="fa-regular fa-circle-question"></i> ヒント<br>
+        <p class="text-xs">料金は申込時点の年齢を基準に判定されます。<br>生年月日や性別など、イベント主催者が設定した区分に応じた金額で、参加費用が自動計算されます。</p>
       </div>
-      <div>
-        {% if preview_by_id.get(member.id) %}
-          {{ preview_by_id[member.id].age_at_application }}歳・{{ member.gender }}
-        {% endif %}
-      </div>
-    </div> 
-    <div>
-      {% if preview_by_id.get(member.id) %}
-        <div>{{ preview_by_id[member.id].fee_rule_name_snapshot }}</div>
-        <div>¥{{ "{:,}".format(preview_by_id[member.id].amount) }}</div>
-      {% endif %}
+        <ul class="apply-member-list">
+        {% for member in members %}
+        <li class="apply-member">
+          <label class="apply-member__label">
+          {# データ属性にJS処理で使用する情報の埋め込み #}
+            <input type="checkbox"
+                  name="member_ids" 
+                  value="{{ member.id }}"
+                  data-amount="{{ preview_by_id[member.id].amount if preview_by_id.get(member.id) else 0 }}"
+                  data-name="{{ member.name }}"
+                  data-age="{{ preview_by_id[member.id].age_at_application if preview_by_id.get(member.id) else '' }}"
+                  data-gender="{{ member.gender or '' }}"
+                  data-fee="{{ preview_by_id[member.id].fee_rule_name_snapshot if preview_by_id.get(member.id) else '' }}"
+                  onchange="updateSummary()">
+            
+            {# 家族メンバーを1人ずつカードとして表示 #}
+            <span class="apply-member__main">
+              <span class="apply-member__name">{{ member.name or "氏名：未登録" }}
+                <span class="apply-member__relation">{{ member.relation }}</span>
+              </span>
+                {% if preview_by_id.get(member.id) %}
+              <span class="apply-member__meta">
+                {{ preview_by_id[member.id].age_at_application }}歳・{{ member.gender or "性別：未登録" }}
+              </span>
+              {% endif %}
+            </span>
+            {% if preview_by_id.get(member.id) %}
+            <span class="apply-member__price">
+              <span class="apply-member__meta">
+                 {{ preview_by_id[member.id].fee_rule_name_snapshot }}
+              </span>
+              <span>
+                {{ "無料" if preview_by_id[member.id].amount == 0 else "¥" ~ "{:,}".format(preview_by_id[member.id].amount) }}
+              </span>
+            </span>
+            {% endif %}
+          </label>
+        </li>
+        {% endfor %}
+      </ul>
     </div>
-  </label>
-  {% endfor %}
 
-  {# リアルタイムに更新される内訳を表示 #}
-  <div id="summary">
-    <h2>内訳</h2>
-    <ul id="summary-list"></ul>
-    <hr>
-    <p>合計 
-      <span id="summary-total">¥0</span></p>
+    {# リアルタイムに更新される内訳を表示(未選択時は非表示) #}
+  <div id="summary" class="card apply-confirm-card" style="display: none;">
+    <h3 class="apply-confirm-card__label">内訳</h3>
+    <ul id="summary-list" class="apply-confirm-list"></ul>
+    <div class="apply-confirm-total">
+      <span>合計</span>
+      <span id="summary-total" class="apply-confirm-total__amount">¥0</span>
+    </div>
+    <div class="apply-actions">
+      <button id="apply-submit" class="btn btn-apply btn-block" type="submit" disabled>
+        {{ "更新する" if application else "確認する" }}
+      </button>
+    </div>
   </div>
-  <button type="submit">{{ "更新する" if application else "確認する" }}</button>
 </form>
+
+
 <script>
 //チェックの状態により合計金額を再計算して表示する
 function updateSummary() {
   const checkboxes = document.querySelectorAll('input[name="member_ids"]:checked');
+  const summary = document.getElementById('summary');
   const summaryList = document.getElementById('summary-list');
   const summaryTotal = document.getElementById('summary-total');
+  const submitButton = document.getElementById('apply-submit');
+
+  // 未選択時は内訳を隠し、送信ボタンを押せなくする
+  if (checkboxes.length == 0) {
+    summary.style.display = 'none';
+    submitButton.disabled = true;
+    return
+  }
+  summary.style.display = 'block';
+  submitButton.disabled = false;
+
   //選択変更の際に内訳をクリアする
   summaryList.innerHTML = '';
   let total = 0;
+
   //選択されたメンバーの内訳を表示する行を作成する
   checkboxes.forEach(function(checkbox) {
     const name = checkbox.dataset.name;
@@ -69,7 +112,17 @@ function updateSummary() {
     const amount = Number(checkbox.dataset.amount);
   
     const li = document.createElement('li');
-    li.textContent = name + '（' + age + '歳・' + gender + '）→ ' + fee + ' ¥' + amount.toLocaleString();
+    li.className = 'apply-confirm-row';
+
+    const nameSpan = document.createElement('span')
+    nameSpan.textContent = name + '（' + age + '歳・' + gender + '）→ ' + fee;
+    
+    const amountSpan = document.createElement('span');
+    amountSpan.className = 'apply-confirm-row__amount';
+    amountSpan.textContent ='¥' + amount.toLocaleString();
+
+    li.appendChild(nameSpan);
+    li.appendChild(amountSpan);
     summaryList.appendChild(li);
 
     total += amount;

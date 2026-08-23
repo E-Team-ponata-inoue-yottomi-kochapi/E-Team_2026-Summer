@@ -49,7 +49,7 @@ def apply_view(event_id):
     all_member_ids = [str(m['id']) for m in members]
     participants_preview = build_participants_preview(event_id, household['id'], all_member_ids)
     preview_by_id = {p['member_id']: p for p in participants_preview}
-    return render_template('application/apply_form.html', event_id=event_id, members=members, application=None,preview_by_id=preview_by_id,)
+    return render_template('application/apply_form.html', event_id=event_id, event=find_event_by_id(event_id), members=members, application=None,preview_by_id=preview_by_id,)
 
   
 #申し込み内容確認画面
@@ -103,7 +103,7 @@ def apply_edit_view(id):
         for p in new_preview:
             preview_by_id[p['member_id']] = p
     
-    return render_template('application/apply_form.html', event_id=None, members=members, application=application,preview_by_id=preview_by_id,)
+    return render_template('application/apply_form.html', event_id=None, event=find_event_by_id(application['event_id']), members=members, application=application,preview_by_id=preview_by_id,)
     
 
   

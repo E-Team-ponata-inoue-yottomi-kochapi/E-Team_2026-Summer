@@ -230,6 +230,12 @@ body {
   color: #fff;
 }
 
+/* ログインボタンを横いっぱいに広げる */
+.btn-block {
+  width: 100%;
+  margin-top: 24px;
+}
+
 /* カード（標準） */
 .card {
   /* background: #fff; */
