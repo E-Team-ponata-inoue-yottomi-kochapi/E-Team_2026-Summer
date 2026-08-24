@@ -18,8 +18,8 @@ def get_open_events():
             cursor.execute(sql)
             events = cursor.fetchall()
             return events
-    except pymysql.Error:
-        raise
+    # except pymysql.Error:
+    #     raise
     finally:
         conn.close()
 
@@ -47,8 +47,8 @@ def get_owner_by_event_id(event_id):
             cursor.execute(sql, (event_id,))
             owner = cursor.fetchone()
             return owner
-    except pymysql.Error:
-        raise
+    # except pymysql.Error:
+    #     raise
     finally:
         conn.close()
 
