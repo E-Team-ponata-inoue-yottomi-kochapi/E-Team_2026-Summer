@@ -7,7 +7,7 @@ from models.admin import find_admin_by_id
 from models.household import get_household_by_user, get_family_member_by_id
 from models.event import find_event_by_id
 from models.application import find_application_by_id
-from services.message import can_access_event_chat
+from services.message import can_access_event_chat, can_delete_event_message
 
 # ログイン権限デコレータ(L)
 def login_required(func):
@@ -82,6 +82,23 @@ def chat_required(func):
         elif result:
             return func(*args, **kwargs)
         # 存在するイベントで権限がない場合は403
+        else:
+            abort(403)
+    return wrapper
+
+# メッセージ削除権限
+def delete_message_required(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        event_id = kwargs.get('event_id')
+        event_message_id = kwargs.get('id') or kwargs.get('event_message_id')
+        result = can_delete_event_message(event_id, event_message_id)
+        # 存在しないメッセージの場合は404
+        if result is None:
+            abort(404)
+        elif result:
+            return func(*args, **kwargs)
+        # 存在するメッセージで権限がない場合は403
         else:
             abort(403)
     return wrapper

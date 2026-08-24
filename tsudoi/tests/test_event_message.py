@@ -22,7 +22,7 @@ class TestMessageModel(unittest.TestCase):
     # 各テストメソッドの実行後に呼ばれ、テストで登録したデータを削除する
     def tearDown(self):
         if self.event_message_id is None:
-            return
+            return None
         conn = get_connection()
         try:
             with conn.cursor() as cursor:
@@ -32,8 +32,10 @@ class TestMessageModel(unittest.TestCase):
         finally:
             conn.close()
         result = get_open_event_messages(self.event_id)
+        self.aft_msgs_count = len(result)
+        print(f"テストデータ物理削除後の件数：{ self.aft_msgs_count }件\n")
         if result:
-            print(f"削除後：{ result[-1] }\n")
+            print(f"テストデータ物理削除後のDB：{ result[-1] }\n")
 
     # ２nd-１．イベントメッセージ新規作成とその取得についてのテスト
     def test_create_event_messages(self):
@@ -48,11 +50,14 @@ class TestMessageModel(unittest.TestCase):
         user_id = 1111
         self.event_id = "b8e4d521-9f6a-4c37-a812-5d7e3f9b2c64"
         self.body = "これは第２段階テスト用です"
+        messages = get_open_event_messages(self.event_id)
+        self.bef_msgs_count = len(messages)
         self.event_message_id = create_event_message(user_id, self.event_id, self.body)
         result = get_open_event_messages(self.event_id)
         print(f"TestMessageModel\ntest_create_event_messages")
         print("２nd-１．イベントメッセージ新規作成とその取得についてのテスト")
-        print(f"登録後：{ result[-1] }")
+        print(f"投稿前の件数：{self.bef_msgs_count}件")
+        print(f"投稿後のDB：{ result[-1] }")
         # get_open_event_messagesが昇順のため、最後のメッセージを取得
         self.assertEqual(self.body, result[-1]["body"])
 
@@ -71,11 +76,13 @@ class TestMessageControllerAuthenticated(unittest.TestCase):
         self.user_id                   = 3001
         self.event_id                  = "b8e4d521-9f6a-4c37-a812-5d7e3f9b2c64"
         self.body                      = None
+        messages = get_open_event_messages(self.event_id)
+        self.bef_msgs_count = len(messages)
 
     # 各テストメソッドの実行後に呼ばれ、テストで登録したデータを削除する
     def tearDown(self):
         if self.event_message_id is None:
-            return
+            return None
         conn = get_connection()
         try:
             with conn.cursor() as cursor:
@@ -85,8 +92,10 @@ class TestMessageControllerAuthenticated(unittest.TestCase):
         finally:
             conn.close()
         result = get_open_event_messages(self.event_id)
+        self.aft_msgs_count = len(result)
+        print(f"テストデータ物理削除後の件数：{ self.aft_msgs_count }件")
         if result:
-            print(f"削除後：{ result[-1] }\n")
+            print(f"テストデータ物理削除後のDB：{ result[-1] }\n")
 
     # ３rd-１．ログイン済ユーザー：画面表示テスト
     def test_messages_view_as_authenticated_user(self):
@@ -131,8 +140,9 @@ class TestMessageControllerAuthenticated(unittest.TestCase):
         self.assertEqual(self.body, result[-1]["body"])
         print(f"{self.title}\ntest_create_process_as_authenticated_user")
         print("３rd-２．ログイン済ユーザー：投稿テスト")
+        print(f"投稿前の件数：{self.bef_msgs_count}件")
         print(f"ステータスコード：{response.status_code}")
-        print(f"登録後：{ result[-1] }")
+        print(f"投稿後のDB：{ result[-1] }")
 
     # ３rd-３．未ログインユーザー：画面表示テスト
     def test_messages_view_as_unauthenticated_user(self):
@@ -158,12 +168,17 @@ class TestMessageControllerAuthenticated(unittest.TestCase):
                                 follow_redirects=False,
                                 )
 
+        messages = get_open_event_messages(self.event_id)
+        self.aft_msgs_count = len(messages)
+
         # ログイン画面へ遷移
         self.assertEqual(302, response.status_code)
         self.assertIn("login", response.location)
         print(f"{self.title}\ntest_create_process_as_unauthenticated_user")
         print("３rd-４．未ログインユーザー：投稿テスト")
-        print(f"ステータスコード：{response.status_code}\n")
+        print(f"投稿前の件数：{self.bef_msgs_count}件")
+        print(f"ステータスコード：{response.status_code}")
+        print(f"投稿後の件数：{self.aft_msgs_count}件\n")
 
 # 第４段階：認可用
 class TestMessageAuthorization(unittest.TestCase):
@@ -179,6 +194,8 @@ class TestMessageAuthorization(unittest.TestCase):
         self.unauthorized_user         = 1111
         self.event_id                  = "b8e4d521-9f6a-4c37-a812-5d7e3f9b2c64"
         self.body                      = None
+        messages = get_open_event_messages(self.event_id)
+        self.bef_msgs_count = len(messages)
 
     # ４th-１．ログイン済＆イベント未申込ユーザー：画面表示テスト
     def test_messages_view_as_unauthorized_user(self):
@@ -213,11 +230,16 @@ class TestMessageAuthorization(unittest.TestCase):
                                 follow_redirects=False,
                                 )
 
+        messages = get_open_event_messages(self.event_id)
+        self.aft_msgs_count = len(messages)
+
         # 権限エラー
         self.assertEqual(403, response.status_code)
         print(f"{self.title}\ntest_create_process_as_unauthorized_user")
         print("４th-２．ログイン済＆イベント未申込ユーザー：投稿テスト")
-        print(f"ステータスコード：{response.status_code}\n")
+        print(f"投稿前の件数：{self.bef_msgs_count}件")
+        print(f"ステータスコード：{response.status_code}")
+        print(f"投稿後の件数：{self.aft_msgs_count}件\n")
 
 # 第５段階：検証用
 class TestMessageAbnormalCase(unittest.TestCase):
@@ -261,8 +283,8 @@ class TestMessageAbnormalCase(unittest.TestCase):
         print(f"{self.title}\ntest_create_process_as_empty_body")
         print("５th-１：未入力テスト")
         print(f"ステータスコード：{response.status_code}")
-        print(f"POST前のDB数：{self.bef_msgs_count}件")
-        print(f"POST後のDB数：{self.aft_msgs_count}件\n")
+        print(f"投稿前の件数：{self.bef_msgs_count}件")
+        print(f"投稿後の件数：{self.aft_msgs_count}件\n")
 
     # ５th-２：文字数制限テスト
     def test_create_process_as_too_long_body(self):
@@ -292,8 +314,8 @@ class TestMessageAbnormalCase(unittest.TestCase):
         print(f"{self.title}\ntest_create_process_as_too_long_body")
         print("５th-２：文字数制限テスト")
         print(f"ステータスコード：{response.status_code}")
-        print(f"POST前のDB数：{self.bef_msgs_count}件")
-        print(f"POST後のDB数：{self.aft_msgs_count}件\n")
+        print(f"投稿前の件数：{self.bef_msgs_count}件")
+        print(f"投稿後の件数：{self.aft_msgs_count}件\n")
 
     # ５th-３：存在しないイベントIDのチャット画面表示テスト
     def test_messages_view_as_nonexistent_event(self):
@@ -312,7 +334,7 @@ class TestMessageAbnormalCase(unittest.TestCase):
 
         print(f"{self.title}\ntest_messages_view_as_nonexistent_event")
         print("５th-３：存在しないイベントIDの画面表示テスト")
-        print(f"ステータスコード：{response.status_code}")
+        print(f"ステータスコード：{response.status_code}\n")
 
     # ５th-４：存在しないイベントIDへの投稿テスト
     def test_create_process_as_nonexistent_event(self):
@@ -341,8 +363,8 @@ class TestMessageAbnormalCase(unittest.TestCase):
         print(f"{self.title}\ntest_create_process_as_nonexistent_event")
         print("５th-４：存在しないイベントIDへの投稿テスト")
         print(f"ステータスコード：{response.status_code}")
-        print(f"POST前のDB数：{self.bef_msgs_count}件")
-        print(f"POST後のDB数：{self.aft_msgs_count}件\n")
+        print(f"投稿前の件数：{self.bef_msgs_count}件")
+        print(f"投稿後の件数：{self.aft_msgs_count}件\n")
 
 # <追加機能：削除>
 # # 第1段階：ウォーキングスケルトン用
@@ -383,14 +405,18 @@ class TestMessageModelForDelete(unittest.TestCase):
         finally:
             conn.close()
         result = get_open_event_messages(self.event_id)
+        self.aft_msgs_count = len(result)
+        print(f"テストデータ物理削除後の件数：{ self.aft_msgs_count }件\n")
         if result:
-            print(f"物理削除後：{ result[-1] }\n")
+            print(f"テストデータ物理削除後のDB：{ result[-1] }\n")
 
     # ２nd-２：認証・認可なしのメッセージ論理削除テスト
     def test_delete_message(self):
         user_id = 3001
         self.event_id = "b8e4d521-9f6a-4c37-a812-5d7e3f9b2c64"
         self.body = "これは第２段階テスト：削除用です"
+        messages = get_open_event_messages(self.event_id)
+        self.bef_msgs_count = len(messages)
         self.event_message_id = create_event_message(user_id, self.event_id, self.body)
         result = get_open_event_messages(self.event_id)
         bef_delete_msg = result[-1]
@@ -398,6 +424,7 @@ class TestMessageModelForDelete(unittest.TestCase):
 
         print(f"TestMessageModelForDelete\ntest_delete_message")
         print("２nd-２：認証・認可なしのメッセージ論理削除テスト")
+        print(f"投稿前の件数：{self.bef_msgs_count}件")
         print(f"論理削除前のDB：{ bef_delete_msg }")
 
         soft_delete_event_message(self.event_id, self.event_message_id)
@@ -430,6 +457,8 @@ class TestMessageControllerAuthenticatedForDelete(unittest.TestCase):
         self.user_id                   = 3001
         self.event_id                  = "b8e4d521-9f6a-4c37-a812-5d7e3f9b2c64"
         self.body                      = "これは第３段階テスト：削除用です"
+        messages = get_open_event_messages(self.event_id)
+        self.bef_msgs_count = len(messages)
         self.event_message_id          = create_event_message(self.user_id, self.event_id, self.body)
 
     # 各テストメソッドの実行後に呼ばれ、テストで登録したデータを削除する
@@ -445,8 +474,10 @@ class TestMessageControllerAuthenticatedForDelete(unittest.TestCase):
         finally:
             conn.close()
         result = get_open_event_messages(self.event_id)
+        self.aft_msgs_count = len(result)
+        print(f"テストデータ物理削除後の件数：{ self.aft_msgs_count }件\n")
         if result:
-            print(f"物理削除後：{ result[-1] }\n")
+            print(f"テストデータ物理削除後のDB：{ result[-1] }\n")
 
     # ３rd-５：ログイン済みユーザー：論理削除テスト
     def test_delete_message_as_authenticated_user(self):
@@ -456,7 +487,7 @@ class TestMessageControllerAuthenticatedForDelete(unittest.TestCase):
         self.assertEqual(self.user_id, session["user_id"])
 
         # HTTPリクエスト
-        response = self.app.delete(f"/events/{self.event_id}/messages/{self.event_message_id}",
+        response = self.app.post(f"/events/{self.event_id}/messages/{self.event_message_id}",
                                 follow_redirects=False,
                                 )
         self.assertEqual(302, response.status_code)
@@ -475,13 +506,14 @@ class TestMessageControllerAuthenticatedForDelete(unittest.TestCase):
 
         print(f"{self.title}\ntest_delete_message")
         print("３rd-５：ログイン済みユーザー：論理削除テスト")
+        print(f"投稿前の件数：{self.bef_msgs_count}件")
         print(f"ステータスコード：{response.status_code}")
         print(f"論理削除後のDB：{ result }")
 
     # ３rd-６：未ログインユーザー：論理削除テスト
     def test_delete_message_as_unauthenticated_user(self):
         # 未ログインのままHTTPリクエスト
-        response = self.app.delete(f"/events/{self.event_id}/messages/{self.event_message_id}",
+        response = self.app.post(f"/events/{self.event_id}/messages/{self.event_message_id}",
                                 follow_redirects=False,
                                 )
 
@@ -500,7 +532,107 @@ class TestMessageControllerAuthenticatedForDelete(unittest.TestCase):
 
         print(f"{self.title}\ntest_delete_message_as_unauthenticated_user")
         print("３rd-６：未ログインユーザー：論理削除テスト")
+        print(f"投稿前の件数：{self.bef_msgs_count}件")
         print(f"ステータスコード：{response.status_code}")
+        print(f"論理削除失敗後：{ result }")
+
+# 第４段階：認可用
+class TestMessageAuthorizationForDelete(unittest.TestCase):
+    # 各テストメソッドの実行前に呼ばる
+    def setUp(self):
+        self.title                               = "TestMessageAuthorizationForDelete"
+        # テストのため無効化
+        app.config['WTF_CSRF_ENABLED']           = False
+        self.app                                 = app.test_client()
+        # 参加者＆メッセージ投稿者
+        self.authorized_user                     = 3001
+        # 主催者＆イベント未申込
+        self.unauthorized_user_not_applied       = 1111
+        # 参加者＆メッセージ非投稿者
+        self.unauthorized_user_not_owner         = 1999
+        self.event_id                            = "b8e4d521-9f6a-4c37-a812-5d7e3f9b2c64"
+        self.body                                = "これは第４段階テスト：削除用です"
+        messages = get_open_event_messages(self.event_id)
+        self.bef_msgs_count = len(messages)
+        self.event_message_id                    = create_event_message(self.authorized_user, self.event_id, self.body)
+
+    # 各テストメソッドの実行後に呼ばれ、テストで登録したデータを削除する
+    def tearDown(self):
+        if self.event_message_id is None:
+            return
+
+        conn = get_connection()
+        try:
+            with conn.cursor() as cursor:
+                sql = "DELETE FROM event_messages WHERE id=%s;"
+                cursor.execute(sql, (self.event_message_id,))
+                conn.commit()
+        finally:
+            conn.close()
+        result = get_open_event_messages(self.event_id)
+        self.aft_msgs_count = len(result)
+        print(f"テストデータ物理削除後の件数：{ self.aft_msgs_count }件\n")
+        if result:
+            print(f"テストデータ物理削除後のDB：{ result[-1] }\n")
+
+    # ４th-３．ログイン済＆イベント主催者＆イベント未申込＆メッセージ非投稿ユーザー：削除テスト
+    def test_delete_message_as_unauthorized_user_not_applied(self):
+        # ログイン処理
+        with self.app.session_transaction() as session:
+            session["user_id"] = self.unauthorized_user_not_applied
+        self.assertEqual(self.unauthorized_user_not_applied, session["user_id"])
+
+        # HTTPリクエスト
+        response = self.app.post(f"/events/{self.event_id}/messages/{self.event_message_id}",
+                                follow_redirects=False,
+                                )
+
+        # 権限エラー
+        self.assertEqual(403, response.status_code)
+
+        conn =get_connection()
+        try:
+            with conn.cursor()as cursor:
+                sql = "SELECT * FROM event_messages WHERE event_id=%s AND id=%s;"
+                cursor.execute(sql, (self.event_id, self.event_message_id))
+                result = cursor.fetchone()
+        finally:
+            conn.close()
+
+        print(f"{self.title}\ntest_delete_message_as_unauthorized_user_not_applied")
+        print("４th-３．ログイン済＆イベント主催者＆イベント未申込＆メッセージ非投稿ユーザー：削除テスト")
+        print(f"投稿前の件数：{self.bef_msgs_count}件")
+        print(f"ステータスコード：{response.status_code}")
+        print(f"論理削除失敗後：{ result }")
+
+    # ４th-４．ログイン済＆イベント参加者＆メッセージ非投稿ユーザー：削除テスト
+    def test_delete_message_as_unauthorized_user_not_owner(self):
+        # ログイン処理
+        with self.app.session_transaction() as session:
+            session["user_id"] = self.unauthorized_user_not_owner
+        self.assertEqual(self.unauthorized_user_not_owner, session["user_id"])
+
+        # HTTPリクエスト
+        response = self.app.post(f"/events/{self.event_id}/messages/{self.event_message_id}",
+                                follow_redirects=False,
+                                )
+
+        # 権限エラー
+        self.assertEqual(403, response.status_code)
+
+        conn =get_connection()
+        try:
+            with conn.cursor()as cursor:
+                sql = "SELECT * FROM event_messages WHERE event_id=%s AND id=%s;"
+                cursor.execute(sql, (self.event_id, self.event_message_id))
+                result = cursor.fetchone()
+        finally:
+            conn.close()
+
+        print(f"{self.title}\ntest_delete_message_as_unauthorized_user_not_owner")
+        print("４th-４．ログイン済＆イベント参加者＆メッセージ非投稿ユーザー：削除テスト")
+        print(f"投稿前の件数：{self.bef_msgs_count}件")
+        print(f"ステータスコード：{response.status_code}\n")
         print(f"論理削除失敗後：{ result }")
 
 if __name__ == '__main__':

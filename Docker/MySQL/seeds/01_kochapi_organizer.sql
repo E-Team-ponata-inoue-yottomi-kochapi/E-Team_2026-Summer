@@ -1,6 +1,7 @@
 -- ユーザー作成
 -- kochapi_user_id = 1111
 -- パスワードはpasswordpassword
+-- 主催者＆イベント未申込
 INSERT INTO
     users (id, email, password_hash)
 VALUES
@@ -162,3 +163,86 @@ VALUES
         5,
         0
     );
+
+-- 参加者
+INSERT INTO
+    users (id, email, password_hash)
+VALUES
+    (
+        1999,
+        'test000@example.com',
+        'pbkdf2:sha256:260000$ltKpVAn9ZjKAsfOT$2e03ac183990ff20d783bbb2d4b3530c19badf56613c09d7b5db8e3573fbcbed'
+    );
+
+-- householdsの作成
+-- kochapi_household_id = '9a6b2c41-8e73-4d95-b126-5f9c3a7e2048'
+INSERT INTO
+    households (id, leader_id)
+VALUES
+    ('9a6b2c41-8e73-4d95-b126-5f9c3a7e2048', 1999);
+
+-- family_membersの作成
+-- kochapi_family_members_id_001 = 0000
+INSERT INTO
+    family_members (
+        id,
+        household_id,
+        relation,
+        name,
+        gender,
+        birth_date,
+        email
+    )
+VALUES
+    (
+        1999,
+        '9a6b2c41-8e73-4d95-b126-5f9c3a7e2048',
+        '本人',
+        '日本　次郎',
+        '男',
+        '1999-12-31',
+        'test000@example.com'
+    );
+
+-- イベント申込作成
+-- application_id = 0000
+INSERT INTO
+    applications (
+        id,
+        event_id,
+        household_id,
+        total_amount,
+        applied_at
+    )
+VALUES
+    (
+        1999,
+        'b8e4d521-9f6a-4c37-a812-5d7e3f9b2c64',
+        '9a6b2c41-8e73-4d95-b126-5f9c3a7e2048',
+        1500,
+        '2026-07-19 11:00:00'
+    );
+
+-- イベント参加者作成
+INSERT INTO
+    application_participants (
+        application_id,
+        member_id,
+        fee_rule_id,
+        member_name_snapshot,
+        relation_snapshot,
+        age_at_application,
+        fee_rule_name_snapshot,
+        amount
+    )
+VALUES
+    (
+        1999,
+        1999,
+        5555,
+        '日本　次郎',
+        '本人',
+        27,
+        '大人',
+        1500
+    )

@@ -19,8 +19,14 @@
 <div class="message-list">
 {% if event_messages %}
     {% for event_message in event_messages %}
-        <p>{{ event_message.name }} {{ event_message.created_at}}</p>
-        <p>{{ event_message.body }}</p>
+            <p>{{ event_message.name }} {{ event_message.created_at}}</p>
+            <p>{{ event_message.body }}</p>
+            {% if event_message.user_id == user_id %}
+                <form method="post" action="{{ url_for('message.delete_process', event_id=event_id, event_message_id=event_message.id) }}">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <button type="submit" onclick="return confirm('このメッセージを削除して宜しいでしょうか？');">削除</button>
+                </form>
+            {% endif %}
     {% endfor %}
 {% else %}
     <p>まだ投稿されたメッセージはありません</p>
