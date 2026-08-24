@@ -155,12 +155,12 @@ def create_fee_rule(event_id, tier_name, min_age, max_age, gender, fee):
     finally:
         conn.close()
 
-# イベント編集時に登録済みの料金区分を一旦全削除（物理削除）する(直後に再登録しないと0件状態になる)
+# イベント編集時に登録済みの料金区分を論理削除する
 def delete_fee_rules_by_event(event_id):
     conn = get_connection()
     try:
         with conn.cursor() as cursor:
-            sql = "DELETE FROM fee_rules WHERE event_id=%s;"
+            sql = "UPDATE fee_rules SET deleted_at = NOW() WHERE event_id=%s AND deleted_at IS NULL;"
             cursor.execute(sql, (event_id,))
             conn.commit()
             return cursor.rowcount
