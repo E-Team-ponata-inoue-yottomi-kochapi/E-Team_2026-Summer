@@ -1,10 +1,10 @@
 from flask import session
 from models.household import get_household_by_user
 from models.application import find_application_by_event_id_and_household_id
-from models.message import create_event_message
+from models.message import create_event_message, find_event_message_by_event_message_id
 from models.event import find_event_by_id
 
-# チェット機能権限用
+# チャット機能権限用
 def get_household_id_by_user_id():
     user_id = session.get("user_id")
     result = get_household_by_user(user_id)
@@ -43,3 +43,16 @@ def create_message(user_id, event_id, body):
     
     event_message_id = create_event_message(user_id, event_id, body)
     return {"valid": True, "data": event_message_id}
+
+# メッセージ削除機能権限チェック
+def can_delete_event_message(event_id, event_message_id):
+    user_id = session.get("user_id")
+    # 削除対象のメッセージを取得
+    message = find_event_message_by_event_message_id(event_message_id)
+    if not message:
+        return None
+
+    if message["user_id"] == user_id and message["event_id"] == event_id:
+        return True
+    else:
+        return False
