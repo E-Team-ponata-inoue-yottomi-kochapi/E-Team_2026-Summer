@@ -38,12 +38,12 @@ def soft_delete_event_message(event_id, event_message_id):
     finally:
         conn.close()
 
-# メッセージ１件取得
-def find_event_message_by_event_message_id(event_message_id):
+# 未削除メッセージ１件取得
+def find_open_event_message_by_event_message_id(event_message_id):
     conn = get_connection()
     try:
         with conn.cursor() as cursor:
-            sql = "SELECT * FROM event_messages WHERE id=%s;"
+            sql = "SELECT * FROM event_messages WHERE id=%s AND deleted_at IS NULL;"
             cursor.execute(sql, (event_message_id,))
             message = cursor.fetchone()
             return message
