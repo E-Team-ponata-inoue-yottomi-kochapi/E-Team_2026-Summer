@@ -1,7 +1,6 @@
 form {
     display: flex;
     width: 100%;
-
 }
 
 #message {
@@ -9,12 +8,26 @@ form {
 }
 
 .message-list {
-    padding: 60px;
+    padding: 5px 0 0;
+    height: 568px;
+    overflow-y: auto;
 }
 
 .chat-input {
     position: fixed;
     bottom: 0;
-    width: 375px;
-    padding: 0 5px 5px 5px;
+    width: 343px;
+    padding: 0 0 5px;
+}
+
+.message-mine {
+    margin-left: auto;
+    width: fit-content;
+    padding: 5px;
+}
+
+.message-others {
+    margin-right: auto;
+    width: fit-content;
+    padding: 5px;
 }
