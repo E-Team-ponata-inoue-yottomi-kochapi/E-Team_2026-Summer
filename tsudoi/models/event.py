@@ -9,17 +9,17 @@ from util.db import get_connection
 # イベントの本体に関するmodel関数
 #######################################################################
 
-# 公開中のイベント一覧を取得する(status='公開'で絞り込み)
+# 公開中かつ開催日時を過ぎていないイベント一覧を取得する
 def get_open_events():
     conn = get_connection()
     try:
         with conn.cursor() as cursor:
-            sql = "SELECT * FROM events WHERE deleted_at IS NULL AND status='公開' ORDER BY created_at DESC;"
+            sql = "SELECT * FROM events WHERE deleted_at IS NULL AND status='公開' AND start_at >= NOW() ORDER BY created_at DESC;"
             cursor.execute(sql)
             events = cursor.fetchall()
             return events
-    except pymysql.Error:
-        raise
+    # except pymysql.Error:
+        # raise
     finally:
         conn.close()
 
