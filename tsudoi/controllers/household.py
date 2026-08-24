@@ -103,3 +103,6 @@ def member_delete_process(id):
     if is_self_member(id):
         flash("本人は削除できません", "error")
         return redirect(url_for('household.household_list_view'))
+    
+    delete_family_member(id)
+    return redirect(url_for('household.household_list_view'))
