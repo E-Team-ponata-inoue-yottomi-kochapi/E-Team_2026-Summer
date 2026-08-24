@@ -575,7 +575,7 @@ class TestMessageAuthorizationForDelete(unittest.TestCase):
         if result:
             print(f"テストデータ物理削除後のDB：{ result[-1] }\n")
 
-    # ４th-３．ログイン済＆イベント未申込ユーザー：削除テスト
+    # ４th-３．ログイン済＆イベント主催者＆イベント未申込＆メッセージ非投稿ユーザー：削除テスト
     def test_delete_message_as_unauthorized_user_not_applied(self):
         # ログイン処理
         with self.app.session_transaction() as session:
@@ -600,12 +600,12 @@ class TestMessageAuthorizationForDelete(unittest.TestCase):
             conn.close()
 
         print(f"{self.title}\ntest_delete_message_as_unauthorized_user_not_applied")
-        print("４th-３．ログイン済＆イベント未申込ユーザー：削除テスト")
+        print("４th-３．ログイン済＆イベント主催者＆イベント未申込＆メッセージ非投稿ユーザー：削除テスト")
         print(f"投稿前の件数：{self.bef_msgs_count}件")
         print(f"ステータスコード：{response.status_code}")
         print(f"論理削除失敗後：{ result }")
 
-    # ４th-４．ログイン済＆イベント申込＆メッセージ非投稿ユーザー：削除テスト
+    # ４th-４．ログイン済＆イベント参加者＆メッセージ非投稿ユーザー：削除テスト
     def test_delete_message_as_unauthorized_user_not_owner(self):
         # ログイン処理
         with self.app.session_transaction() as session:
@@ -630,7 +630,7 @@ class TestMessageAuthorizationForDelete(unittest.TestCase):
             conn.close()
 
         print(f"{self.title}\ntest_delete_message_as_unauthorized_user_not_owner")
-        print("４th-４．ログイン済＆イベント申込＆メッセージ非投稿ユーザー：削除テスト")
+        print("４th-４．ログイン済＆イベント参加者＆メッセージ非投稿ユーザー：削除テスト")
         print(f"投稿前の件数：{self.bef_msgs_count}件")
         print(f"ステータスコード：{response.status_code}\n")
         print(f"論理削除失敗後：{ result }")
