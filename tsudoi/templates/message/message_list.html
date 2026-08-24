@@ -19,6 +19,7 @@
 <div class="message-list">
 {% if event_messages %}
     {% for event_message in event_messages %}
+        <div class="{% if event_message.user_id == user_id %} message-mine {% else %} message-others {% endif %}">
             <p>{{ event_message.name }} {{ event_message.created_at}}</p>
             <p>{{ event_message.body }}</p>
             {% if event_message.user_id == user_id %}
@@ -27,6 +28,7 @@
                     <button type="submit" onclick="return confirm('このメッセージを削除して宜しいでしょうか？');">削除</button>
                 </form>
             {% endif %}
+        </div>
     {% endfor %}
 {% else %}
     <p>まだ投稿されたメッセージはありません</p>
