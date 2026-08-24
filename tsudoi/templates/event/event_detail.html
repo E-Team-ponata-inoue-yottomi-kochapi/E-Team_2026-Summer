@@ -96,10 +96,10 @@
     </ul>
 </div>
 
-<!-- イベント参加者のみ下記を追加表示（主催者は含まない） -->
+<!-- イベント参加者のみ下記を追加表示（主催者もイベントに参加しないとみれない仕様） -->
 {% if can_chat %}
 <div class="event-detail-chat">
-    <p class="text-xs">\ イベントについて話しながら、みんなで楽しもう /</p>
+    <p class="text-xs">イベントについて話しながら、みんなで楽しもう  <i class="fa-regular fa-comments"></i></p>
     <a 
     class="btn btn-outline btn-block" 
     href="{{ url_for('message.messages_view', event_id=event.id) }}">
