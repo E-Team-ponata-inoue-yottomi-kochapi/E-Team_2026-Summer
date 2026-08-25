@@ -9,17 +9,22 @@
 
 <!-- ここからbaseのbodyに差し込まれる -->
 {% block content %}
-<div>
-    <h1>500 エラー<br>（Internal Server Error）</h1>
-    <p>申し訳ありません</p>
-    <p>サーバーで問題が発生いたしました</p>
-    <p>しばらく時間をおいてから、もう一度お試しください</p>
-</div>
-<div>
+<div class="error-page">
+    <div class="error-icon">
+        <i class="fa-solid fa-triangle-exclamation"></i>
+    </div>
+    <h1 class="error-code">500</h1>
+    <p class="error-title">Internal Server Error</p>
+    <div class="error-message">
+        <p>申し訳ありません</p>
+        <p>サーバーで問題が発生いたしました</p>
+        <p>しばらく時間を置いてから、もう一度お試しください</p>
+    </div>
+    <!-- ぼたんをせっちするならここ -->
     {% if session.get("user_id") %}
-    <a href="{{ url_for('mypage.mypage_view') }}">マイページへ戻る</a>
+    <a class="btn btn-create btn-block error-back" href="{{ url_for('mypage.mypage_view') }}">マイページへ戻る</a>
     {% else %}
-    <a href="{{ url_for('auth.login_view') }}">ログインへ戻る</a>
+    <a class="btn btn-create btn-block error-back" href="{{ url_for('auth.login_view') }}">ログインへ戻る</a>
     {% endif %}
 </div>
 {% endblock %}
