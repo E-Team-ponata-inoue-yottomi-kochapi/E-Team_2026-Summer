@@ -1,4 +1,5 @@
 # Flaskクラスのインポート + csrfクラスのインポート
+import os
 from flask import Flask, render_template
 from flask_wtf.csrf import CSRFProtect
 
@@ -63,4 +64,6 @@ def method_not_allowed_error(error):
 # port=5000,#待機ポート指定
 # debug=True)　エラー表示とコード更新時の自動リロード有効化
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    debug_mode = os.environ.get("FLASK_DEBUG", "true").lower() == "true"
+    port = int(os.environ.get("PORT",5000))
+    app.run(host="0.0.0.0", port=port, debug=debug_mode)
