@@ -1,172 +1,261 @@
 {% extends 'base.html' %}
 
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/event_form.css')}}">
+{% endblock %}
+<!-- {% block body_class %}plain-bg{% endblock %} -->
+
 {% block content %}
+<div class="event-form-page">
+    <div class="event-info-section" id="event-info-section">
+        {% if event %}
+        <a class="event-form-back" href="{{ url_for('event.detail_view',event_id=event.id) if event else url_for('mypage.mypage_view') }}">
+            <i class="fa-solid fa-chevron-left"></i><i class="fa-solid fa-chevron-left"></i>
+            イベント詳細ページに戻る
+        </a>
+        {% endif %}
 
-<h2>{{'イベントを編集します' if event else '新しいイベントを作成します'}}</h2>
-<p>基本情報</p>
-<hr>
-<br><br>
-
-<form action="{{
-    url_for('event.event_edit_process', event_id=event.id) if event else url_for('event.create_process')}}" method="POST">
-    <input type="hidden" name="csrf_token" value="{{csrf_token()}}">
-
-    <label>イベント名<br>
-        <input type="text" name="title" value="{{ event.title if event else ''}}" required >    
-    </label><br>
-
-    <label>開催日時<br>
-        <input type="datetime-local" name="start_at" value="{{ event.start_at if event else ''}}" required >
-    </label><br>
-
-    <label>開催場所<br>
-        <input type="text" name="place" value="{{ event.place if event else ''}}" required >
-    </label><br>
-
-    <label>住所<br>
-        <input type="text" name="address" value="{{ event.address if event else ''}}" required >
-    </label><br>
-    <a href="">地図で見る</a><br>
-    <label>定員<br>
-        <input type="number" name="capacity" value="{{ event.capacity if event else ''}}" required >
-    </label><br>
-
-    <label>申込期限<br>
-        <input type="datetime-local" name="deadline" value="{{ event.deadline if event else ''}}" required >
-    </label><br>
-    <br>
-    <br>
-    <p>詳細情報</p>
-    <hr>
-    <label>イベントの説明<br>
-        <textarea name="description" required>{{ event.description if event else'' }}</textarea>
-    </label><br>
-
-    <label>持ち物<br>
-        <textarea name="items_to_bring" required>{{ event.items_to_bring if event else'' }}</textarea>
-    </label><br>
-
-    <label>当日のスケジュール<br>
-        <textarea name="schedule" required>{{ event.schedule if event else'' }}</textarea>
-    </label><br>
-
-    <p>開催条件</p><br>
-    <label>
-    <input type="radio" name="hold_condition" value="雨天決行" {% if event and event.hold_condition == '雨天決行' %}checked{% endif %} required >
-    雨天決行
-    </label>
-    <br>
-    <label>
-    <input type="radio" name="hold_condition" value="雨天中止" {% if event and event.hold_condition == '雨天中止' %}checked{% endif %} required >
-    雨天中止
-    </label>
-    
-    <br>
-
-    <label>中止時の対応・連絡方法<br>
-        <textarea name="cancellation_policy" placeholder="見本のテキストが入ります">{{ event.cancellation_policy if event else'' }}</textarea>
-    </label><br>
-
-    <label>緊急連絡先<br>
-        <input type="text" name="emergency_contact" value="{{ event.emergency_contact if event else'' }}" required>
-    </label><br>
-
-   
-
-    <label>支払い期限<br>
-        <input type="date" name="payment_deadline" value="{{ event.payment_deadline if event else'' }}" >
-    </label><br>
-    <hr>
-    <h3>料金設定</h3>
-    <button type="button" id="add-fee-rule">＋ 区分を追加</button>
-    <p>（必要な分だけ入力、空欄は無視されます）</p>
-    <div id="fee-rules-container">
-    {% set default_hints =[
-        {'tier_name': '大人', 'min_age':18, 'max_age':120, 'fee':1500},
-        {'tier_name': '子供', 'min_age':6, 'max_age':17, 'fee':500}
-    ] %}
-    {% for i in range(fee_rules|length if fee_rules else default_hints|length) %}
-        {% set fee_rule = fee_rules[i] if fee_rules else None %}
-        {% set hint = default_hints[i] if not fee_rules and i < default_hints|length else None %}
-    <fieldset>
-        <legend>区分</legend>
-        <label>区分名
-            <input type="text" name="tier_name" value="{{ fee_rule.tier_name if fee_rule else '' }}" placeholder="{{'例：'~hint.tier_name if hint else ''}}">
-        </label><br>
-
-        <label>最小年齢
-            <input type="number" name="min_age" value="{{ fee_rule.min_age if fee_rule else '' }}" placeholder="{{'例：'~hint.min_age if hint else ''}}">
-        </label>
-
-        <label>最大年齢
-            <input type="number" name="max_age" value="{{ fee_rule.max_age if fee_rule else '' }}" placeholder="{{'例：'~hint.max_age if hint else ''}}">
-        </label><br>
-
-        <label>性別
-            <select name="gender">
-                <option value="" {% if not fee_rule or not fee_rule.gender %}selected{% endif %}>指定なし</option>
-                <option value="男" {% if fee_rule and fee_rule.gender == '男' %}selected{% endif %}>男</option>
-                <option value="女" {% if fee_rule and fee_rule.gender == '女' %}selected{% endif %}>女</option>
-                <option value="その他"　{% if fee_rule and fee_rule.gender == 'その他' %}selected{% endif %}>その他</option>
-            </select>
-        </label>
-        <br>
-        <label>金額（円）
-            <input type="number" name="fee" value="{{ fee_rule.fee if fee_rule else '' }}" placeholder="{{'例：'~hint.fee if hint else ''}}">
-        </label>
-    </fieldset>
-    {% endfor %}
+        <h2 class="event-form-title">
+            <i class="fa-solid fa-child-reaching"></i> 
+                {{ 'イベントを編集します' if event else '新しいイベントを作成します' }} 
+        </h2>
     </div>
-<template id="fee-rule-template">
-    <fieldset class="fee-rule-row">
-        <legend>区分</legend>
-        <label>区分名
-            <input type="text" name="tier_name" placeholder="区分名を入力">
-        </label><br>
-        <label>最小年齢
-            <input type="number" name="min_age" placeholder="最小年齢">
-        </label>
-        <label>最大年齢
-            <input type="number" name="max_age" placeholder="最大年齢">
-        </label><br>
-        <label>性別
-            <select name="gender">
-                <option value="">指定なし</option>
-                <option value="男">男</option>
-                <option value="女">女</option>
-                <option value="その他">その他</option>
-            </select>      
-        </label>
-        <br>
-        <label>金額（円）
-            <input type="number" name="fee" placeholder="金額">
-        </label>
-    </fieldset>
-</template>
 
-    <p>集金方法（現金のみ）</p><br>
-    <label>
-    <input type="radio" name="payment_method" value="現地払い" {% if event and event.payment_method == '現地払い' %}checked{% endif %} required >
-    現地払い
-    </label>
-    <br>
-    <label>
-    <input type="radio" name="payment_method" value="事前払い" {% if event and event.payment_method == '事前払い' %}checked{% endif %} required >
-    事前払い
-    </label>
-    <br>
-    <button type="submit">{{ '更新する' if event else 'イベントを作成する' }}</button>
+    <form action="{{ url_for('event.event_edit_process', event_id=event.id) if event else url_for('event.create_process')}}" method="POST">
+        <input type="hidden" name="csrf_token" value="{{csrf_token()}}">
 
-</form>
+        <h3 class="event-form-section">基本情報</h3>
+        <div class="card">
+            <div class="form-group">
+                <label>イベント名
+                    <input type="text" name="title" value="{{ event.title if event else ''}}" required >    
+                </label>
+            </div>
 
-<br><br>
-<hr><br>
-<a href="{{ url_for('mypage.mypage_view')}}">マイページに戻る</a><br>
-<!-- <a href="javascript:history.back()">← 戻る</a>}でも可　-->
-<br><hr><br>
+            <div class="form-group">
+                <label>開催日時
+                    <input type="datetime-local" name="start_at" value="{{ event.start_at if event else ''}}" required >
+                </label>
+            </div>
 
+            <div class="form-group">
+                <label>場所
+                    <input type="text" name="place" value="{{ event.place if event else ''}}" required >
+                </label>
+            </div>
 
+            <div class="form-group">
+                <label>住所
+                    <input type="text" name="address" value="{{ event.address if event else ''}}" required >
+                </label>
+            </div>
+            
+            <div class="form-group">
+                <label>定員
+                    <input type="number" name="capacity" value="{{ event.capacity if event else ''}}" required >
+                </label>
+            </div>
 
+            <div class="form-group">
+                <label>申込期限
+                    <input type="datetime-local" name="deadline" value="{{ event.deadline if event else ''}}" required >
+                </label>
+            </div>
+        </div>
+
+        <div class="event-info-section">
+            <h3 class="event-form-section">詳細情報</h3>
+        </div>
+        <div class="card">
+            <div class="form-group">    
+                <label>イベントの説明
+                    <textarea name="description" required>{{ event.description if event else'' }}</textarea>
+                </label>
+            </div>
+
+            <div class="form-group">
+                <label>持ち物
+                    <textarea name="items_to_bring" required>{{ event.items_to_bring if event else'' }}</textarea>
+                </label>
+            </div>
+
+            <div class="form-group">
+                <label>当日のスケジュール
+                    <textarea name="schedule" required>{{ event.schedule if event else'' }}</textarea>
+                </label>
+            </div>
+
+            <div class="form-group">
+                <label>開催条件</label>
+                <div class="radio-group">
+                    <label class="radio-option">雨天決行
+                        <input type="radio" name="hold_condition" value="雨天決行" {% if event and event.hold_condition == '雨天決行' %}checked{% endif %} required >
+                    </label>
+                    <label class="radio-option">雨天中止
+                        <input type="radio" name="hold_condition" value="雨天中止" {% if event and event.hold_condition == '雨天中止' %}checked{% endif %} required >
+                    </label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>中止時の対応・連絡方法
+                    <textarea name="cancellation_policy" placeholder="見本のテキストが入ります">{{ event.cancellation_policy if event else'' }}</textarea>
+                </label>
+            </div>
+
+            <div class="form-group">
+                <label>緊急連絡先
+                    <input type="text" name="emergency_contact" value="{{ event.emergency_contact if event else'' }}" required>
+                </label>
+            </div>
+
+            <div class="form-group">
+                <label>支払い期限
+                    <input type="date" name="payment_deadline" value="{{ event.payment_deadline if event else'' }}" >
+                </label>
+            </div>
+        </div>
+
+        <div class="event-info-section">
+            <h3 class="event-form-section">料金設定</h3>
+            <i class="fa-regular fa-circle-question"></i> ヒント<br>
+            <p class="text-xs">イベントの参加費用を年齢や性別ごとに設定することができます。<br>イベント参加者の生年月日をもとに集金額が自動計算されます。</p>
+        </div>
+        
+        <div id="fee-rule-errors" class="fee-rule-errors">
+            <strong>料金区分の年齢が重なっています</strong>
+            <ul id="fee-rule-errors-list"></ul>
+        </div>
+        
+        <div id="fee-rules-container" class="fee-rule-list" data-is-edit="{{ 'true' if event else 'false' }}">
+        {% set default_hints =[
+            {'tier_name': '大人', 'min_age':18, 'max_age':120, 'fee':1500},
+            {'tier_name': '子供', 'min_age':6, 'max_age':17, 'fee':500},
+            {'tier_name': '未就学', 'min_age':0, 'max_age':5, 'fee':0}
+        ] %}
+        {% for i in range(fee_rules|length if fee_rules else default_hints|length) %}
+            {% set fee_rule = fee_rules[i] if fee_rules else None %}
+            {% set hint = default_hints[i] if not fee_rules and i < default_hints|length else None %}
+        
+            <div class="card fee-rule-card">
+                <button type="button" class="fee-rule-delete" aria-label="この区分を削除">
+                    <i class="fa-regular fa-trash-can"></i>
+                </button>
+                <div class="form-group">
+                    <label>区分名
+                        <input type="text" name="tier_name" value="{{ fee_rule.tier_name if fee_rule else '' }}" placeholder="{{'例：'~hint.tier_name if hint else ''}}">
+                    </label>
+                </div>
+
+                <div class="form-group">
+                    <label>最小年齢
+                        <input type="number" name="min_age" value="{{ fee_rule.min_age if fee_rule else '' }}" placeholder="{{'例：'~hint.min_age if hint else ''}}">
+                    </label>
+                </div>
+
+                <div class="form-group">
+                    <label>最大年齢
+                        <input type="number" name="max_age" value="{{ fee_rule.max_age if fee_rule else '' }}" placeholder="{{'例：'~hint.max_age if hint else ''}}">
+                    </label>
+                </div>
+
+                <div class="form-group">
+                    <label>性別
+                        <select name="gender">
+                            <option value="" {% if not fee_rule or not fee_rule.gender %}selected{% endif %}>指定なし</option>
+                            <option value="男" {% if fee_rule and fee_rule.gender == '男' %}selected{% endif %}>男</option>
+                            <option value="女" {% if fee_rule and fee_rule.gender == '女' %}selected{% endif %}>女</option>
+                            <option value="その他"　{% if fee_rule and fee_rule.gender == 'その他' %}selected{% endif %}>その他</option>
+                        </select>
+                    </label>
+                </div>
+
+                <div class="form-group">
+                    <label>金額（円）
+                        <input type="number" name="fee" value="{{ fee_rule.fee if fee_rule else '' }}" placeholder="{{'例：'~hint.fee if hint else ''}}">
+                    </label>
+                </div>
+            </div>
+        {% endfor %}
+        </div>
+
+        <template id="fee-rule-template">
+            <div class="card fee-rule-card">
+                <button type="button" class="fee-rule-delete" aria-label="この区分を削除">
+                    <i class="fa-regular fa-trash-can"></i>
+                </button>
+
+                <div class="form-group">
+                    <label>区分名
+                        <input type="text" name="tier_name" placeholder="区分名を入力">
+                    </label>
+                </div>
+
+                <div class="form-group">
+                    <label>最小年齢
+                        <input type="number" name="min_age" placeholder="最小年齢">
+                    </label>
+                </div>
+
+                <div class="form-group">
+                    <label>最大年齢
+                        <input type="number" name="max_age" placeholder="最大年齢">
+                    </label>
+                </div>
+
+                <div class="form-group">
+                    <label>性別
+                        <select name="gender">
+                            <option value="">指定なし</option>
+                            <option value="男">男</option>
+                            <option value="女">女</option>
+                            <option value="その他">その他</option>
+                        </select>      
+                    </label>
+                </div>
+
+                <div class="form-group">
+                    <label>金額（円）
+                        <input type="number" name="fee" placeholder="金額">
+                    </label>
+                </div>
+            </div>
+        </template>
+
+            <div class="add-btn">
+                <button id="add-fee-rule" class="btn btn-outline2 btn-add-fee-rule" type="button" >
+                    <i class="fa-solid fa-plus"></i> 区分を追加
+                </button>
+                <p>（必要な分だけ入力、空欄は無視されます）</p>
+            </div>
+
+            <div class="event-info-section">
+                <h3 class="event-form-section">集金方法（現金のみ）</h3>
+                <p class="payment-note">このアプリでは決済を行いません。支払いは現金で、主催者が直接集めます。</p>
+
+                <div class="radio-group">
+                    <label class="radio-option">
+                        <input type="radio" name="payment_method" value="現地払い" {% if event and event.payment_method == '現地払い' %}checked{% endif %} required >
+                        現地払い(当日、現地で支払う)
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="payment_method" value="事前払い" {% if event and event.payment_method == '事前払い' %}checked{% endif %} required >
+                        事前払い(事前に主催者へ支払う)
+                    </label>
+                </div>
+            </div>
+
+            <div class="create-actions">
+                <a class="btn btn-outline" href="{{ url_for('event.detail_view', event_id=event.id) if event else url_for('mypage.mypage_view') }}">
+                    キャンセル
+                </a>
+
+                <button class="btn btn-create " type="submit">
+                    {{ '更新する' if event else 'イベントを作成する' }}
+                </button>
+            </div>
+    </form>
+</div>
 {% endblock %}
 {% block js %}
 <script src="{{ url_for('static', filename='js/pages/event.js')}}"></script>

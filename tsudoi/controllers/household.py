@@ -36,10 +36,11 @@ def household_list_view():
 def member_create_process():
     household = get_household_by_user(session['user_id'])
     relation = request.form.get('relation')
+    name = request.form.get('name')
     birth_date = request.form.get('birth_date')
     
     # 必須項目・日付のバリデーション
-    errors = validate_member_input(relation, birth_date)
+    errors = validate_member_input(relation, name, birth_date)
     if errors:
         for error in errors:
             flash(error, "error")
@@ -67,9 +68,10 @@ def member_create_process():
 def member_edit_process(id):
     household = get_household_by_user(session['user_id']) 
     relation = request.form.get('relation')
+    name = request.form.get('name')
     birth_date = request.form.get('birth_date')
     
-    errors = validate_member_input(relation,birth_date)
+    errors = validate_member_input(relation, name, birth_date)
     if errors:
         for error in errors:
             flash(error, "error")

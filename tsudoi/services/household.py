@@ -28,7 +28,7 @@ def is_self_member(member_id):
     return member['relation'] == '本人'
 
 #フォームの入力エラーの作成
-def validate_member_input(relation, birth_date):
+def validate_member_input(relation, name, birth_date):
     errors=[]
     if relation:
         relation = relation.strip()
@@ -36,6 +36,9 @@ def validate_member_input(relation, birth_date):
         birth_date = birth_date.strip()
     if not relation:
         errors.append("続柄を選択してください")
+    # イベント作成時の「主催者」に必要なので、一旦必須項目にします。
+    if relation == '本人' and not name:
+        errors.append("名前（ニックネーム）をにゅうりょくしてください")
     if not birth_date:
         errors.append("生年月日を入力してください")
     else:
