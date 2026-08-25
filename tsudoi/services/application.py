@@ -18,12 +18,18 @@ def calculate_age(birth_date):
         age -= 1
     return age
 
-
-# 年齢に合う料金区分を、fee_rulesの中から探す
-def find_fee_rule(fee_rules, age):
+# 年齢と性別に合う料金区分を、fee_rulesの中から探す
+def find_fee_rule(fee_rules, age, gender):
     for rule in fee_rules:
-        if rule['min_age'] <= age <= rule['max_age']:
+        age_match = rule['min_age'] <= age <= rule['max_age']
+        gender_match = (
+            rule['gender'] is None
+            or rule['gender'] == gender
+        )
+
+        if age_match and gender_match:
             return rule
+
     return None
 
 
@@ -39,7 +45,7 @@ def build_participants_preview(event_id, household_id, member_ids):
     for member_id in member_ids:
         member = members_by_id[member_id]
         age = calculate_age(member['birth_date'])
-        fee_rule = find_fee_rule(fee_rules, age)
+        fee_rule = find_fee_rule(fee_rules, age, member['gender'])
 
         # 応急処置
         if fee_rule is None:
