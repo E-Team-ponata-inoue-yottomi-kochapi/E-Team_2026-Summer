@@ -10,28 +10,27 @@
 <!-- ここからbaseのbodyに差し込まれる -->
 {% block content %}
 <div>
-    <a href="{{ url_for('event.detail_view', event_id=event_id) }}">イベント詳細へ戻る</a>
-</div>
-<div>
-<h1>チャットルーム</h1>
+    <h1>チャットルーム</h1>
 </div>
 <!-- 古い順に表示される -->
 <div class="message-list">
 {% if event_messages %}
-    {% for event_message in event_messages %}
-        <div class="{% if event_message.user_id == user_id %} message-mine {% else %} message-others {% endif %}">
-            <p>{{ event_message.name }} {{ event_message.created_at}}</p>
-            <p>{{ event_message.body }}</p>
-            {% if event_message.user_id == user_id %}
-                <form method="post" action="{{ url_for('message.delete_process', event_id=event_id, event_message_id=event_message.id) }}">
-                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                    <button type="submit" onclick="return confirm('このメッセージを削除して宜しいでしょうか？');">削除</button>
-                </form>
-            {% endif %}
-        </div>
-    {% endfor %}
+    <div class="message-list_content" id="scroll-inner">
+        {% for event_message in event_messages %}
+            <div class="{% if event_message.user_id == user_id %} message-mine {% else %} message-others {% endif %}">
+                <p>{{ event_message.name }} {{ event_message.created_at}}</p>
+                <p>{{ event_message.body }}</p>
+                {% if event_message.user_id == user_id %}
+                    <form method="post" action="{{ url_for('message.delete_process', event_id=event_id, event_message_id=event_message.id) }}">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <button type="submit" onclick="return confirm('このメッセージを削除して宜しいでしょうか？');">削除</button>
+                    </form>
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
 {% else %}
-    <p>まだ投稿されたメッセージはありません</p>
+    <p class="message-empty">まだ投稿されたメッセージはありません</p>
 {% endif %}
 </div>
 <div class="chat-input">
@@ -51,4 +50,8 @@
         <button type="submit">投稿</button>
     </form>
 </div>
+{% endblock %}
+
+{% block js %}
+<script src="{{ url_for('static', filename='js/pages/message.js') }}"></script>
 {% endblock %}
