@@ -12,6 +12,14 @@ def is_relation_duplicated(household_id, relation):
     members = get_family_members(household_id)
     return any(m['relation'] == relation for m in members)
 
+#指定した続柄がすでに登録済みかを確認する
+def is_relation_duplicated_on_edit(household_id, relation, member_id):
+    if relation not in LIMITED_RELATIONS:
+        return False
+
+    members = get_family_members(household_id)
+    return any(m['relation'] == relation and m['id'] != member_id for m in members)
+
 # 指定したメンバーが「本人」かどうかを確認する
 def is_self_member(member_id):
     member = get_family_member_by_id(member_id)
