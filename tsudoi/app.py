@@ -47,6 +47,15 @@ def not_found_error(error):
 def forbidden_error(error):
     return render_template("error/403.html", title="403エラー"),403
 
+@app.errorhandler(400)
+def bad_request_error(error):
+    return render_template("error/400.html", title="400エラー"),400
+
+@app.errorhandler(405)
+def method_not_allowed_error(error):
+    return render_template("error/405.html", title="405エラー"),405
+
+
 # このファイルが直接実行される時のみ「ファイルの中身」を実行する。
 # このファイルがインポートされたときは「ファイルの中身」は実行されない。
 # app.run　Flaskの開発用サーバーを起動
