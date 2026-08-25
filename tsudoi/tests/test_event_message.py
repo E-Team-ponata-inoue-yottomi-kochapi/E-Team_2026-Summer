@@ -635,5 +635,81 @@ class TestMessageAuthorizationForDelete(unittest.TestCase):
         print(f"ステータスコード：{response.status_code}\n")
         print(f"論理削除失敗後：{ result }")
 
+# 第５段階：検証用
+class TestMessageAbnormalCaseForDelete(unittest.TestCase):
+    # 各テストメソッドの実行前に呼ばる
+    def setUp(self):
+        self.title                        = "TestMessageAbnormalCaseForDelete"
+        # テストのため無効化
+        app.config['WTF_CSRF_ENABLED']    = False
+        self.app                          = app.test_client()
+        self.user_id                      = 3001
+        self.event_id                     = "b8e4d521-9f6a-4c37-a812-5d7e3f9b2c64"
+        self.nonexistent_event_message_id = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+        self.body                         = "これは第５段階テスト：削除用です"
+        messages = get_open_event_messages(self.event_id)
+        self.bef_msgs_count = len(messages)
+        self.event_message_id = create_event_message(self.user_id, self.event_id, self.body)
+
+    # 各テストメソッドの実行後に呼ばれ、テストで登録したデータを削除する
+    def tearDown(self):
+        if self.event_message_id is None:
+            return
+
+        conn = get_connection()
+        try:
+            with conn.cursor() as cursor:
+                sql = "DELETE FROM event_messages WHERE id=%s;"
+                cursor.execute(sql, (self.event_message_id,))
+                conn.commit()
+        finally:
+            conn.close()
+        result = get_open_event_messages(self.event_id)
+        self.aft_msgs_count = len(result)
+        print(f"テストデータ物理削除後の件数：{ self.aft_msgs_count }件\n")
+        if result:
+            print(f"テストデータ物理削除後のDB：{ result[-1] }\n")
+
+    # ５th-５：存在しないメッセージIDの削除テスト
+    def test_delete_nonexistent_message(self):
+        # ログイン処理
+        with self.app.session_transaction() as session:
+            session["user_id"] = self.user_id
+        self.assertEqual(self.user_id, session["user_id"])
+
+        # HTTPリクエスト
+        response = self.app.post(f"/events/{self.event_id}/messages/{self.nonexistent_event_message_id}",
+                                follow_redirects=False,
+                                )
+
+        self.assertEqual(404, response.status_code)
+
+        print(f"{self.title}\ntest_delete_nonexistent_message")
+        print("５th-５：存在しないイベントメッセージIDの削除テスト")
+        print(f"投稿前の件数：{self.bef_msgs_count}件")
+        print(f"ステータスコード：{response.status_code}\n")
+
+    # ５th-６：論理削除済みメッセージの再削除テスト
+    def test_delete_already_deleted_message(self):
+        # ログイン処理
+        with self.app.session_transaction() as session:
+            session["user_id"] = self.user_id
+        self.assertEqual(self.user_id, session["user_id"])
+
+        # 論理削除
+        soft_delete_event_message(self.event_id, self.event_message_id)
+
+        # HTTPリクエスト
+        response = self.app.post(f"/events/{self.event_id}/messages/{self.event_message_id}",
+                                follow_redirects=False,
+                                )
+
+        self.assertEqual(404, response.status_code)
+
+        print(f"{self.title}\ntest_delete_already_deleted_message")
+        print("５th-６：論理削除済みメッセージの再削除テスト")
+        print(f"投稿前の件数：{self.bef_msgs_count}件")
+        print(f"ステータスコード：{response.status_code}\n")
+
 if __name__ == '__main__':
     unittest.main()
