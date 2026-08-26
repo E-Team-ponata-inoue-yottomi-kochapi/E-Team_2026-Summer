@@ -4,7 +4,7 @@
     overflow: hidden;
 }
 
-main {
+.site-wrapper main {
     display: flex;
     flex-direction: column;
     height: calc(100dvh - 56px);
@@ -12,20 +12,26 @@ main {
     overflow: hidden;
 }
 
-h1 {
-    margin-top: 24px;
+.message-page-header {
+    flex-shrink: 0;
+    padding-top: 16px;
+}
+
+.message-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+    color: var(--muted-foreground);
+    margin-bottom: 12px;
+}
+
+.message-page-header h1 {
+    margin-top: 20px;
     padding-bottom: 4px;
 }
 
-.chat-input form {
-    display: flex;
-    width: 100%;
-}
-
-#message {
-    flex: 1;
-}
-
+/* メッセージエリア（エリア内だけスクロールするように） */
 .message-list {
     display: flex;
     flex-direction: column;
@@ -35,30 +41,222 @@ h1 {
     overflow-y: auto;
 }
 
-.message-list_content {
+/*  */
+.message-list-content {
     margin-top: auto;
+    padding: 8px 0;
 }
 
 .message-empty {
     margin: auto;
+
 }
 
-.chat-input {
-    position: fixed;
-    bottom: 0;
-    width: 100%;
-    max-width: 343px;
-    padding: 0 0 5px;
+/*　日付（中央寄せ）で区切る　*/
+.message-date-divider {
+    display: flex;
+    justify-content: center;
+    margin: 16px 0;
 }
 
-.message-mine {
-    margin-left: auto;
+/* 日付の文字装飾 */
+.message-date-divider span {
+    background: var(--muted);
+    color: var(--muted-foreground);
+    font-size: 12px;
+    padding: 4px 12px;
+    border-radius: 9999px;
+}
+
+/* アバターと文章を並べる（LINEっぽくする） */
+.message-mine,
+.message-others {
+    display: flex;
+    align-items: flex-end;
+    gap: 6px;
     width: fit-content;
-    padding: 5px;
+    max-width: 80%;
+    margin-bottom: 14px;
 }
 
+/* 自分のメッセージ　*/
+.message-mine {
+    flex-direction: row-reverse;
+    margin-left: auto;
+    
+}
+
+
+/*　他人のメッセージ　*/
 .message-others {
     margin-right: auto;
-    width: fit-content;
-    padding: 5px;
+    
 }
+
+/*　アバターアイコンの装飾　*/
+.message-avatar {
+    /* 土台の箱 */
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: var(--muted);
+    /*　アバターの位置　*/
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    color: var(--muted-foreground);
+
+}
+
+.message-content {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+/* 自分側を右寄せ */
+.message-mine .message-content {
+    align-items: flex-end;
+}
+
+/*　相手側を左寄せ　*/
+.message-others .message-content {
+    align-items: flex-start;
+}
+
+/* 表示される名前の装飾 */
+.message-name {
+    font-size: 12px;
+    color: var(--muted-foreground);
+    margin-bottom: 4px;
+}
+
+/*　吹き出し風のメッセ背景　*/
+.message-bubble {
+    padding: 10px 14px;
+    border-radius: 16px;
+    font-size: 16px;
+    line-height: 1.5;
+    word-break: break-word;
+    white-space: pre-line;
+}
+
+/* 自分の吹き出しの色と形 */
+.message-mine .message-bubble {
+    background: color-mix(in srgb, var(--brand-mint) 35%, white);
+    color: var(--foreground);
+    border-bottom-right-radius: 4px;
+}
+
+/*　相手の吹き出しの色と形　*/
+.message-others .message-bubble {
+    background: #fff;
+    color: var(--foreground);
+    border: 1px solid var(--border);
+    border-bottom-left-radius: 4px;
+}
+
+/*時間と削除ボタンのならび*/
+.message-meta {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 4px;
+}
+
+/*　時間のサイズと色　*/
+.message-time {
+    font-size: 10px;
+    color: var(--muted-foreground);
+}
+
+/*　削除ボタンの装飾　*/
+.message-delete {
+    background: none;
+    border: none;
+    color: var(--flow-danger);
+    cursor: pointer;
+    font-size: 12px;
+    padding: 2px 2px 4px 2px;
+
+}
+
+
+
+/* ==========================================================
+   メッセージの入力欄
+   ========================================================== */
+
+/* 入力欄共通 */   
+.chat-input {
+    flex-shrink: 0;
+    background: var(--background);
+    border-top: 1px solid var(--border);
+
+    padding: 10px 0 calc(10px + env(safe-area-inset-bottom));
+}
+
+
+.chat-input form {
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+    width: 100%;
+}
+
+.message-errors {
+    color: var(--flow-danger);
+    font-size: 12px;
+    margin-bottom: 6px;
+    padding-left: 18px;
+}
+
+#message {
+    flex: 1;
+    height: 40px;
+    padding: 9px 14px;
+    font-size: 16px;
+    line-height: 1.3;
+    font-family: inherit;
+    border-radius: 20px;
+    background: var(--input-background);
+    border: 1px solid var(--border);
+    overflow: auto;
+    resize: none;
+    min-height: 0;
+    /* margin-bottom: 8px; */
+
+    scrollbar-width: none;/*firefoxのスクロールバーを消す*/
+}
+
+/* クロームサファリのスクロールバーを消す */
+#message::-webkit-scrollbar {
+    display: none;
+}
+
+/* 送信ボタン */
+.chat-input button[type="submit"] {
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: none;
+    background: color-mix(in srgb, var(--brand-mint) 75%, white);
+    color: var(--background);
+    cursor: pointer;
+    
+}
+
+.chat-input i {
+    filter: drop-shadow(1px 1px 1px rgba(0, 0, 0, 0.5));
+    margin-right: 4px;
+}
+
+
+
+
+
+
+
