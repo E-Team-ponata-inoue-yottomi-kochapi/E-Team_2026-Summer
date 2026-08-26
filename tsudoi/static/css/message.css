@@ -27,8 +27,9 @@
 }
 
 .message-page-header h1 {
-    margin-top: 20px;
+    /* margin-top: 12px; */
     padding-bottom: 4px;
+    
 }
 
 /* メッセージエリア（エリア内だけスクロールするように） */
@@ -195,7 +196,8 @@
     background: var(--background);
     border-top: 1px solid var(--border);
 
-    padding: 10px 0 calc(10px + env(safe-area-inset-bottom));
+    padding: 10px 16px calc(10px + env(safe-area-inset-bottom));
+    margin: 0 -16px;
 }
 
 
@@ -239,6 +241,7 @@
 /* 送信ボタン */
 .chat-input button[type="submit"] {
     flex-shrink: 0;
+    
     width: 40px;
     height: 40px;
     border-radius: 50%;
