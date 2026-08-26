@@ -1,7 +1,25 @@
-form {
+.site-wrapper {
+    height: 100dvh;
+    min-height: 0;
+    overflow: hidden;
+}
+
+main {
+    display: flex;
+    flex-direction: column;
+    height: calc(100dvh - 56px);
+    min-height: 0;
+    overflow: hidden;
+}
+
+h1 {
+    margin-top: 24px;
+    padding-bottom: 4px;
+}
+
+.chat-input form {
     display: flex;
     width: 100%;
-
 }
 
 #message {
@@ -9,12 +27,38 @@ form {
 }
 
 .message-list {
-    padding: 60px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    margin-bottom: 41px;
+    min-height: 0;
+    overflow-y: auto;
+}
+
+.message-list_content {
+    margin-top: auto;
+}
+
+.message-empty {
+    margin: auto;
 }
 
 .chat-input {
     position: fixed;
     bottom: 0;
-    width: 375px;
-    padding: 0 5px 5px 5px;
+    width: 100%;
+    max-width: 343px;
+    padding: 0 0 5px;
+}
+
+.message-mine {
+    margin-left: auto;
+    width: fit-content;
+    padding: 5px;
+}
+
+.message-others {
+    margin-right: auto;
+    width: fit-content;
+    padding: 5px;
 }
