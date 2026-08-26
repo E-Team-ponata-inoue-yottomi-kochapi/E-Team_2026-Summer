@@ -1,4 +1,4 @@
-from flask import Blueprint, session, render_template, redirect, url_for, request, abort
+from flask import Blueprint, session, render_template, redirect, url_for, request, abort, flash
 from models.event import get_open_events, create_event, create_fee_rule, update_event, delete_fee_rules_by_event
 from services.event import get_event_detail
 import pymysql
@@ -82,13 +82,25 @@ def new_view():
 @event_bp.route("/", methods=["POST"])
 @login_required
 def create_process():
+    capacity = request.form.get('capacity')
+
+    try:
+        capacity = int(capacity)
+    except (TypeError, ValueError):
+        flash("定員は1以上の整数で入力してください", "error")
+        return redirect(url_for("event.new_view"))
+
+    if capacity < 1:
+        flash("定員は1以上の整数で入力してください", "error")
+        return redirect(url_for("event.new_view"))
+
     event_id = create_event(
         owner_id=session['user_id'],
         title=request.form.get('title'),
         start_at=request.form.get('start_at'),
         place=request.form.get('place'),
         address=request.form.get('address'),
-        capacity=request.form.get('capacity') or None,
+        capacity=capacity,
         deadline=request.form.get('deadline') or None,
         description=request.form.get('description'),
         items_to_bring=request.form.get('items_to_bring'),
@@ -136,13 +148,29 @@ def event_edit_view(event_id):
 @login_required
 @host_required
 def event_edit_process(event_id):
+    capacity = request.form.get('capacity')
+
+    try:
+        capacity = int(capacity)
+    except (TypeError, ValueError):
+        flash("定員は1以上の整数で入力してください", "error")
+        return redirect(
+            url_for("event.event_edit_view", event_id=event_id)
+        )
+
+    if capacity < 1:
+        flash("定員は1以上の整数で入力してください", "error")
+        return redirect(
+            url_for("event.event_edit_view", event_id=event_id)
+        )
+
     update_event(
         event_id=event_id,
         title=request.form.get('title'),
         start_at=request.form.get('start_at'),
         place=request.form.get('place'),
         address=request.form.get('address'),
-        capacity=request.form.get('capacity') or None,
+        capacity=capacity,
         deadline=request.form.get('deadline') or None,
         description=request.form.get('description'),
         items_to_bring=request.form.get('items_to_bring'),
