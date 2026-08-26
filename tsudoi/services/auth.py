@@ -66,7 +66,7 @@ def login(email, password):
     if not check_password_hash(user["password_hash"], password):
         return{"valid": False, "messages": ["メールアドレスorパスワードが違います"]}
 
-    if user["is_banned"] is True or user["deleted_at"]:
+    if user["is_banned"] or user["deleted_at"]:
         return {"valid": False, "messages": ["ログインエラー：管理者へお問い合わせください"]}
 
     return {"valid": True, "data": {"user_id": user["id"]}}
