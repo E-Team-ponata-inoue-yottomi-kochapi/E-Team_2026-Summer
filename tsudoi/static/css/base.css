@@ -305,6 +305,7 @@ label {
 /* form-group（ラベルと入力欄のセット）の装飾 */
 .form-group {
   margin-bottom: 16px;
+  
 }
 
 /* 入力欄に関するエラーメッセージの装飾 */
