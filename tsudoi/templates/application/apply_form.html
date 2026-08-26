@@ -27,6 +27,7 @@
         <li class="apply-member">
           <label class="apply-member__label">
           {# データ属性にJS処理で使用する情報の埋め込み #}
+          {% if preview_by_id.get(member.id) %}
             <input type="checkbox"
                   name="member_ids" 
                   value="{{ member.id }}"
@@ -35,7 +36,12 @@
                   data-age="{{ preview_by_id[member.id].age_at_application if preview_by_id.get(member.id) else '' }}"
                   data-gender="{{ member.gender or '' }}"
                   data-fee="{{ preview_by_id[member.id].fee_rule_name_snapshot if preview_by_id.get(member.id) else '' }}"
+                  {% if member.id in saved_member_ids %}checked{% endif %}
                   onchange="updateSummary()">
+            {% else %}
+            {# 料金区分がないメンバーを選択できないようにする#}
+            <input type="checkbox" disabled>
+            {% endif %}
             
             {# 家族メンバーを1人ずつカードとして表示 #}
             <span class="apply-member__main">
@@ -56,6 +62,10 @@
               <span>
                 {{ "無料" if preview_by_id[member.id].amount == 0 else "¥" ~ "{:,}".format(preview_by_id[member.id].amount) }}
               </span>
+            </span>
+            {% else %}
+            <span class="apply-member__price apply-member__price--unavailable">
+              対象外
             </span>
             {% endif %}
           </label>
@@ -79,6 +89,7 @@
     </div>
   </div>
 </form>
+</div>
 
 
 <script>

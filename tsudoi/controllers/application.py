@@ -6,8 +6,8 @@ from util.auth_guard import login_required, host_required, applicant_required
 
 #必要なデータの呼び出し
 from models.household import get_household_by_user, get_family_members
-from models.application import get_application, cancel_application,get_application_participants
-from services.application import build_participants_preview, create_application, update_application
+from models.application import get_application, cancel_application,get_application_participants,find_application_by_event_id_and_household_id
+from services.application import build_participants_preview, create_application, update_application, is_deadline_passed
 from models.event import find_event_by_id
 
 application_bp = Blueprint("application", __name__, url_prefix="/apply")
@@ -49,7 +49,14 @@ def apply_view(event_id):
     all_member_ids = [str(m['id']) for m in members]
     participants_preview = build_participants_preview(event_id, household['id'], all_member_ids)
     preview_by_id = {p['member_id']: p for p in participants_preview}
-    return render_template('application/apply_form.html', event_id=event_id, event=find_event_by_id(event_id), members=members, application=None,preview_by_id=preview_by_id,)
+    #saved_member_ids=set()を追加
+    return render_template('application/apply_form.html', 
+                           event_id=event_id, 
+                           event=find_event_by_id(event_id), 
+                           members=members, 
+                           application=None,preview_by_id=preview_by_id,
+                           saved_member_ids=set(),
+                           )
 
   
 #申し込み内容確認画面
@@ -72,6 +79,18 @@ def apply_confirmation_view(event_id):
 @login_required
 def apply_create_process(event_id):
     household = get_household_by_user(session['user_id'])
+    event = find_event_by_id(event_id)
+    
+    if is_deadline_passed(event):
+        flash("このイベントの申込期限は終了しています", "error")
+        return redirect(url_for('event.detail_view', event_id=event_id))
+        
+    #すでに同じイベントに同じ世帯の申し込みがないか確認する
+    existing_application = find_application_by_event_id_and_household_id(event_id,household['id'])
+    if existing_application:
+        flash("すでにこのイベントに申し込み済みです", "error")
+        return redirect(url_for('event.detail_view', event_id=event_id))
+    
     member_ids = request.form.getlist('member_ids')
     #申込完了ページがないため変数の代入をしていません
     create_application(event_id, household['id'], member_ids)
@@ -87,14 +106,10 @@ def apply_edit_view(id):
     application = get_application(id)
     household = get_household_by_user(session['user_id'])
     members = get_family_members(household['id'])
-    #メンバー全員の料金を計算して表示する
-    # all_member_ids = [str(m['id']) for m in members]
-    # participants_preview = build_participants_preview(application['event_id'], household['id'], all_member_ids)
-    # preview_by_id = {p['member_id']: p for p in participants_preview}
-    #⇩修正
-    # 既存申込み参加者は、保存されている年齢・料金を使う
+    
     saved_participants = get_application_participants(id)
     preview_by_id = {p['member_id']: p for p in saved_participants}
+    saved_member_ids = set(preview_by_id.keys())
 
     # イベント申込みに追加されていないメンバーは、その場で新規に計算する
     missing_member_ids = [str(m['id']) for m in members if m['id'] not in preview_by_id]
@@ -103,7 +118,13 @@ def apply_edit_view(id):
         for p in new_preview:
             preview_by_id[p['member_id']] = p
     
-    return render_template('application/apply_form.html', event_id=None, event=find_event_by_id(application['event_id']), members=members, application=application,preview_by_id=preview_by_id,)
+    return render_template('application/apply_form.html', 
+                           event_id=None, 
+                           event=find_event_by_id(application['event_id']), 
+                           members=members, 
+                           application=application,preview_by_id=preview_by_id,
+                           saved_member_ids=saved_member_ids
+                           )
     
 
   

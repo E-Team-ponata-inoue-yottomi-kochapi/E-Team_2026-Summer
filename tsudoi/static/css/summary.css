@@ -1,0 +1,148 @@
+/* ==========================================================
+   集計画面
+   ========================================================== */
+  .site-wrapper.plain-bg {
+    background-image: none;
+  }
+  
+   .summary-page {
+    padding-top: 24px;
+    padding-bottom: 32px;
+   }
+
+   /* 戻るリンク */
+   .summary-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 16px;
+    font-size: 14px;
+    color: var(--muted-foreground);
+   }
+
+   .summary-event-title {
+    margin-bottom: 20px;
+    font-size: 18px;
+   }
+
+   /* サマリーの区分別カード */
+   .summary-section-label {
+    color: var(--flow-apply);
+    font-size: 14px;
+    margin-top: 24px;
+    margin-bottom: 12px;
+   }
+
+   .sumamry-section-label:first-of-type {
+    margin-top: 0;
+   }
+
+   .summary-card {
+    padding: 16px 18px;
+   }
+
+   .summary-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+   }
+
+   .summary-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    font-size: 14px;
+   }
+
+   /* カードの合計部分 */
+   .summary-total {
+    margin-top: 4px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+    font-weight: 500;
+   }
+
+   /* 参加者リスト（グループ単位） */
+   .summary-household-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 32px;
+   }
+
+   .summary-household-card {
+    background: var(--accent);
+    border-radius: 8px;
+    padding: 14px 16px 16px;
+   }
+
+   .summary-household-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 0 4px;
+    margin-bottom: 10px;
+    font-weight: 500;
+   }
+
+   .summary-household-subtotal {
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--muted-foreground);
+   }
+
+   .summary-member-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+   }
+
+   .summary-member {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    background: #fff;
+    border-radius: 10px;
+    padding: 10px 14px;
+   }
+
+   .summary-member__main {
+    font-size: 14px;
+    font-weight: 500;
+   }
+
+   .summary-member-name {
+    font-size: 14px;
+    font-weight: 500;
+   }
+
+   .summary-member__meta {
+    font-size: 12px;
+    color: var(--muted-foreground);
+   }
+
+   .summary-member__price {
+    text-align: right;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+   }
+
+   .summary-member__fee {
+    font-size: 12px;
+    color: var(--muted-foreground);
+   }
+
+   /* 参加者がゼロの時の装飾 */
+   .summary-empty {
+    padding: 24px 4px;
+    text-align: center;
+    color: var(--muted-foreground);
+    font-size: 14px;
+   }
+
+   .summary-edit-link {
+    margin-top: 8px;
+   }
+

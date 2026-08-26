@@ -265,12 +265,22 @@ input[type="date"],
 input[type="datetime-local"],
 select,
 textarea {
+  appearance: none;
+  display: block;
   width: 100%;
+  max-width: 100%;
   height: 36px;
-  padding: 0 12px;
+  line-height: 34px;
+  padding: 0 8px;
+  font-size: 16px;
+  text-align: left;
   background: var(--input-background);
   border: 1px solid var(--border);
   border-radius: 8px;
+}
+
+input[type="datetime-local"]{
+  padding: 0;
 }
 
 /* プレースホルダーの文字の色 */

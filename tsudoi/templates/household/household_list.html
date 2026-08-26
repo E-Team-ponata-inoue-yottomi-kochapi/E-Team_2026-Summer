@@ -7,7 +7,6 @@
 {% block content %}
 
 {# TODO: Jsのコードをstatic/pages/フォルダに移動したい #}
-{# TODO: 削除ボタンにポップアップつけたい #}
 
 <div class="household-page">
   <div class="household-header">
@@ -23,8 +22,8 @@
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
       <input type="hidden" name="relation" value="本人">
       <div class="form-group">
-        <label for="name">名前（任意）</label>
-        <input type="text" id="name" name="name" placeholder="氏名">
+        <label for="name">名前（ニックネーム）<span class="required">*</span></label>
+        <input type="text" id="name" name="name" placeholder="氏名" required>
       </div>
       <div class="form-group"> 
         <label for="birth_date" >生年月日<span class="required">*</span></label>
@@ -148,8 +147,13 @@
           </div>
           {# すでに選択肢が存在するため一致条件を追加 #}
           <div class="form-group">
+            {% if member.relation == '本人' %}
+            <label for="edit-name-{{ member.id }}">名前（ニックネーム）<span class="required">*</span></label>
+            <input type="text" id="edit-name-{{ member.id}}" name="name" value="{{ member.name}}" required>
+            {% else %}
             <label for="edit-name-{{ member.id }}">名前（任意）</label>
-            <input type="text" id="edit-name-{{ member.id}}" name="name" value="{{ member.name}}">
+            <input type="text" id="edit-name-{{ member.id}}" name="name" value="{{ member.name}}" >
+            {% endif %}
           </div>
           <div class="form-group">
             <label for="edit-gender-{{ member.id }}">性別（任意）</label>
@@ -172,7 +176,7 @@
             <button class="btn btn-create" type="submit">更新する</button>
           </div>
         </form>
-        <form class="household-delete-form" action="{{ url_for('household.member_delete_process', id=member.id) }}" method="POST">
+        <form class="household-delete-form" action="{{ url_for('household.member_delete_process', id=member.id) }}" method="POST" onsubmit="return confirm('この家族メンバーを削除します。よろしいですか？');">
           <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
           <button class="household-delete-btn" type="submit">
             <i class="fa-regular fa-trash-can"></i> この家族メンバーを削除する
@@ -184,23 +188,8 @@
     </ul>
   </div>
   {% endif %}
-
-  {# スクリプトを追記 #}
-    <script>
-    function toggleAddForm() {
-      const form = document.getElementById('add-form');
-      form.style.display = form.style.display === 'none' ? 'block' : 'none';
-    }
-
-    function toggleEditForm(id) {
-      const li = document.getElementById('member-' + id);
-      const viewMode = li.querySelector('.household-member__view');
-      const editMode = li.querySelector('.household-member__edit');
-      const isEditing = editMode.style.display !== 'none';
-      viewMode.style.display = isEditing ? 'flex': 'none';
-      editMode.style.display = isEditing ? 'none': 'block';
-      li.classList.toggle('household-member--editing', !isEditing);
-    }
-    </script>
-</div>
   {% endblock %}
+
+{% block js %}
+<script src="{{ url_for('static', filename='js/pages/household.js') }}"></script>
+{% endblock %}

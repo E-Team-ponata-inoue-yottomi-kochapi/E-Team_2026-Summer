@@ -3,7 +3,7 @@ from util.auth_guard import login_required, owner_required
 
 from models.user import User
 
-from services.household import is_relation_duplicated,is_self_member,validate_member_input,is_changing_self_relation
+from services.household import is_relation_duplicated,is_self_member,validate_member_input,is_changing_self_relation, is_relation_duplicated_on_edit
 
 from models.household import (
     get_household_by_user,
@@ -36,10 +36,11 @@ def household_list_view():
 def member_create_process():
     household = get_household_by_user(session['user_id'])
     relation = request.form.get('relation')
+    name = request.form.get('name')
     birth_date = request.form.get('birth_date')
     
     # 必須項目・日付のバリデーション
-    errors = validate_member_input(relation, birth_date)
+    errors = validate_member_input(relation, name, birth_date)
     if errors:
         for error in errors:
             flash(error, "error")
@@ -65,10 +66,12 @@ def member_create_process():
 @login_required
 @owner_required
 def member_edit_process(id):
+    household = get_household_by_user(session['user_id']) 
     relation = request.form.get('relation')
+    name = request.form.get('name')
     birth_date = request.form.get('birth_date')
     
-    errors = validate_member_input(relation,birth_date)
+    errors = validate_member_input(relation, name, birth_date)
     if errors:
         for error in errors:
             flash(error, "error")
@@ -78,6 +81,11 @@ def member_edit_process(id):
     if is_changing_self_relation(id, relation):
         flash("本人の続柄は変更できません", "error")
         return redirect(url_for('household.household_list_view'))
+    
+    if is_relation_duplicated_on_edit(household['id'], relation, id):
+        flash(f"「{relation}」はすでに登録されています", "error")
+        return redirect(url_for('household.household_list_view'))
+
     
     update_family_member(
         member_id=id,
@@ -97,5 +105,6 @@ def member_delete_process(id):
     if is_self_member(id):
         flash("本人は削除できません", "error")
         return redirect(url_for('household.household_list_view'))
+    
     delete_family_member(id)
     return redirect(url_for('household.household_list_view'))

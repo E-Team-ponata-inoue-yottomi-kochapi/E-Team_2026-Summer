@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, datetime
 from models.household import get_family_members
 from models.application import (
     get_fee_rules, 
@@ -6,9 +6,27 @@ from models.application import (
     insert_application_participant, 
     update_application_total, 
     delete_application_participants, 
-    summarize_applications_by_event
+    summarize_applications_by_event,
+    find_application_by_event_id_and_household_id,
 )
 from models.event import find_event_by_id
+
+#すでに同じイベントに同じ世帯の申し込みが存在するか確認する
+def is_already_applied(event_id, household_id):
+    existing_application = find_application_by_event_id_and_household_id(event_id,household_id)
+    return existing_application is not None
+
+#イベントの申込期限を過ぎていないか確認
+def is_deadline_passed(event):
+    if event.get('deadline') is None:
+        return False
+    return datetime.now() > event['deadline']
+
+#member_idが自分の世帯のメンバーか確認する
+def validate_member_ids(household_id, member_ids):
+    members = get_family_members(household_id)
+    valid_ids = {str(m['id']) for m in members}
+    return all (member_id in valid_ids for member_id in member_ids)
 
 # 生年月日から、現在の年齢を計算する
 def calculate_age(birth_date):
@@ -18,18 +36,13 @@ def calculate_age(birth_date):
         age -= 1
     return age
 
-# 年齢と性別に合う料金区分を、fee_rulesの中から探す
+
+# 年齢に合う料金区分を、fee_rulesの中から探す
 def find_fee_rule(fee_rules, age, gender):
     for rule in fee_rules:
-        age_match = rule['min_age'] <= age <= rule['max_age']
-        gender_match = (
-            rule['gender'] is None
-            or rule['gender'] == gender
-        )
-
-        if age_match and gender_match:
-            return rule
-
+        if rule['min_age'] <= age <= rule['max_age']:
+            if rule['gender'] is None or rule['gender'] == gender:
+                return rule
     return None
 
 
@@ -47,7 +60,6 @@ def build_participants_preview(event_id, household_id, member_ids):
         age = calculate_age(member['birth_date'])
         fee_rule = find_fee_rule(fee_rules, age, member['gender'])
 
-        # 応急処置
         if fee_rule is None:
             continue
 
@@ -173,4 +185,3 @@ def summarize_applications(event_id):
         "household_count" : household_count,
         "event": event
     }
-

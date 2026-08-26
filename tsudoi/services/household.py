@@ -12,6 +12,14 @@ def is_relation_duplicated(household_id, relation):
     members = get_family_members(household_id)
     return any(m['relation'] == relation for m in members)
 
+#指定した続柄がすでに登録済みかを確認する
+def is_relation_duplicated_on_edit(household_id, relation, member_id):
+    if relation not in LIMITED_RELATIONS:
+        return False
+
+    members = get_family_members(household_id)
+    return any(m['relation'] == relation and m['id'] != member_id for m in members)
+
 # 指定したメンバーが「本人」かどうかを確認する
 def is_self_member(member_id):
     member = get_family_member_by_id(member_id)
@@ -20,7 +28,7 @@ def is_self_member(member_id):
     return member['relation'] == '本人'
 
 #フォームの入力エラーの作成
-def validate_member_input(relation, birth_date):
+def validate_member_input(relation, name, birth_date):
     errors=[]
     if relation:
         relation = relation.strip()
@@ -28,6 +36,9 @@ def validate_member_input(relation, birth_date):
         birth_date = birth_date.strip()
     if not relation:
         errors.append("続柄を選択してください")
+    # イベント作成時の「主催者」に必要なので、一旦必須項目にします。
+    if relation == '本人' and not name:
+        errors.append("名前（ニックネーム）をにゅうりょくしてください")
     if not birth_date:
         errors.append("生年月日を入力してください")
     else:

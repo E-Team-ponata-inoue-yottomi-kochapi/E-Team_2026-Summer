@@ -1,4 +1,5 @@
 # Flaskクラスのインポート + csrfクラスのインポート
+import os
 from flask import Flask, render_template
 from flask_wtf.csrf import CSRFProtect
 
@@ -47,6 +48,15 @@ def not_found_error(error):
 def forbidden_error(error):
     return render_template("error/403.html", title="403エラー"),403
 
+@app.errorhandler(400)
+def bad_request_error(error):
+    return render_template("error/400.html", title="400エラー"),400
+
+@app.errorhandler(405)
+def method_not_allowed_error(error):
+    return render_template("error/405.html", title="405エラー"),405
+
+
 # このファイルが直接実行される時のみ「ファイルの中身」を実行する。
 # このファイルがインポートされたときは「ファイルの中身」は実行されない。
 # app.run　Flaskの開発用サーバーを起動
@@ -54,4 +64,6 @@ def forbidden_error(error):
 # port=5000,#待機ポート指定
 # debug=True)　エラー表示とコード更新時の自動リロード有効化
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    debug_mode = os.environ.get("FLASK_DEBUG", "true").lower() == "true"
+    port = int(os.environ.get("PORT",5000))
+    app.run(host="0.0.0.0", port=port, debug=debug_mode)

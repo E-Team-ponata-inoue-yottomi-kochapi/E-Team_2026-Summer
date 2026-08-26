@@ -11,13 +11,13 @@
 {% block content %}
 <div class="error-page">
     <div class="error-icon">
-        <i class="fa-solid fa-lock"></i>
+        <i class="fa-solid fa-ban"></i>
     </div>
-    <h1 class="error-code">403</h1>
-    <p class="error-title">Forbidden</p>
+    <h1 class="error-code">405</h1>
+    <p class="error-title">Method Not Allowed</p>
     <div class="error-message">
         <p>申し訳ありません</p>
-        <p>このページを閲覧する権限がありません</p>
+        <p>このページへのアクセス方法が正しくありません</p>
     </div>
     <!-- ぼたんをせっちするならここ -->
     {% if session.get("user_id") %}

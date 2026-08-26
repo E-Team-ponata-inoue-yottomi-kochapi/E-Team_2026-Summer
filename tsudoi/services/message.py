@@ -1,7 +1,7 @@
 from flask import session
 from models.household import get_household_by_user
 from models.application import find_application_by_event_id_and_household_id
-from models.message import create_event_message, find_event_message_by_event_message_id
+from models.message import create_event_message, find_open_event_message_by_event_message_id
 from models.event import find_event_by_id
 
 # チャット機能権限用
@@ -48,7 +48,7 @@ def create_message(user_id, event_id, body):
 def can_delete_event_message(event_id, event_message_id):
     user_id = session.get("user_id")
     # 削除対象のメッセージを取得
-    message = find_event_message_by_event_message_id(event_message_id)
+    message = find_open_event_message_by_event_message_id(event_message_id)
     if not message:
         return None
 
