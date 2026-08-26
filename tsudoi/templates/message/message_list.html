@@ -9,23 +9,52 @@
 
 <!-- ここからbaseのbodyに差し込まれる -->
 {% block content %}
-<div>
+<div class="message-page-header">
+    <a class="message-back" href="{{ url_for('event.detail_view', event_id=event_id)}}">
+        <i class="fa-solid fa-chevron-left"></i><i class="fa-solid fa-chevron-left"></i>
+            イベント詳細へ戻る
+    </a>
     <h1>チャットルーム</h1>
 </div>
+
 <!-- 古い順に表示される -->
 <div class="message-list">
 {% if event_messages %}
-    <div class="message-list_content" id="scroll-inner">
+    <div class="message-list-content" id="scroll-inner">
+        {% set ns = namespace(last_date=None) %}
         {% for event_message in event_messages %}
+            {% set msg_date = event_message.created_at.strftime('%Y-%m-%d') if event_message.created_at else '' %}
+            {% if msg_date != ns.last_date %}
+            <div class="message-date-divider">
+                <span>{{ event_message.created_at.strftime('%Y年%-m月%-d日') }}</span>
+            </div>
+            {% set ns.last_date = msg_date %}
+            {% endif %}
             <div class="{% if event_message.user_id == user_id %} message-mine {% else %} message-others {% endif %}">
-                <p>{{ event_message.name }} {{ event_message.created_at}}</p>
-                <p>{{ event_message.body }}</p>
-                {% if event_message.user_id == user_id %}
-                    <form method="post" action="{{ url_for('message.delete_process', event_id=event_id, event_message_id=event_message.id) }}">
-                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                        <button type="submit" onclick="return confirm('このメッセージを削除して宜しいでしょうか？');">削除</button>
-                    </form>
+                {% if event_message.user_id != user_id %}
+                <div class="message-avatar">
+                    <i class="fa-solid fa-circle-user"></i>
+                </div>
                 {% endif %}
+                <div class="message-content">
+                    {% if event_message.user_id != user_id %}
+                    <p class="message-name">{{ event_message.name }}</p>
+                    {% endif %}
+                    <p class="message-bubble">{{ event_message.body }}</p>
+                    <div class="message-meta">
+                        {% if event_message.user_id == user_id %}
+                        <form method="post" action="{{ url_for('message.delete_process', event_id=event_id, event_message_id=event_message.id) }}">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <button class="message-delete" type="submit" onclick="return confirm('このメッセージを削除して宜しいでしょうか？');">
+                                <i class="fa-regular fa-trash-can"></i>
+                            </button>
+                        </form>
+                        {% endif %}
+                        <span class="message-time">
+                            {{ event_message.created_at.strftime('%H:%M') if event_message.created_at else '' }}
+                        </span>
+                    </div>
+                </div>
             </div>
         {% endfor %}
     </div>
@@ -33,21 +62,24 @@
     <p class="message-empty">まだ投稿されたメッセージはありません</p>
 {% endif %}
 </div>
+
 <div class="chat-input">
     {% if error_msgs %}
-    <div>
-        <ul>
-            {% for error_msg in error_msgs%}
-            <li>{{ error_msg }}</li>
-            {% endfor %}
-        </ul>
-    </div>
+    <ul class="message-errors">
+        {% for error_msg in error_msgs%}
+        <li>{{ error_msg }}</li>
+        {% endfor %}
+    </ul>
     {% endif %}
+
     <!-- CSSで画面下に固定予定 -->
     <form method="POST" action="{{ url_for('message.create_process', event_id=event_id)}}">
         <input type="hidden" name="csrf_token" value="{{ csrf_token()}}">
-        <input type="text" id="message" name="body" placeholder="メッセージを入力..." value="{{ body }}">
-        <button type="submit">投稿</button>
+        <textarea id="message" name="body" placeholder="メッセージを入力...">{{ body }}</textarea>
+        <button type="submit" aria-label="送信">
+            <i class="fa-solid fa-paper-plane"></i>
+        </button>
+        <!-- <i class="fa-regular fa-paper-plane"></i> -->
     </form>
 </div>
 {% endblock %}
