@@ -36,6 +36,15 @@
     margin-top: 2px;
    }
 
+   .event-status-closed {
+    position: absolute;
+    top: 14px;
+    right: 18px;
+    font-size: 12px;
+    font-weight: 700;
+    color: red;
+}
+
 /* ==========================================================
    イベント詳細画面
    ========================================================== */
