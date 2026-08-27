@@ -58,7 +58,7 @@ def build_participants_preview(event_id, household_id, member_ids):
     for member_id in member_ids:
         member = members_by_id[member_id]
         age = calculate_age(member['birth_date'])
-        fee_rule = find_fee_rule(fee_rules, age,member['gender'])
+        fee_rule = find_fee_rule(fee_rules, age, member['gender'])
 
         if fee_rule is None:
             continue

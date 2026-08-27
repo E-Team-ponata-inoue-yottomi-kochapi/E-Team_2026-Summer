@@ -86,7 +86,8 @@
         {% for fee_rule in fee_rules %}
         <li class="apply-confirm-row">
             <span>
-                {{ fee_rule.tier_name }} ({{ fee_rule.min_age }}〜{{ fee_rule.max_age }}歳)
+                {{ fee_rule.tier_name }}
+                ({{ fee_rule.min_age }}〜{{ fee_rule.max_age }}歳・{{ fee_rule.gender if fee_rule.gender else '指定なし' }})
             </span>
             <span>
                 {{ "無料" if fee_rule.fee == 0 else "¥" ~ "{:,}".format(fee_rule.fee)}}
