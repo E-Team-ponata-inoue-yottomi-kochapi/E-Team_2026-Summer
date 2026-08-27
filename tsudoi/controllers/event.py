@@ -10,6 +10,7 @@ from models.household import get_household_by_user
 from models.application import list_applications_by_household
 from models.application import find_application_by_event_id_and_household_id
 from models.application import summarize_applications_by_event
+from config.constants import MYPAGE_ENDPOINT, EVENT_LIST_ENDPOINT, EVENT_DETAIL_ENDPOINT
 
 event_bp = Blueprint("event", __name__, url_prefix="/events")
 logger = logging.getLogger(__name__)
@@ -44,7 +45,7 @@ def list_view():
         else:
             event['badge_status'] = 'open'
 
-    return render_template("event/event_list.html", title="イベント一覧", events=events)
+    return render_template("event/event_list.html", title="イベント一覧", events=events, back_page_url=url_for(MYPAGE_ENDPOINT), back_page_title="マイページ")
 
 
 # イベント詳細表示画面
@@ -71,7 +72,7 @@ def detail_view(event_id):
     except pymysql.MySQLError as e:
         logger.exception('MySQLエラーが発生しました: %s', e)
         abort(500)
-    return render_template("event/event_detail.html", title="イベント詳細", event=event, owner=owner, fee_rules=fee_rules, can_chat=can_chat, application=application, participant_count=participant_count)
+    return render_template("event/event_detail.html", title="イベント詳細", event=event, owner=owner, fee_rules=fee_rules, can_chat=can_chat, application=application, participant_count=participant_count, back_page_url=url_for(EVENT_LIST_ENDPOINT), back_page_title="イベント一覧")
 
 
 # イベント作成画面表示
@@ -79,7 +80,7 @@ def detail_view(event_id):
 @login_required
 def new_view():
  
-    return render_template("event/event_form.html", event=None, fee_rules=None)
+    return render_template("event/event_form.html", event=None, fee_rules=None, title="イベント作成", back_page_url=url_for(MYPAGE_ENDPOINT), back_page_title="マイページ")
 
 
 # イベント作成処理
@@ -157,7 +158,7 @@ def event_edit_view(event_id):
     result = get_event_detail(event_id)
     if result is None:
         abort(404)
-    return render_template("event/event_form.html", event=result["event"],fee_rules=result["fee_rules"])
+    return render_template("event/event_form.html", event=result["event"],fee_rules=result["fee_rules"], title="イベント編集", back_page_url=url_for(EVENT_DETAIL_ENDPOINT, event_id=event_id), back_page_title="イベント詳細")
 
 # イベント編集処理
 @event_bp.route("/<string:event_id>/edit", methods=["POST"])

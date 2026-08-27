@@ -3,6 +3,7 @@ import pymysql
 import logging
 from services.mypage import get_current_user, update_user, get_mypage, validate_user_update
 from util.auth_guard import login_required
+from config.constants import MYPAGE_ENDPOINT
 
 mypage_bp = Blueprint("mypage", __name__)
 logger = logging.getLogger(__name__)
@@ -29,7 +30,7 @@ def mypage_view():
     applications = mypage_data["applications"]
     events = mypage_data["events"]
 
-    return render_template("mypage/index.html", applications = applications, events = events)
+    return render_template("mypage/index.html", applications = applications, events = events, title="マイページ")
 
 # ユーザー編集画面表示
 @mypage_bp.route("/user/edit", methods=["GET"])
@@ -50,7 +51,7 @@ def user_edit_view():
         logger.error("ログイン中のユーザー情報が存在しません: %s", user_id)
         abort(500)
 
-    return render_template("mypage/settings.html", user = user)
+    return render_template("mypage/settings.html", user = user, title="ユーザー編集", back_page_url=url_for(MYPAGE_ENDPOINT), back_page_title="マイページ")
 
 # ユーザー編集処理
 @mypage_bp.route("/user", methods=["POST"])
@@ -74,7 +75,7 @@ def user_edit_process():
             user = get_current_user(user_id)
             #入力したパスワードを画面に残す
             user["email"] = email
-            return render_template("mypage/settings.html", user=user, error_messages=errors)
+            return render_template("mypage/settings.html", user=user, error_messages=errors, title="ユーザー編集", back_page_url=url_for(MYPAGE_ENDPOINT), back_page_title="マイページ")
 
         # Serviceに更新処理を依頼
         result = update_user(user_id, email, password)
