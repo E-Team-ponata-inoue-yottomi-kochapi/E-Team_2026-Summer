@@ -182,7 +182,7 @@ VALUES
     ('9a6b2c41-8e73-4d95-b126-5f9c3a7e2048', 1999);
 
 -- family_membersの作成
--- kochapi_family_members_id_001 = 0000
+-- kochapi_family_members_id_001 = 1999
 INSERT INTO
     family_members (
         id,
@@ -205,7 +205,7 @@ VALUES
     );
 
 -- イベント申込作成
--- application_id = 0000
+-- application_id = 1999
 INSERT INTO
     applications (
         id,
@@ -245,4 +245,86 @@ VALUES
         27,
         '大人',
         1500
+    );
+
+-- deleteユーザー
+INSERT INTO
+    users (id, email, password_hash, deleted_at)
+VALUES
+    (
+        3939,
+        'deleteuser@example.com',
+        'pbkdf2:sha256:260000$ltKpVAn9ZjKAsfOT$2e03ac183990ff20d783bbb2d4b3530c19badf56613c09d7b5db8e3573fbcbed',
+        '2026-08-25 00:00:00'
+    );
+
+-- householdsの作成
+-- kochapi_household_id = 'delxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxdel'
+INSERT INTO
+    households (id, leader_id)
+VALUES
+    ('delxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxdel', 3939);
+
+-- family_membersの作成
+-- kochapi_family_members_id_001 = 3939
+INSERT INTO
+    family_members (
+        id,
+        household_id,
+        relation,
+        name,
+        gender,
+        birth_date,
+        email
     )
+VALUES
+    (
+        3939,
+        'delxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxdel',
+        '本人',
+        'DELETEユーザー',
+        '男',
+        '2000-10-06',
+        'deleteuser@example.com'
+    );
+
+-- banユーザー
+INSERT INTO
+    users (id, email, password_hash, is_banned)
+VALUES
+    (
+        8282,
+        'banuser@example.com',
+        'pbkdf2:sha256:260000$ltKpVAn9ZjKAsfOT$2e03ac183990ff20d783bbb2d4b3530c19badf56613c09d7b5db8e3573fbcbed',
+        TRUE
+    );
+
+-- householdsの作成
+-- kochapi_household_id = 'banxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxban'
+INSERT INTO
+    households (id, leader_id)
+VALUES
+    ('banxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxban', 8282);
+
+-- family_membersの作成
+-- kochapi_family_members_id_001 = 8282
+INSERT INTO
+    family_members (
+        id,
+        household_id,
+        relation,
+        name,
+        gender,
+        birth_date,
+        email
+    )
+VALUES
+    (
+        8282,
+        'banxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxban',
+        '本人',
+        'BANユーザー',
+        '男',
+        '2000-08-02',
+        'banuser@example.com'
+    );

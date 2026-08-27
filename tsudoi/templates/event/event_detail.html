@@ -32,7 +32,7 @@
             <p class="capacity"><span class="m-title">定員：</span>{{ participant_count }} / {{ event.capacity }} 名</p>
             {% if event.deadline %}
             <p class="event-deadline">
-                <span class="m-title">申込期限：</span>{{ event.deadline.strftime('%Y年 %-m月%-d日 %H:%M~')}}
+                <span class="m-title">申込期限：</span>{{ event.deadline.strftime('%Y年 %-m月%-d日 %H:%M')}}
                 {% if application %}
                 <span class="badge-leaf badge-leaf--sakura">
                     <span class="badge-leaf__text">申込済み</span>
