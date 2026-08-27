@@ -1,9 +1,18 @@
 from models.household import get_family_members,get_family_member_by_id
 from datetime import date
+import re
+#メールアドレスの表記条件追記
+def is_valid_email(email):
+    ng_pattern = r'\A(?!\.|.*(\.{2,}|\.{1,}@)).*\Z'
+    basic_pattern = r'^[^\s@]+@[^\s@]+\.[^\s@]+$'
+    
+    if re.fullmatch(ng_pattern, email) is None:
+        return False
+    if re.fullmatch(basic_pattern, email) is None:
+        return False
+    return True
 
 LIMITED_RELATIONS = ['本人', '夫', '妻']
-
-
 # 指定した続柄が、すでに登録済みかどうかを確認する
 def is_relation_duplicated(household_id, relation):
     if relation not in LIMITED_RELATIONS:
@@ -28,7 +37,7 @@ def is_self_member(member_id):
     return member['relation'] == '本人'
 
 #フォームの入力エラーの作成
-def validate_member_input(relation, name, birth_date):
+def validate_member_input(relation, name, birth_date,email):
     errors=[]
     if relation:
         relation = relation.strip()
@@ -48,6 +57,9 @@ def validate_member_input(relation, name, birth_date):
                 errors.append("生年月日は今日より前の日付を入力してください")
         except ValueError:
             errors.append("生年月日の形式が正しくありません")
+    
+    if email and not is_valid_email(email):
+        errors.append("メールアドレスの形式が正しくありません")
     
     return errors
         
