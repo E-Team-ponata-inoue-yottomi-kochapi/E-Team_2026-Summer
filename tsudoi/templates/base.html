@@ -16,7 +16,8 @@
 </head>
 <body>
     {% set hide_footer_endpoints = ['auth.login_view', 'auth.signup_view', 'message.messages_view'] %}
-    {% set show_footer = request.endpoint not in hide_footer_endpoints %}
+    {% set show_footer = (request.endpoint not in hide_footer_endpoints) and not hide_footer %}
+
     <div class="site-wrapper blob-bg {% block body_class %}{% endblock %} {% if not show_footer %}no-footer{% endif %}">
     <!-- 共通部品を埋め込む -->
     {% include 'common/header.html' %}
