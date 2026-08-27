@@ -32,10 +32,14 @@ def list_view():
         applied_event_ids = {a['event_id'] for a in applications}
 
     # バッジをつける処理
+    now = datetime.now()
+
     for event in events:
         if event['id'] in applied_event_ids:
             event['badge_status'] = 'sakura'
-        elif event['deadline'] and event['deadline'] - datetime.now() <= timedelta(days=3):
+        elif event['deadline'] and event['deadline'] < now:
+            event['badge_status'] = 'closed'
+        elif event['deadline'] and event['deadline'] <= now + timedelta(days=3):
             event['badge_status'] = 'dry'
         else:
             event['badge_status'] = 'open'
