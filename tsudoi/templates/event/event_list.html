@@ -16,15 +16,17 @@
     <ul class="mypage-list">
         {% for event in events %}
         <li class="card mypage-item">
-        {% if event.badge_status %}
-        <span class="badge-leaf badge-leaf--{{ event.badge_status }}">
-            <span class="badge-leaf__text">
-                {% if event.badge_status == 'open' %}開催中
-                {% elif event.badge_status == 'dry' %}締切間近
-                {% elif event.badge_status == 'sakura' %}申込済み
-                {% endif %}
+        {% if event.badge_status == 'closed' %}
+            <span class="event-status-closed">受付終了</span>
+        {% elif event.badge_status %}
+            <span class="badge-leaf badge-leaf--{{ event.badge_status }}">
+                <span class="badge-leaf__text">
+                    {% if event.badge_status == 'open' %}開催中
+                    {% elif event.badge_status == 'dry' %}締切間近
+                    {% elif event.badge_status == 'sakura' %}申込済み
+                    {% endif %}
+                </span>
             </span>
-        </span>
         {% endif %}
             <a class="mypage-item__link" href="{{ url_for('event.detail_view', event_id=event.id ) }}">
                 <p class="mypage-item__title">{{ event.title }}</p>

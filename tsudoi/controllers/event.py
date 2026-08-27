@@ -1,6 +1,6 @@
 from flask import Blueprint, session, render_template, redirect, url_for, request, abort, flash
 from models.event import get_open_events, create_event, create_fee_rule, update_event, delete_fee_rules_by_event
-from services.event import get_event_detail
+from services.event import get_event_detail, has_overlapping_fee_rules
 import pymysql
 from util.auth_guard import login_required, host_required
 import logging
@@ -32,10 +32,14 @@ def list_view():
         applied_event_ids = {a['event_id'] for a in applications}
 
     # バッジをつける処理
+    now = datetime.now()
+
     for event in events:
         if event['id'] in applied_event_ids:
             event['badge_status'] = 'sakura'
-        elif event['deadline'] and event['deadline'] - datetime.now() <= timedelta(days=3):
+        elif event['deadline'] and event['deadline'] < now:
+            event['badge_status'] = 'closed'
+        elif event['deadline'] and event['deadline'] <= now + timedelta(days=3):
             event['badge_status'] = 'dry'
         else:
             event['badge_status'] = 'open'
@@ -92,6 +96,23 @@ def create_process():
 
     if capacity < 1:
         flash("定員は1以上の整数で入力してください", "error")
+    tier_names=request.form.getlist('tier_name')
+    min_ages=request.form.getlist('min_age')
+    max_ages=request.form.getlist('max_age')
+    genders=request.form.getlist('gender')
+    fees=request.form.getlist('fee')
+
+        # 料金区分と年齢の入力チェック
+    if any(
+        tier_name and (not min_age or not max_age)
+        for tier_name, min_age, max_age in zip(tier_names, min_ages, max_ages)
+    ):
+        flash("料金区分の最小年齢と最大年齢を入力してください", "error")
+        return redirect(url_for("event.new_view")) 
+
+    # 料金区分の重複チェック
+    if has_overlapping_fee_rules(tier_names, min_ages, max_ages, genders):
+        flash("料金区分の年齢範囲が重複しています", "error")
         return redirect(url_for("event.new_view"))
 
     event_id = create_event(
@@ -113,11 +134,6 @@ def create_process():
         # TODO：ステータスの定数化をする
         status='公開',
     )
-    tier_names=request.form.getlist('tier_name')
-    min_ages=request.form.getlist('min_age')
-    max_ages=request.form.getlist('max_age')
-    genders=request.form.getlist('gender')
-    fees=request.form.getlist('fee')
 
     for tier_name, min_age, max_age, gender, fee in zip(tier_names, min_ages, max_ages, genders, fees):
         if not tier_name:
@@ -164,6 +180,27 @@ def event_edit_process(event_id):
             url_for("event.event_edit_view", event_id=event_id)
         )
 
+    # フォームから料金区分を取得
+    tier_names = request.form.getlist('tier_name')
+    min_ages = request.form.getlist('min_age')
+    max_ages = request.form.getlist('max_age')
+    genders = request.form.getlist('gender')
+    fees = request.form.getlist('fee')
+
+    # 料金区分と年齢の入力チェック
+    if any(
+        tier_name and (not min_age or not max_age)
+        for tier_name, min_age, max_age in zip(tier_names, min_ages, max_ages)
+    ):
+        flash("料金区分の最小年齢と最大年齢を入力してください", "error")
+        return redirect(url_for("event.event_edit_view", event_id=event_id)) 
+
+    # 料金区分の重複チェック
+    if has_overlapping_fee_rules(tier_names, min_ages, max_ages, genders):
+        flash("料金区分の年齢範囲が重複しています", "error")
+        return redirect(url_for("event.event_edit_view", event_id=event_id))
+
+    # イベント情報を更新
     update_event(
         event_id=event_id,
         title=request.form.get('title'),
@@ -182,14 +219,10 @@ def event_edit_process(event_id):
         payment_deadline=request.form.get('payment_deadline') or None,
     )
 
+    # 既存の料金区分を削除
     delete_fee_rules_by_event(event_id)
 
-    tier_names = request.form.getlist('tier_name')
-    min_ages = request.form.getlist('min_age')
-    max_ages = request.form.getlist('max_age')
-    genders = request.form.getlist('gender')
-    fees = request.form.getlist('fee')
-
+    # 新しい料金区分を登録
     for tier_name, min_age, max_age, gender, fee in zip(tier_names, min_ages, max_ages, genders, fees):
         if not tier_name:
             continue
