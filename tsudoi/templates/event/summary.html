@@ -11,10 +11,10 @@
 
 
 <div class="summary-page">
-    <a class="summary-back" href="{{ url_for('event.detail_view', event_id=event.id)}}">
+    <!-- <a class="summary-back" href="{{ url_for('event.detail_view', event_id=event.id)}}">
         <i class="fa-solid fa-chevron-left"></i><i class="fa-solid fa-chevron-left"></i>
             イベント詳細画面へ戻る
-    </a>
+    </a> -->
 
     <h1>参加者一覧・集計</h1>
     <h2 class="summary-event-title">{{ event["title"] }}</h2>
@@ -29,7 +29,7 @@
             <li class="summary-row">
                 <span>合計金額</span>
                 <span>
-                    {{"無料" if total_amout == 0 else "¥" ~"{:,}".format(total_amount) }}
+                    {{"無料" if total_amount == 0 else "¥" ~"{:,}".format(total_amount) }}
                 </span>
             </li>
         </ul>
@@ -39,7 +39,7 @@
     <div class="card summary-card">
         <ul class="summary-list">
             {% for fee_name, fee_data in fee_summary.items() %}
-            <li class="sammary-row">
+            <li class="summary-row">
                 <span>{{ fee_name }}</span>
                 <span>
                     {{ fee_data["count"] }}名 / {{ "無料" if fee_data["amount"] == 0 else "¥"~"{:,}".format(fee_data["amount"])}}
@@ -49,7 +49,7 @@
             <li class="summary-row summary-total">
                 <span>合計</span>
                 <span>
-                    {{ total_participants }}名 / {{ "無料" if total_amout == 0 else "¥" ~ "{:,}".format(total_amount)}}
+                    {{ total_participants }}名 / {{ "無料" if total_amount == 0 else "¥" ~ "{:,}".format(total_amount)}}
                 </span>
             </li>
         </ul>
@@ -72,7 +72,7 @@
     </div>
     
     <h3 class="summary-section-label">
-        参加者リスト({{ total_participants }}名 / {{ household_count }}グループ)
+        参加者リスト（ {{ total_participants }}名 / {{ household_count }}グループ ）
     </h3>
     {% if household_summary %}
     <div class="summary-household-list">
@@ -80,7 +80,7 @@
         <div class="summary-household-card">
             <div class="summary-household-header">
                 <span>
-                    グループ{{ loop.index }} ({{ household_data["count"]  }}名 )
+                    グループ{{ loop.index }}（ {{ household_data["count"]  }}名 ）
                 </span>
                 <span class="summary-household-subtotal">
                     小計 {{ "無料" if household_data["amount"] == 0 else "¥" ~ "{:,}".format(household_data["amount"])}}
@@ -90,7 +90,7 @@
                 {% for member in household_data["members"] %}
                 <li class="summary-member">
                     <span class="summary-member__main">
-                        <span class="sumamry-member__name">{{ member["name"] or "氏名：未登録" }}</span>
+                        <span class="summary-member__name">{{ member["name"] or "氏名：未登録" }}</span>
                         <span class="summary-member__meta">{{ member["age"] }}歳・{{ member["gender"] or "性別：未登録" }}</span>
                     </span>
                     <span class="summary-member__price">
@@ -106,7 +106,8 @@
         {% endfor %}
     </div>
     {% else %}
-    <p class="summary-empty">まだ参加申し込みがありません</p>
+    <p class="summary-empty">まだ参加申し込みがありません<br>
+                            主催者も参加する場合は、参加申し込みをしてください</p>
     {% endif %}
 
     <a class="btn btn-create btn-block summary-edit-link" href="{{ url_for('event.event_edit_view', event_id=event.id )}}">
