@@ -52,7 +52,7 @@
             
             <div class="form-group">
                 <label>定員
-                    <input type="number" name="capacity" value="{{ event.capacity if event else ''}}" required >
+                    <input type="number" name="capacity" min="1" value="{{ event.capacity if event else ''}}" required >
                 </label>
             </div>
 
