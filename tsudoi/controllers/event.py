@@ -96,6 +96,7 @@ def create_process():
 
     if capacity < 1:
         flash("定員は1以上の整数で入力してください", "error")
+        return redirect(url_for(event.new_view))
     tier_names=request.form.getlist('tier_name')
     min_ages=request.form.getlist('min_age')
     max_ages=request.form.getlist('max_age')
