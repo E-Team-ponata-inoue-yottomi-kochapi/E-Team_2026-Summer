@@ -33,7 +33,7 @@
     margin-bottom: 12px;
    }
 
-   .sumamry-section-label:first-of-type {
+   .summary-section-label:first-of-type {
     margin-top: 0;
    }
 
@@ -112,7 +112,7 @@
     font-weight: 500;
    }
 
-   .summary-member-name {
+   .summary-member__name {
     font-size: 14px;
     font-weight: 500;
    }

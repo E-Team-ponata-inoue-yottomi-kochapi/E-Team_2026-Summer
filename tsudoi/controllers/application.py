@@ -10,6 +10,8 @@ from models.application import get_application, cancel_application,get_applicati
 from services.application import build_participants_preview, create_application, update_application, is_deadline_passed, validate_member_ids, is_capacity_exceeded, is_capacity_exceeded_on_edit,is_empty_selection
 from models.event import find_event_by_id
 
+from config.constants import EVENT_DETAIL_ENDPOINT, EVENT_APPLY_ENDPOINT
+
 application_bp = Blueprint("application", __name__, url_prefix="/apply")
 logger = logging.getLogger(__name__)
 
@@ -35,7 +37,10 @@ def summary_view(event_id):
         gender_summary = summary["gender_summary"],
         household_summary = summary["household_summary"],
         household_count = summary["household_count"],
-        event = summary["event"]
+        event = summary["event"],
+        title="参加者一覧・集計",
+        back_page_url=url_for(EVENT_DETAIL_ENDPOINT, event_id=event_id),
+        back_page_title="イベント詳細"
         )
 
 
@@ -56,6 +61,9 @@ def apply_view(event_id):
                            members=members, 
                            application=None,preview_by_id=preview_by_id,
                            saved_member_ids=set(),
+                           title="イベント申込フォーム",
+                           back_page_url=url_for(EVENT_DETAIL_ENDPOINT, event_id=event_id),
+                           back_page_title="イベント詳細"
                            )
 
   
@@ -80,7 +88,7 @@ def apply_confirmation_view(event_id):
     participants = build_participants_preview(event_id, household['id'], member_ids)
     total_amount = sum(p["amount"] for p in participants)
     return render_template(
-        'application/apply_confirmation.html', event=event, event_id=event_id, participants=participants, total_amount=total_amount
+        'application/apply_confirmation.html', event=event, event_id=event_id, participants=participants, total_amount=total_amount, title="申込内容確認", back_page_url=url_for(EVENT_APPLY_ENDPOINT, event_id=event_id), back_page_title="イベント申込フォーム"
     )
   
 #申し込み確定処理
@@ -147,7 +155,10 @@ def apply_edit_view(id):
                            event=find_event_by_id(application['event_id']), 
                            members=members, 
                            application=application,preview_by_id=preview_by_id,
-                           saved_member_ids=saved_member_ids
+                           saved_member_ids=saved_member_ids,
+                           title="イベント申込内容編集",
+                           back_page_url=url_for(EVENT_DETAIL_ENDPOINT, event_id=application['event_id']),
+                           back_page_title="イベント詳細"
                            )
     
 

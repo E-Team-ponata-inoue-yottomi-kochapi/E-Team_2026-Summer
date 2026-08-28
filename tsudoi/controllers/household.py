@@ -13,6 +13,8 @@ from models.household import (
     delete_family_member,
 )
 
+from config.constants import MYPAGE_ENDPOINT
+
 household_bp = Blueprint("household", __name__, url_prefix="/household")
 
 #家族一覧ページ表示
@@ -28,7 +30,7 @@ def household_list_view():
         user = User.find_user_by_id(session['user_id'])
         user_email = user['email']
 
-    return render_template('household/household_list.html', members=members,has_self=has_self,user_email=user_email)
+    return render_template('household/household_list.html', members=members,has_self=has_self,user_email=user_email, title="家族一覧", back_page_url=url_for(MYPAGE_ENDPOINT), back_page_title="マイページ")
 
 #家族追加処理→家族一覧表示
 @household_bp.route('/member/create', methods=["POST"])
