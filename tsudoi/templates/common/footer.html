@@ -1,0 +1,24 @@
+<footer class="site-footer">
+  <nav class="footer-nav">
+    <a href="{{ url_for('mypage.mypage_view') }}"
+       class="footer-nav__item {{ 'is-active' if request.endpoint == 'mypage.mypage_view' else '' }}">
+      <span class="footer-nav__icon"><i class="fa-solid fa-house"></i></span>
+      <span class="footer-nav__label">マイページ</span>
+    </a>
+    <a href="{{ url_for('event.list_view') }}"
+       class="footer-nav__item {{ 'is-active' if request.endpoint == 'event.list_view' else '' }}">
+      <span class="footer-nav__icon"><i class="fa-solid fa-calendar-days"></i></span>
+      <span class="footer-nav__label">イベント</span>
+    </a>
+    <a href="{{ url_for('household.household_list_view') }}"
+       class="footer-nav__item {{ 'is-active' if request.endpoint == 'household.household_list_view' else '' }}">
+      <span class="footer-nav__icon"><i class="fa-solid fa-people-roof"></i></span>
+      <span class="footer-nav__label">家族</span>
+    </a>
+    <a href="{{ url_for('event.new_view') }}"
+       class="footer-nav__item footer-nav__item--accent">
+      <span class="footer-nav__icon"><i class="fa-solid fa-plus"></i></span>
+      <span class="footer-nav__label">作成</span>
+    </a>
+  </nav>
+</footer>
