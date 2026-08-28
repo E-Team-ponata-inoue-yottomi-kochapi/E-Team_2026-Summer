@@ -38,9 +38,10 @@ def member_create_process():
     relation = request.form.get('relation')
     name = request.form.get('name')
     birth_date = request.form.get('birth_date')
+    email = request.form.get('email')
     
     # 必須項目・日付のバリデーション
-    errors = validate_member_input(relation, name, birth_date)
+    errors = validate_member_input(relation, name, birth_date,email)
     if errors:
         for error in errors:
             flash(error, "error")
@@ -57,7 +58,7 @@ def member_create_process():
         name=request.form.get('name'),
         gender=request.form.get('gender') or None,
         birth_date=request.form.get('birth_date'),
-        email=request.form.get('email'),
+        email=email,
     )
     return redirect(url_for('household.household_list_view'))
 
@@ -70,8 +71,9 @@ def member_edit_process(id):
     relation = request.form.get('relation')
     name = request.form.get('name')
     birth_date = request.form.get('birth_date')
+    email = request.form.get('email')
     
-    errors = validate_member_input(relation, name, birth_date)
+    errors = validate_member_input(relation, name, birth_date,email)
     if errors:
         for error in errors:
             flash(error, "error")
@@ -93,7 +95,7 @@ def member_edit_process(id):
         name=request.form.get('name'),
         gender=request.form.get('gender') or None,
         birth_date=request.form.get('birth_date'),
-        email=request.form.get('email'),
+        email=email,
     )
     return redirect(url_for('household.household_list_view'))
 
