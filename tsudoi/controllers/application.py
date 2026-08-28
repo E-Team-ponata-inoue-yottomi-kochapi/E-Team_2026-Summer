@@ -7,7 +7,7 @@ from util.auth_guard import login_required, host_required, applicant_required
 #必要なデータの呼び出し
 from models.household import get_household_by_user, get_family_members
 from models.application import get_application, cancel_application,get_application_participants,find_application_by_event_id_and_household_id
-from services.application import build_participants_preview, create_application, update_application, is_deadline_passed
+from services.application import build_participants_preview, create_application, update_application, is_deadline_passed, validate_member_ids, is_capacity_exceeded, is_capacity_exceeded_on_edit,is_empty_selection
 from models.event import find_event_by_id
 
 application_bp = Blueprint("application", __name__, url_prefix="/apply")
@@ -66,10 +66,19 @@ def apply_confirmation_view(event_id):
     # フォームで選択されたmember_idsを受け取り、まだ保存せず画面表示のみ
     household = get_household_by_user(session['user_id'])
     member_ids = request.form.getlist('member_ids')
+    #自分の世帯メンバーか確認、それ以外ならエラー
+    if not validate_member_ids(household['id'], member_ids):
+        abort(403)
+    
+    #店員超過のため申し込みできない
+    event = find_event_by_id(event_id) 
+    if is_capacity_exceeded(event, len(member_ids)):
+        flash("定員を超えるため、申し込めません。", "error")
+        return redirect(url_for('event.detail_view', event_id=event_id))
+        
     #申込画面に表示するデータの取得
     participants = build_participants_preview(event_id, household['id'], member_ids)
     total_amount = sum(p["amount"] for p in participants)
-    event = find_event_by_id(event_id)
     return render_template(
         'application/apply_confirmation.html', event=event, event_id=event_id, participants=participants, total_amount=total_amount
     )
@@ -92,6 +101,21 @@ def apply_create_process(event_id):
         return redirect(url_for('event.detail_view', event_id=event_id))
     
     member_ids = request.form.getlist('member_ids')
+    
+    if is_empty_selection(member_ids):
+            flash("参加者を1人以上選択してください", "error")
+            return redirect(url_for('event.detail_view', event_id=event_id))
+    
+    #自分の世帯メンバーか確認、それ以外ならエラー
+    if not validate_member_ids(household['id'], member_ids):
+        abort(403)
+        
+    #店員超過のため申し込みできない
+    event = find_event_by_id(event_id) 
+    if is_capacity_exceeded(event, len(member_ids)):
+        flash("定員を超えるため、申し込めません。", "error")
+        return redirect(url_for('event.detail_view', event_id=event_id))
+        
     #申込完了ページがないため変数の代入をしていません
     create_application(event_id, household['id'], member_ids)
     flash("申し込みが完了しました")
@@ -135,8 +159,27 @@ def apply_edit_view(id):
 def apply_edit_process(id):
     application = get_application(id)
     household = get_household_by_user(session['user_id'])
+    event = find_event_by_id(application['event_id'])
+    
+    if is_deadline_passed(event):
+        flash("このイベントの申込期限は終了しています", "error")
+        return redirect(url_for('mypage.mypage_view'))
+    
     member_ids = request.form.getlist('member_ids')
-
+    
+    #参加者が1人以上いないとエラーを表示
+    if is_empty_selection(member_ids):
+            flash("参加者を1人以上選択してください", "error")
+            return redirect(url_for('mypage.mypage_view'))
+    
+    if not validate_member_ids(household['id'], member_ids):
+        abort(403) 
+    
+    #更新時に家族をカウントせずにカウントして再度申し込みの定員数を確認
+    if is_capacity_exceeded_on_edit(event, id, len(member_ids)):
+        flash("定員を超えるため、更新できません。", "error")
+        return redirect(url_for('mypage.mypage_view'))
+    
     update_application(id, application['event_id'], household['id'], member_ids)
 
     flash("申し込み内容を更新しました")

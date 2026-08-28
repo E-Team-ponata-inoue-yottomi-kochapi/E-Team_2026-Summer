@@ -8,6 +8,8 @@ from models.application import (
     delete_application_participants, 
     summarize_applications_by_event,
     find_application_by_event_id_and_household_id,
+    count_participants_by_event,
+    count_participants_by_event_excluding_application
 )
 from models.event import find_event_by_id
 
@@ -27,6 +29,23 @@ def validate_member_ids(household_id, member_ids):
     members = get_family_members(household_id)
     valid_ids = {str(m['id']) for m in members}
     return all (member_id in valid_ids for member_id in member_ids)
+
+# イベントの定員数を超えていないか確認する(新規申し込み)
+def is_capacity_exceeded(event, new_participant_count):
+    if event.get('capacity') is None:
+        return False
+    current_count = count_participants_by_event(event['id'])
+    return (current_count + new_participant_count) > event['capacity']
+
+#編集時の定員数確認
+def is_capacity_exceeded_on_edit(event, application_id, new_participant_count):
+    if event.get('capacity') is None:
+        return False
+    current_count = count_participants_by_event_excluding_application(event['id'], application_id)
+    return (current_count + new_participant_count) > event['capacity']
+
+def is_empty_selection(member_ids):
+    return len(member_ids) == 0
 
 # 生年月日から、現在の年齢を計算する
 def calculate_age(birth_date):

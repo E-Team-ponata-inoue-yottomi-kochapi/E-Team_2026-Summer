@@ -190,3 +190,40 @@ def find_application_by_event_id_and_household_id(event_id, household_id):
             return result
     finally:
         conn.close()
+
+#イベント参加者を数える
+def count_participants_by_event(event_id):
+    conn = get_connection()
+    try:
+        with conn.cursor() as cursor:
+            sql ="""
+                SELECT COUNT(*) as count
+                FROM application_participants ap
+                INNER JOIN applications a ON ap.application_id = a.id
+                WHERE a.event_id = %s AND a.canceled_at IS NULL AND ap.deleted_at IS NULL
+                """
+                
+            cursor.execute(sql, (event_id,))
+            result =cursor.fetchone()
+            return result['count']
+    finally:
+        conn.close()
+        
+# 指定した申込みは除外してイベントの現在の参加者数を数える
+def count_participants_by_event_excluding_application(event_id, application_id):
+    conn = get_connection()
+    try:
+        with conn.cursor() as cursor:
+            sql = """
+                SELECT COUNT(*) as count
+                FROM application_participants ap
+                INNER JOIN applications a ON ap.application_id = a.id
+                WHERE a.event_id = %s AND a.canceled_at IS NULL AND ap.deleted_at IS NULL
+                AND a.id != %s
+            """
+            cursor.execute(sql, (event_id, application_id))
+            result = cursor.fetchone()
+            return result['count']
+    finally:
+        conn.close()
+            

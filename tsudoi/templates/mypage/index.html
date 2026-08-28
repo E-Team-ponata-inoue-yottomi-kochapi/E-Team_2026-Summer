@@ -7,12 +7,12 @@
 {% block content %}
 <div class="mypage-page">
     <h1>マイページ</h1>
-
-    {% for message in get_flashed_messages() %}
+    <!-- base.htmlで実装しているためコメントアウト -->
+    <!-- {% for message in get_flashed_messages() %}
         <hr>
         <p>{{ message }}</p>
         <hr>
-    {% endfor %}
+    {% endfor %} -->
 
     <div class="card">
         <section class="mypage-section">
